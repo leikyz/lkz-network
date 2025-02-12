@@ -12,7 +12,7 @@ void CreatePlayerMessage::Process()
     std::cout << "Player ID: " << playerId << std::endl;
 }
 
-std::vector<uint8_t> CreatePlayerMessage::Serialize() const
+std::vector<uint8_t> CreatePlayerMessage::Serialize()
 {
     // Implémentation de la sérialisation (exemple simple avec un entier)
     std::vector<uint8_t> data;

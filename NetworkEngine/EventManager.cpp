@@ -1,66 +1,73 @@
-#include "EventManager.h"
-
-
-std::unordered_map<std::string, std::vector<EventManager::EventCallback>> EventManager::events; // Définition ici !
-
-void EventManager::RegisterEvent(const std::string& name, EventCallback function) 
-{
-    events[name].push_back(function);
-}
-
-void EventManager::WriteInt(int value)
-{
-    // Convert int to 4-byte array (big-endian)
-    uint8_t byteArray[4];
-    byteArray[0] = static_cast<uint8_t>((value >> 24) & 0xFF); // Extract the most significant byte
-    byteArray[1] = static_cast<uint8_t>((value >> 16) & 0xFF);
-    byteArray[2] = static_cast<uint8_t>((value >> 8) & 0xFF);
-    byteArray[3] = static_cast<uint8_t>(value & 0xFF); // Extract the least significant byte
-
-    // Add each byte to the event's buffer
-    for (int i = 0; i < 4; ++i)
-    {
-        // Store the byte, assuming you have an appropriate storage mechanism (like a vector)
-        std::cout << "Byte " << i << ": " << static_cast<int>(byteArray[i]) << std::endl;
-        // You would typically store it here, e.g., in a message buffer or send it over the network.
-    }
-}
-
-void EventManager::ReadInt(int value)
-{
-    // Assuming you're receiving a byte array of size 4
-    uint8_t byteArray[4];  // You should populate this byte array with data from the received packet
-
-    // For illustration purposes, assuming you fill byteArray with actual data here.
-
-    value = 0;
-    value |= static_cast<int>(byteArray[0]) << 24; // Combine the bytes back into the integer
-    value |= static_cast<int>(byteArray[1]) << 16;
-    value |= static_cast<int>(byteArray[2]) << 8;
-    value |= static_cast<int>(byteArray[3]);
-
-    std::cout << "Read value: " << value << std::endl;
-}
-
-void EventManager::Deserialize(const std::vector<uint8_t>& buffer)
-{
-    // Initialiser un index pour suivre la position dans le buffer
-    int index = 0;
-
-    // Déclarer des variables pour les paramètres
-    int param1 = 0;
-    int param2 = 0;
-
-    // Lire le premier int (4 bytes)
-    memcpy(&param1, &buffer[index], sizeof(int));
-    index += sizeof(int);  // Déplacer l'index de 4 bytes
-
-    // Lire le deuxième int (4 bytes)
-    memcpy(&param2, &buffer[index], sizeof(int));
-    index += sizeof(int);  // Déplacer l'index de 4 bytes
-
-    // Afficher les valeurs pour vérifier
-    std::cout << "Premier int: " << param1 << std::endl;
-}
-
-
+//#include "EventManager.h"
+//#include <sstream>
+//#include <iostream>
+//
+//std::unordered_map<int, std::vector<EventManager::EventCallback>> EventManager::events;
+//
+//void EventManager::RegisterEvent(int eventId, EventCallback function) {
+//    events[eventId].push_back(function);
+//}
+//
+//void EventManager::TriggerRaw(BaseClient* client, const std::string& message) {
+//    std::vector<std::string> content = Deserialize(message);
+//
+//    if (content.empty()) {
+//        std::cerr << "Invalid event call" << std::endl;
+//        return;
+//    }
+//
+//    int eventId = std::stoi(content[0]); // Convertit l'ID en entier
+//    std::vector<std::string> args(content.begin() + 1, content.end());
+//
+//    if (events.find(eventId) != events.end()) {
+//        for (const auto& function : events[eventId]) {
+//            function(client, args);
+//        }
+//    }
+//}
+//
+//std::string EventManager::Serialize(int eventId, const std::vector<std::string>& parameters) {
+//    std::ostringstream oss;
+//    oss << eventId << "|";
+//
+//    if (!parameters.empty()) {
+//        for (size_t i = 0; i < parameters.size(); ++i) {
+//            oss << parameters[i];
+//            if (i < parameters.size() - 1) {
+//                oss << "&";
+//            }
+//        }
+//    }
+//
+//    oss << "~";
+//    return oss.str();
+//}
+//
+//std::vector<std::string> EventManager::Deserialize(const std::string& message) {
+//    std::vector<std::string> result;
+//    size_t separator = message.find('|');
+//
+//    if (separator == std::string::npos) {
+//        return result;
+//    }
+//
+//    std::string eventIdStr = message.substr(0, separator);
+//    std::string paramString = message.substr(separator + 1);
+//
+//    result.push_back(eventIdStr); // Conserve l'ID sous forme de string pour la conversion
+//
+//    if (!paramString.empty() && paramString != "~") {
+//        size_t start = 0, end;
+//        while ((end = paramString.find('&', start)) != std::string::npos) {
+//            result.push_back(paramString.substr(start, end - start));
+//            start = end + 1;
+//        }
+//        result.push_back(paramString.substr(start));
+//    }
+//
+//    return result;
+//}
+//
+//bool EventManager::ValidateParameters(const std::vector<std::string>& parameters, size_t expectedCount) {
+//    return parameters.size() == expectedCount;
+//}

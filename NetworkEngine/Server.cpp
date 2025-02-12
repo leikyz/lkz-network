@@ -35,7 +35,8 @@ void Server::Start()
     int clientAddrSize = sizeof(clientAddr);
     char buffer[BUFFER_SIZE];
 
-    while (true) {
+    while (true) 
+    {
         int bytesReceived = recvfrom(serverSocket, buffer, BUFFER_SIZE, 0, (sockaddr*)&clientAddr, &clientAddrSize);
         if (bytesReceived == SOCKET_ERROR) {
             printf("Message receive error: %d\n", WSAGetLastError());

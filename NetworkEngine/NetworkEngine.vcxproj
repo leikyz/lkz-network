@@ -128,15 +128,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CreatePlayerMessage.cpp" />
+    <ClCompile Include="CreatePlayerMessage.h" />
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Message.h" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Reader.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ApproachHandler.h" />
-    <ClInclude Include="Client.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Reader.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="Writer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

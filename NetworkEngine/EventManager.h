@@ -1,34 +1,25 @@
 #ifndef EVENT_MANAGER_H
 #define EVENT_MANAGER_H
 
-#include <iostream>
 #include <unordered_map>
 #include <vector>
 #include <functional>
-#include <sstream>
+#include <string>
 
-class EventManager
-{
+class BaseClient; // Déclaration avant utilisation
+
+class EventManager {
 public:
-    EventManager() = delete;
+    using EventCallback = std::function<void(BaseClient*, const std::vector<std::string>&)>;
 
-    using EventCallback = std::function<void(std::vector<std::string>)>;
+    static void RegisterEvent(int eventId, EventCallback function);
+    static void TriggerRaw(BaseClient* client, const std::string& message);
+    static std::string Serialize(int eventId, const std::vector<std::string>& parameters);
+    static std::vector<std::string> Deserialize(const std::string& message);
+    static bool ValidateParameters(const std::vector<std::string>& parameters, size_t expectedCount);
 
-    static std::unordered_map<std::string, std::vector<EventCallback>> events;
-
-    static void RegisterEvent(const std::string& name, EventCallback function);
-    static void TriggerRaw(const std::string& message);
-    static void Trigger(const std::string& clientId, const std::string& name, const std::vector<std::string>& args);
-
-    // Serialize and deserialize methods
-    static void Serialize();
-    static void Deserialize(const std::vector<uint8_t>& buffer);
-
-    // Writer
-    static void WriteInt(int value);
-
-    // Reader
-    static void ReadInt(int value);
+private:
+    static std::unordered_map<int, std::vector<EventCallback>> events;
 };
 
-#endif // !1
+#endif // EVENT_MANAGER_H

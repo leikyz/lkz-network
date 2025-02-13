@@ -1,64 +1,55 @@
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdio.h>
+﻿#include "Client.h"
+#include "../Common/EventManager.h"
 
-#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "ws2_32.lib")
 
-#define SERVER_IP "127.0.0.1" // Adresse du serveur (localhost)
-#define SERVER_PORT 465       // Port du serveur
+#define SERVER_IP "127.0.0.1" // Adresse IP locale
+#define PORT 5555
 #define BUFFER_SIZE 1024
 
-int main() 
+void Client::Start()
 {
-    WSADATA data;
-    if (WSAStartup(MAKEWORD(2, 2), &data) != 0)
-    {
-        printf("Error during the Initiailization of Winsock \n");
-        return 1;
+    /*std::cout << "test";*/
+
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "Erreur d'initialisation de Winsock" << std::endl;
     }
 
-    // Create UDP Socket
-    SOCKET serverSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (serverSocket == INVALID_SOCKET)
-    {
-        printf("Erreur lors de la création du socket: %d\n", WSAGetLastError());
+    // Cr�ation du socket UDP
+    SOCKET clientSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (clientSocket == INVALID_SOCKET) {
+        std::cerr << "Erreur lors de la cr�ation du socket: " << WSAGetLastError() << std::endl;
         WSACleanup();
-        return 1;
     }
 
-    // Create Server
+    // Pr�paration de l'adresse du serveur
+   // Pr�paration de l'adresse du serveur avec inet_pton
     sockaddr_in serverAddr = {};
-    serverAddr.sin_family = AF_INET; //IPV4
-    serverAddr.sin_addr.s_addr = INADDR_ANY;
-    serverAddr.sin_port = htons(SERVER_PORT); // Convert port to network format
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(PORT);
 
-    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) // Associate socket to server
-    {
-        printf("Échec du bind: %d\n", WSAGetLastError());
-        closesocket(serverSocket);
+    if (inet_pton(AF_INET, SERVER_IP, &serverAddr.sin_addr) != 1) {
+        std::cerr << "Erreur de conversion de l'adresse IP" << std::endl;
         WSACleanup();
-        return 1;
+        return;
     }
 
-    printf("UDP Server listening on port %d...\n", SERVER_PORT);
 
-    sockaddr_in clientAddr;
-    int clientAddrSize = sizeof(clientAddr);
-    char buffer[BUFFER_SIZE];
+    // S�rialisation de l'entier 10
+    int value = 10;
+    std::vector<int8_t> serializedData = EventManager::Serialize(value);
 
-    while (true)
-    {
-        int bytesReceived = recvfrom(serverSocket, buffer, BUFFER_SIZE, 0, (sockaddr*)&clientAddr, &clientAddrSize);
-        if (bytesReceived == SOCKET_ERROR) {
-            printf("Message receive error: %d\n", WSAGetLastError());
-            break;
-        }
-
-        buffer[bytesReceived] = '\0'; // S'assurer que le message est bien terminé
-        printf("MessageReceive: %s\n", buffer);
+    // Envoi des donn�es au serveur
+    int sendResult = sendto(clientSocket, reinterpret_cast<const char*>(serializedData.data()), serializedData.size(), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+    if (sendResult == SOCKET_ERROR) {
+        std::cerr << "Erreur d'envoi: " << WSAGetLastError() << std::endl;
+    }
+    else {
+        std::cout << "Entier 10 envoy� au serveur." << std::endl;
     }
 
-    closesocket(serverSocket);
+    // Fermeture du socket
+    closesocket(clientSocket);
     WSACleanup();
-    return 0;
 }

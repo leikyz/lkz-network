@@ -14,17 +14,17 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Fichiers d%27en-tête\Network">
-      <UniqueIdentifier>{deceee4c-d73e-4a3d-adbf-49bd18b257e0}</UniqueIdentifier>
+      <UniqueIdentifier>{e8955d43-c7b5-47f3-9afb-d3883615c31d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Fichiers sources\Network">
-      <UniqueIdentifier>{83fed554-6915-4cee-8b48-9bfc1ed8a692}</UniqueIdentifier>
+      <UniqueIdentifier>{370581f2-f9b0-488d-970f-253b374fafb8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Client.cpp">
+    <ClCompile Include="Server.cpp">
       <Filter>Fichiers sources\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\EventManager.cpp">
@@ -32,7 +32,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Client.h">
+    <ClInclude Include="Server.h">
       <Filter>Fichiers d%27en-tête\Network</Filter>
     </ClInclude>
   </ItemGroup>

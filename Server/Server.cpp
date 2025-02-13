@@ -1,4 +1,5 @@
-#include "Server.h"
+ï»¿#include "Server.h"
+#include "../Common/EventManager.h"
 
 void Server::Start()
 {
@@ -11,7 +12,7 @@ void Server::Start()
     // Create UDP Socket
     SOCKET serverSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (serverSocket == INVALID_SOCKET) {
-        printf("Erreur lors de la création du socket: %d\n", WSAGetLastError());
+        printf("Erreur lors de la crï¿½ation du socket: %d\n", WSAGetLastError());
         WSACleanup();
         return;
     }
@@ -23,7 +24,7 @@ void Server::Start()
     serverAddr.sin_port = htons(PORT); // Convert port to network format
 
     if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-        printf("Échec du bind: %d\n", WSAGetLastError());
+        printf("ï¿½chec du bind: %d\n", WSAGetLastError());
         closesocket(serverSocket);
         WSACleanup();
         return;
@@ -35,7 +36,7 @@ void Server::Start()
     int clientAddrSize = sizeof(clientAddr);
     char buffer[BUFFER_SIZE];
 
-    while (true) 
+    while (true)
     {
         int bytesReceived = recvfrom(serverSocket, buffer, BUFFER_SIZE, 0, (sockaddr*)&clientAddr, &clientAddrSize);
         if (bytesReceived == SOCKET_ERROR) {
@@ -43,8 +44,11 @@ void Server::Start()
             break;
         }
 
-        buffer[bytesReceived] = '\0'; // S'assurer que le message est bien terminé
-        printf("MessageReceive: %s\n", buffer);
+        // Convertir les donnï¿½es reï¿½ues en vecteur de bytes
+        std::vector<int8_t> receivedData(buffer, buffer + bytesReceived);
+
+        // Dï¿½sï¿½rialiser et afficher le rï¿½sultat
+        EventManager::Deserialize(receivedData);
     }
 
     closesocket(serverSocket);

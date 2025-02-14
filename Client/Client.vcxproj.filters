@@ -19,6 +19,12 @@
     <Filter Include="Fichiers sources\Network">
       <UniqueIdentifier>{83fed554-6915-4cee-8b48-9bfc1ed8a692}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Protocol">
+      <UniqueIdentifier>{a02b31e9-7131-4914-aa35-a6a1c3a62421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages">
+      <UniqueIdentifier>{a945c537-1754-4556-bb3a-481641d0aab3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -28,7 +34,10 @@
       <Filter>Fichiers sources\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\EventManager.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\CreateClientMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

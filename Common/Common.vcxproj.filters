@@ -13,6 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Protocol">
+      <UniqueIdentifier>{96cc40b8-0cd1-42c8-bfcf-c66e7320567d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Protocol\Message">
+      <UniqueIdentifier>{667417e8-483e-4d7b-868f-6f934c68a61b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol">
+      <UniqueIdentifier>{7545e99e-ed23-41d2-9df5-20b7bfd23ca6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages">
+      <UniqueIdentifier>{c850a317-c3a7-4d56-b813-88eb9953934d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages\Approach">
+      <UniqueIdentifier>{39c39651-2b47-4bef-b284-4d023e496765}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -21,10 +36,16 @@
     <ClCompile Include="EventManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="CreateClientMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Message</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

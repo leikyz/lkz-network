@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\CreateClientMessage.cpp" />
     <ClCompile Include="..\Common\EventManager.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Program.cpp" />

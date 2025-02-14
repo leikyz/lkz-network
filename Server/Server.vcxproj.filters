@@ -19,6 +19,24 @@
     <Filter Include="Fichiers sources\Network">
       <UniqueIdentifier>{370581f2-f9b0-488d-970f-253b374fafb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Protocol">
+      <UniqueIdentifier>{8cbef57a-c112-49d8-a6d5-e0981c901b02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages">
+      <UniqueIdentifier>{8b864671-573e-4140-a818-11dc5c4ddaaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages\Approach">
+      <UniqueIdentifier>{62dc29c2-3dc0-4708-908f-116aecc77124}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Network\Manager">
+      <UniqueIdentifier>{d5d804ff-fe2e-43b7-9a21-4cb62c0a58c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Manager">
+      <UniqueIdentifier>{398605b1-fc70-43f3-9ffc-8cd8955e8ee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Network\Manager">
+      <UniqueIdentifier>{9b4731b7-ec72-4327-94c3-ff978dc2bbe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -27,12 +45,24 @@
     <ClCompile Include="Server.cpp">
       <Filter>Fichiers sources\Network</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\CreateClientMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
     <ClCompile Include="..\Common\EventManager.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Protocol\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientManager.cpp">
+      <Filter>Fichiers sources\Network\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
+      <Filter>Fichiers d%27en-tête\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientManager.h">
+      <Filter>Fichiers d%27en-tête\Network\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
       <Filter>Fichiers d%27en-tête\Network</Filter>
     </ClInclude>
   </ItemGroup>

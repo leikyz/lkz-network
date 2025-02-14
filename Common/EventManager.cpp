@@ -4,28 +4,23 @@
 #include <string>
 #include <cstring>
 #include <cstdint>
+#include "CreateClientMessage.cpp"
 
-// Serialize un int en bytes
-std::vector<int8_t> EventManager::Serialize(int value) {
-    std::vector<int8_t> serialized(sizeof(int));
+EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
-    // Copier les bytes de l'int dans le tableau
+std::vector<uint8_t> EventManager::serialize(int value) {
+    std::vector<uint8_t> serialized(sizeof(int));
     std::memcpy(serialized.data(), &value, sizeof(int));
-
     return serialized;
 }
 
-// Deserialize les bytes en int et affiche le r�sultat
-std::vector<std::string> EventManager::Deserialize(const std::vector<int8_t>& data) {
+std::vector<std::string> EventManager::deserialize(const std::vector<uint8_t>& data) {
     std::vector<std::string> results;
 
     if (data.size() >= sizeof(int)) {
         int value = 0;
         std::memcpy(&value, data.data(), sizeof(int));
-
-        // Affiche la valeur d�s�rialis�e
         std::cout << "Deserialized int: " << value << std::endl;
-
         results.push_back(std::to_string(value));
     }
     else {
@@ -33,4 +28,9 @@ std::vector<std::string> EventManager::Deserialize(const std::vector<int8_t>& da
     }
 
     return results;
+}
+
+void EventManager::BindEvents()
+{
+    EventManager::registerHandler<CreateClientMessage>(1);
 }

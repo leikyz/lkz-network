@@ -6,24 +6,18 @@
 #include <string>
 #include <winsock2.h>
 #include <iostream>
-#include "Client.h"  // Assure-toi que la structure Client est incluse
+#include "Client.h"  
 
 class ClientManager
 {
 public:
-
-    /*static int nextId;*/
-    // Ajouter un client avec son adresse IP
-    static void addClient(const std::string& ipAddress, SOCKET sock);
-
-    // Rechercher un client par ID
+    static void addClient(sockaddr_in clientAddr, SOCKET socket, const std::string& ipAddress);
     static std::shared_ptr<Client> getClientById(int clientId);
-
-    // Afficher tous les clients
     static void displayClients();
 
 private:
-    static std::unordered_map<int, std::shared_ptr<Client>> clients;  // Map statique pour stocker les clients par leur ID
+    static std::unordered_map<int, std::shared_ptr<Client>> clients;
+    static int nextId;
 };
 
 #endif // CLIENT_MANAGER_H

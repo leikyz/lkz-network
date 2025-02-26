@@ -1,33 +1,34 @@
 #include "ClientManager.h"
 
-// Définition de la map statique pour stocker les clients
 std::unordered_map<int, std::shared_ptr<Client>> ClientManager::clients;
+int ClientManager::nextId = 1; 
 
-// Ajouter un client avec son adresse IP et son socket
-void ClientManager::addClient(const std::string& ipAddress, SOCKET sock)
+void ClientManager::addClient(sockaddr_in clientAddr, SOCKET socket, const std::string& ipAddress)
 {
-    std::shared_ptr<Client> newClient = std::make_shared<Client>(ipAddress, sock);  // Crée un client avec l'IP et le socket
+    int clientId = nextId++; 
 
-    // Ajouter le client à la map
-    clients[newClient->clientId] = newClient;
+    auto client = std::make_shared<Client>();
+    client->id = clientId;
+    client->address = clientAddr;
+    client->socket = socket;
+    client->ipAddress = ipAddress;
+    clients[clientId] = client;
 
-    std::cout << "Client ajouté: ID = " << newClient->clientId << ", IP = " << newClient->ipAddress << std::endl;
+    std::cout << "Client added : ID=" << clientId << ", IP=" << ipAddress << std::endl;
 }
 
-// Rechercher un client par ID
 std::shared_ptr<Client> ClientManager::getClientById(int clientId)
 {
     auto it = clients.find(clientId);
     if (it != clients.end()) {
         return it->second;
     }
-    return nullptr;  // Retourne nullptr si le client n'est pas trouvé
+    return nullptr;  
 }
 
-// Afficher tous les clients
 void ClientManager::displayClients()
 {
     for (const auto& pair : clients) {
-        std::cout << "Client ID: " << pair.second->clientId << ", IP: " << pair.second->ipAddress << std::endl;
+        std::cout << "Client ID: " << pair.second->id << ", IP: " << pair.second->ipAddress << std::endl;
     }
 }

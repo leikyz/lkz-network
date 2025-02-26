@@ -45,52 +45,48 @@ void Server::Start()
             break;
         }
 
-        // Convertir les données reçues en vecteur de bytes
         std::vector<uint8_t> receivedData(buffer, buffer + bytesReceived);
 
-        // Appel de la méthode de traitement des messages (désérialisation et appel du gestionnaire)
-        EventManager::processMessage(receivedData);
+        int id = static_cast<int>(buffer[0]);
+
+        // To create client
+        if (id == 1) 
+        {
+            char ipAddress[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, &clientAddr.sin_addr, ipAddress, INET_ADDRSTRLEN);
+            unsigned short port = ntohs(clientAddr.sin_port);
+
+            ClientManager::addClient(clientAddr, serverSocket, std::string(ipAddress));
+            
+        }
+        else
+        {
+
+            EventManager::processMessage(receivedData);
+        }
     }
     closesocket(serverSocket);
     WSACleanup();
 }
 
-void Server::Send(int clientId, Message& message)
-{
-    // Trouver le client dans le ClientManager en utilisant son clientId
-    std::shared_ptr<Client> client = ClientManager::getClientById(clientId);
-    if (client)
-    {
-        // Récupérer le socket du client
-        SOCKET clientSocket = client->socket;
-        sockaddr_in clientAddr = {};  // Définir l'adresse du client (tu peux la récupérer si nécessaire)
-        clientAddr.sin_family = AF_INET;
-        clientAddr.sin_port = htons(5555);  // Remplace avec le port approprié
+void Server::Send(int clientId, Message& message) {
+    auto client = ClientManager::getClientById(clientId);
+    if (!client) {
+        std::cerr << "Client non trouvé pour ID " << clientId << std::endl;
+        return;
+    }
 
-        // Conversion de l'adresse IP du client en format binaire
-        if (inet_pton(AF_INET, client->ipAddress.c_str(), &clientAddr.sin_addr) != 1) {
-            std::cerr << "Erreur de conversion de l'adresse IP du client" << std::endl;
-            return;
-        }
+    std::vector<uint8_t> buffer;
+    std::vector<uint8_t> data = message.serialize(buffer);
 
-        // Créer un buffer local pour la sérialisation du message
-        std::vector<uint8_t> buffer;
+    int bytesSent = sendto(client->socket, reinterpret_cast<const char*>(data.data()), data.size(), 0,
+        reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
-        // Sérialisation du message dans le buffer
-        std::vector<uint8_t> data = message.serialize(buffer);
-
-        // Envoi du message via UDP
-        int bytesSent = sendto(clientSocket, reinterpret_cast<const char*>(data.data()), data.size(), 0,
-            reinterpret_cast<const sockaddr*>(&clientAddr), sizeof(clientAddr));
-        if (bytesSent == SOCKET_ERROR) {
-            std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
-        }
-        else {
-            std::cout << "Message envoyé à client ID " << clientId << std::endl;
-        }
+    if (bytesSent == SOCKET_ERROR) {
+        std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
     }
     else {
-        std::cerr << "Client avec ID " << clientId << " non trouvé." << std::endl;
+        std::cout << "Message envoyé au client ID " << clientId << std::endl;
     }
 }
 

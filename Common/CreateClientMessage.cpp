@@ -53,8 +53,8 @@ struct CreateClientMessage : public Message
 
 
     void process() const override
-    {
-       /* ClientManager::addClient(ipAddress);*/
+    {/*
+        ClientManager::addClient(ipAddress);*/
         std::cout << "[CreateClientMessage] Received: " << std::endl;
     }
 };

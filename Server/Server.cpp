@@ -47,30 +47,31 @@ void Server::Start()
 
         std::vector<uint8_t> receivedData(buffer, buffer + bytesReceived);
 
-        int id = static_cast<int>(buffer[0]);
+        // Vérifier si receivedData contient au moins un octet (ID du message)
+        if (!receivedData.empty()) {
+            int messageId = static_cast<int>(receivedData[0]);
 
-        // To create client
-        if (id == 1) 
-        {
-            char ipAddress[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, &clientAddr.sin_addr, ipAddress, INET_ADDRSTRLEN);
-            unsigned short port = ntohs(clientAddr.sin_port);
+            // Si le message est un "CreateClientMessage" (ID == 1), ajouter serverSocket
+            if (messageId == 1) {
+                uintptr_t socketValue = reinterpret_cast<uintptr_t>(socket); // Sérialisation
+                uint8_t* socketPtr = reinterpret_cast<uint8_t*>(&socketValue);
 
-            ClientManager::addClient(clientAddr, serverSocket, std::string(ipAddress));
-            
+                receivedData.insert(receivedData.end(), socketPtr, socketPtr + sizeof(socketValue));
+            }
         }
-        else
-        {
 
-            EventManager::processMessage(receivedData);
-        }
+        // Passer les données au gestionnaire d'événements
+        EventManager::processMessage(receivedData);
     }
+
+
+
     closesocket(serverSocket);
     WSACleanup();
 }
 
 void Server::Send(int clientId, Message& message) {
-    auto client = ClientManager::getClientById(clientId);
+   /* auto client = ClientManager::getClientById(clientId);
     if (!client) {
         std::cerr << "Client non trouvé pour ID " << clientId << std::endl;
         return;
@@ -79,7 +80,7 @@ void Server::Send(int clientId, Message& message) {
     std::vector<uint8_t> buffer;
     std::vector<uint8_t> data = message.serialize(buffer);
 
-    int bytesSent = sendto(client->socket, reinterpret_cast<const char*>(data.data()), data.size(), 0,
+    int bytesSent = sendto(serverSocket, reinterpret_cast<const char*>(data.data()), data.size(), 0,
         reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
     if (bytesSent == SOCKET_ERROR) {
@@ -87,7 +88,7 @@ void Server::Send(int clientId, Message& message) {
     }
     else {
         std::cout << "Message envoyé au client ID " << clientId << std::endl;
-    }
+    }*/
 }
 
 

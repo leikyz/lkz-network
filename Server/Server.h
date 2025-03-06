@@ -1,9 +1,6 @@
 ﻿#ifndef SERVER_H
 #define SERVER_H
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdio.h>
 #include <vector>
 #include "../Common/Message.h"
 #include "../Common/EventManager.h"

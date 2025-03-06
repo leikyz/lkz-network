@@ -3,14 +3,13 @@
 std::unordered_map<int, std::shared_ptr<Client>> ClientManager::clients;
 int ClientManager::nextId = 1; 
 
-void ClientManager::addClient(sockaddr_in clientAddr, SOCKET socket, const std::string& ipAddress)
+void ClientManager::addClient(sockaddr_in clientAddr, const std::string& ipAddress)
 {
     int clientId = nextId++; 
 
     auto client = std::make_shared<Client>();
     client->id = clientId;
     client->address = clientAddr;
-    client->socket = socket;
     client->ipAddress = ipAddress;
     clients[clientId] = client;
 

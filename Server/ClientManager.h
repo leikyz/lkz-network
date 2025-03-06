@@ -7,11 +7,13 @@
 #include <winsock2.h>
 #include <iostream>
 #include "Client.h"  
+#include <ws2tcpip.h>
+#include <stdio.h>
 
 class ClientManager
 {
 public:
-    static void addClient(sockaddr_in clientAddr, SOCKET socket, const std::string& ipAddress);
+    static void addClient(sockaddr_in clientAddr, const std::string& ipAddress);
     static std::shared_ptr<Client> getClientById(int clientId);
     static void displayClients();
 

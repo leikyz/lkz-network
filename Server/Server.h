@@ -2,21 +2,22 @@
 #define SERVER_H
 
 #include <vector>
-#include "../Common/Message.h"
-#include "../Common/EventManager.h"
 #include "ClientManager.h"
+#include <winsock2.h> 
+#include "Message.h"
 #pragma comment(lib, "Ws2_32.lib")
 
-#define PORT 5555 // Port d'�coute du serveur
+#define PORT 5555
 #define BUFFER_SIZE 1024
 
 class Server
 {
 private:
+    static SOCKET serverSocket; 
 
 public:
     static void Start();
-    static void Send(int clientId, Message& message);
+    static void Send(sockaddr_in clientAddr, Message& message);
 };
 
 #endif // SERVER_H

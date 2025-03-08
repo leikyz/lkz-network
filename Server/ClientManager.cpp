@@ -1,33 +1,45 @@
 #include "ClientManager.h"
 
-std::unordered_map<int, std::shared_ptr<Client>> ClientManager::clients;
-int ClientManager::nextId = 1; 
+std::unordered_map<std::string, std::shared_ptr<Client>> ClientManager::clients;
 
-void ClientManager::addClient(sockaddr_in clientAddr, const std::string& ipAddress)
+std::string ClientManager::getClientKey(const sockaddr_in& clientAddr)
 {
-    int clientId = nextId++; 
-
-    auto client = std::make_shared<Client>();
-    client->id = clientId;
-    client->address = clientAddr;
-    client->ipAddress = ipAddress;
-    clients[clientId] = client;
-
-    std::cout << "Client added : ID=" << clientId << ", IP=" << ipAddress << std::endl;
+    char ipStr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &clientAddr.sin_addr, ipStr, INET_ADDRSTRLEN);
+    return std::string(ipStr) + ":" + std::to_string(ntohs(clientAddr.sin_port));
 }
 
-std::shared_ptr<Client> ClientManager::getClientById(int clientId)
+void ClientManager::addClient(sockaddr_in clientAddr)
 {
-    auto it = clients.find(clientId);
+    std::string key = getClientKey(clientAddr);
+
+    if (clients.find(key) != clients.end()) {
+        std::cout << "Client already exists: " << key << std::endl;
+        return;
+    }
+
+    auto client = std::make_shared<Client>();
+    client->address = clientAddr;
+    client->ipAddress = key; // Store the IP:Port as a string
+
+    clients[key] = client;
+
+    std::cout << "Client added: " << key << std::endl;
+}
+
+std::shared_ptr<Client> ClientManager::getClientByAddress(const sockaddr_in& clientAddr)
+{
+    std::string key = getClientKey(clientAddr);
+    auto it = clients.find(key);
     if (it != clients.end()) {
         return it->second;
     }
-    return nullptr;  
+    return nullptr;
 }
 
 void ClientManager::displayClients()
 {
     for (const auto& pair : clients) {
-        std::cout << "Client ID: " << pair.second->id << ", IP: " << pair.second->ipAddress << std::endl;
+        std::cout << "Client: " << pair.first << std::endl;
     }
 }

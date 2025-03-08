@@ -127,15 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\CreateClientMessage.cpp" />
-    <ClCompile Include="..\Common\EventManager.cpp" />
     <ClCompile Include="ClientManager.cpp" />
+    <ClCompile Include="CreateClientMessage.cpp" />
+    <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientManager.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="Server.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

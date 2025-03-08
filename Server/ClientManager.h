@@ -13,13 +13,14 @@
 class ClientManager
 {
 public:
-    static void addClient(sockaddr_in clientAddr, const std::string& ipAddress);
-    static std::shared_ptr<Client> getClientById(int clientId);
+    static void addClient(sockaddr_in clientAddr);
+    static std::shared_ptr<Client> getClientByAddress(const sockaddr_in& clientAddr);
     static void displayClients();
 
 private:
-    static std::unordered_map<int, std::shared_ptr<Client>> clients;
-    static int nextId;
+    static std::unordered_map<std::string, std::shared_ptr<Client>> clients;
+
+    static std::string getClientKey(const sockaddr_in& clientAddr);
 };
 
 #endif // CLIENT_MANAGER_H

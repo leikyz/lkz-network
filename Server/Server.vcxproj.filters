@@ -37,6 +37,15 @@
     <Filter Include="Fichiers d%27en-tête\Network\Manager">
       <UniqueIdentifier>{9b4731b7-ec72-4327-94c3-ff978dc2bbe4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Protocol">
+      <UniqueIdentifier>{d0276e5b-9391-4283-8ddb-5a30f886ea88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Protocol\Manager">
+      <UniqueIdentifier>{29ccb3b3-1b07-4161-95bd-116f747659a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Protocol\Messages">
+      <UniqueIdentifier>{ebb2852b-f64a-469b-a8c8-41c4f7208aba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -45,14 +54,14 @@
     <ClCompile Include="Server.cpp">
       <Filter>Fichiers sources\Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\CreateClientMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\EventManager.cpp">
-      <Filter>Fichiers sources\Protocol\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="ClientManager.cpp">
       <Filter>Fichiers sources\Network\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateClientMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>Fichiers sources\Protocol\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +73,12 @@
     </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>Fichiers d%27en-tête\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

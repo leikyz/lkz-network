@@ -1,4 +1,8 @@
 ﻿#include "Server.h"
+#include "EventManager.h"
+#include "Message.h"
+
+SOCKET Server::serverSocket = INVALID_SOCKET;
 
 void Server::Start()
 {
@@ -11,9 +15,9 @@ void Server::Start()
     }
 
     // Create UDP Socket
-    SOCKET serverSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    serverSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (serverSocket == INVALID_SOCKET) {
-        printf("Erreur lors de la cr�ation du socket: %d\n", WSAGetLastError());
+        printf("Erreur lors de la création du socket: %d\n", WSAGetLastError());
         WSACleanup();
         return;
     }
@@ -25,7 +29,7 @@ void Server::Start()
     serverAddr.sin_port = htons(PORT); // Convert port to network format
 
     if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-        printf("�chec du bind: %d\n", WSAGetLastError());
+        printf("Échec du bind: %d\n", WSAGetLastError());
         closesocket(serverSocket);
         WSACleanup();
         return;
@@ -47,33 +51,35 @@ void Server::Start()
 
         std::vector<uint8_t> receivedData(buffer, buffer + bytesReceived);
 
-        // Vérifier si receivedData contient au moins un octet (ID du message)
-        if (!receivedData.empty()) {
-            int messageId = static_cast<int>(receivedData[0]);
+        int id = static_cast<int>(buffer[0]);
 
-            // Si le message est un "CreateClientMessage" (ID == 1), ajouter serverSocket
-            if (messageId == 1) {
-                uintptr_t socketValue = reinterpret_cast<uintptr_t>(socket); // Sérialisation
-                uint8_t* socketPtr = reinterpret_cast<uint8_t*>(&socketValue);
+        // To create client
+        if (id == 1)
+        {
+            char ipAddress[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, &clientAddr.sin_addr, ipAddress, INET_ADDRSTRLEN);
+            unsigned short port = ntohs(clientAddr.sin_port);
 
-                receivedData.insert(receivedData.end(), socketPtr, socketPtr + sizeof(socketValue));
-            }
+            ClientManager::addClient(clientAddr);
         }
 
-        // Passer les données au gestionnaire d'événements
-        EventManager::processMessage(receivedData);
+        EventManager::processMessage(receivedData, clientAddr);     
     }
-
-
-
     closesocket(serverSocket);
     WSACleanup();
 }
 
-void Server::Send(int clientId, Message& message) {
-   /* auto client = ClientManager::getClientById(clientId);
+void Server::Send(sockaddr_in clientAddr, Message& message)
+{
+    auto client = ClientManager::getClientByAddress(clientAddr);
     if (!client) {
-        std::cerr << "Client non trouvé pour ID " << clientId << std::endl;
+        char ipStr[INET_ADDRSTRLEN]; // Buffer for IP string
+        inet_ntop(AF_INET, &clientAddr.sin_addr, ipStr, INET_ADDRSTRLEN);
+
+        std::cerr << "Client non trouvé pour l'adresse "
+            << ipStr << ":"
+            << ntohs(clientAddr.sin_port) << std::endl;
+
         return;
     }
 
@@ -87,9 +93,7 @@ void Server::Send(int clientId, Message& message) {
         std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
     }
     else {
-        std::cout << "Message envoyé au client ID " << clientId << std::endl;
-    }*/
+        std::cout << "Message envoyé au client " << client->ipAddress << std::endl;
+    }
 }
-
-
 

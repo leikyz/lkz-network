@@ -76,7 +76,7 @@ void Server::Send(sockaddr_in clientAddr, Message& message)
         char ipStr[INET_ADDRSTRLEN]; // Buffer for IP string
         inet_ntop(AF_INET, &clientAddr.sin_addr, ipStr, INET_ADDRSTRLEN);
 
-        std::cerr << "Client non trouvé pour l'adresse "
+        std::cerr << "Client not found"
             << ipStr << ":"
             << ntohs(clientAddr.sin_port) << std::endl;
 
@@ -93,7 +93,13 @@ void Server::Send(sockaddr_in clientAddr, Message& message)
         std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
     }
     else {
-        std::cout << "Message envoyé au client " << client->ipAddress << std::endl;
+        // ANSI escape code for purple/pink color
+        const char* purpleColor = "\033[38;5;129m"; // This is a color close to purple/pink
+        const char* resetColor = "\033[0m"; // Reset the color
+
+        std::cout << purpleColor << "(" << client->ipAddress << ") Message sent: {"
+            << typeid(message).name() << "}" << resetColor << std::endl;
     }
 }
+
 

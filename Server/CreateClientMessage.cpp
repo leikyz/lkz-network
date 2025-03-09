@@ -17,27 +17,20 @@ struct CreateClientMessage : public Message
     {
         buffer.clear();
 
-        // Serialize ID (fixed ID value as a 4-byte integer)
-       // Serialize ID in little-endian order
         buffer.push_back(static_cast<uint8_t>(ID & 0xFF));
         buffer.push_back(static_cast<uint8_t>((ID >> 8) & 0xFF));
         buffer.push_back(static_cast<uint8_t>((ID >> 16) & 0xFF));
         buffer.push_back(static_cast<uint8_t>((ID >> 24) & 0xFF));
 
-
-        //// Serialize isCreated (1 for true, 0 for false)
         buffer.push_back(isCreated ? 1 : 1);
 
         return buffer;
     }
 
-
-    // Deserialize the message
     void deserialize(const std::vector<uint8_t>& buffer) override
     {
         if (buffer.size() >= 1)
         {
-            // Deserialize the isCreated value (1 means true, 0 means false)
             isCreated = (buffer[0] == 1);
         }
         else
@@ -46,14 +39,9 @@ struct CreateClientMessage : public Message
         }
     }
 
-    // Process the message
     void process(const sockaddr_in& senderAddr) const override
     {
-        std::cout << "Client creation status: " << (isCreated ? "Created" : "Not Created") << std::endl;
-
-        // Create a CreateClientMessage instance and send it by reference
         CreateClientMessage message(isCreated);
         Server::Send(senderAddr, message);
     }
-
 };

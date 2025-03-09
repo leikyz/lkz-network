@@ -25,7 +25,6 @@ void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_i
         return;
     }
 
-    // message Id
     int id = static_cast<int>(buffer[0]);
 
     // Check if it's in range
@@ -42,7 +41,15 @@ template<typename T>
 void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
     T msg;
-  //  msg.deserialize(buffer);
+    msg.deserialize(buffer);
     msg.process(senderAddr);
+
+    // ANSI escape code for yellow color
+    const char* yellowColor = "\033[38;5;226m"; // This is a yellow color
+    const char* resetColor = "\033[0m"; // Reset the color
+
+    std::cout << yellowColor << "Message received: {"
+        << typeid(msg).name() << "}" << resetColor << std::endl;
 }
+
 

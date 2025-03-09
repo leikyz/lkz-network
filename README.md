@@ -1,4 +1,4 @@
-Network Engine is a fast and efficient networking solution built on UDP, designed for real-time applications.
+Fast and efficient networking solution built on UDP, designed for real-time applications.
 It features an advanced event-driven system that ensures optimal message handling with minimal latency.
 
 ✨ Key Features

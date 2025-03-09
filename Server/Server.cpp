@@ -16,7 +16,8 @@ void Server::Start()
 
     // Create UDP Socket
     serverSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (serverSocket == INVALID_SOCKET) {
+    if (serverSocket == INVALID_SOCKET) 
+    {
         printf("Erreur lors de la création du socket: %d\n", WSAGetLastError());
         WSACleanup();
         return;
@@ -28,7 +29,8 @@ void Server::Start()
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(PORT); // Convert port to network format
 
-    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) 
+    {
         printf("Échec du bind: %d\n", WSAGetLastError());
         closesocket(serverSocket);
         WSACleanup();
@@ -44,7 +46,8 @@ void Server::Start()
     while (true)
     {
         int bytesReceived = recvfrom(serverSocket, buffer, BUFFER_SIZE, 0, (sockaddr*)&clientAddr, &clientAddrSize);
-        if (bytesReceived == SOCKET_ERROR) {
+        if (bytesReceived == SOCKET_ERROR) 
+        {
             printf("Message receive error: %d\n", WSAGetLastError());
             break;
         }
@@ -69,11 +72,14 @@ void Server::Start()
     WSACleanup();
 }
 
+
+// Send function to a specific client
 void Server::Send(sockaddr_in clientAddr, Message& message)
 {
     auto client = ClientManager::getClientByAddress(clientAddr);
-    if (!client) {
-        char ipStr[INET_ADDRSTRLEN]; // Buffer for IP string
+    if (!client) 
+    {
+        char ipStr[INET_ADDRSTRLEN]; 
         inet_ntop(AF_INET, &clientAddr.sin_addr, ipStr, INET_ADDRSTRLEN);
 
         std::cerr << "Client not found"
@@ -89,16 +95,13 @@ void Server::Send(sockaddr_in clientAddr, Message& message)
     int bytesSent = sendto(serverSocket, reinterpret_cast<const char*>(data.data()), data.size(), 0,
         reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
-    if (bytesSent == SOCKET_ERROR) {
+    if (bytesSent == SOCKET_ERROR) 
         std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
-    }
-    else {
-        // ANSI escape code for purple/pink color
-        const char* purpleColor = "\033[38;5;129m"; // This is a color close to purple/pink
-        const char* resetColor = "\033[0m"; // Reset the color
-
+    else 
+    {
+        const char* purpleColor = "\033[38;5;129m"; 
         std::cout << purpleColor << "(" << client->ipAddress << ") Message sent: {"
-            << typeid(message).name() << "}" << resetColor << std::endl;
+            << typeid(message).name() << "}" << std::endl;
     }
 }
 

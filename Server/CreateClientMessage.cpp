@@ -1,6 +1,6 @@
 #include "Message.h"
 #include "../Server/ClientManager.h"
-#include "Server.h"
+
 
 struct CreateClientMessage : public Message
 {
@@ -8,7 +8,6 @@ struct CreateClientMessage : public Message
 
     bool isCreated;
 
-    // Constructor to initialize isCreated
     CreateClientMessage(bool isCreated = false) : isCreated(isCreated) {}
 
     int getId() const override { return ID; }

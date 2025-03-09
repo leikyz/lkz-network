@@ -9,7 +9,6 @@ void EventManager::BindEvents()
     EventManager::registerHandler<CreateClientMessage>(1);
 }
 
-// Register handler outside of the class definition
 template<typename T>
 void EventManager::registerHandler(int id)
 {
@@ -36,7 +35,6 @@ void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_i
     messageHandlers[id](buffer, senderAddr);
 }
 
-// Define the template function outside of the class definition
 template<typename T>
 void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
@@ -44,12 +42,10 @@ void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const socka
     msg.deserialize(buffer);
     msg.process(senderAddr);
 
-    // ANSI escape code for yellow color
     const char* yellowColor = "\033[38;5;226m"; // This is a yellow color
-    const char* resetColor = "\033[0m"; // Reset the color
 
     std::cout << yellowColor << "Message received: {"
-        << typeid(msg).name() << "}" << resetColor << std::endl;
+        << typeid(msg).name() << "}" << std::endl;
 }
 
 

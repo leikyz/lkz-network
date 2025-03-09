@@ -20,7 +20,7 @@ void ClientManager::addClient(sockaddr_in clientAddr)
 
     auto client = std::make_shared<Client>();
     client->address = clientAddr;
-    client->ipAddress = key; // Store the IP:Port as a string
+    client->ipAddress = key; 
 
     clients[key] = client;
 

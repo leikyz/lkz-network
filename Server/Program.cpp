@@ -3,10 +3,7 @@
 
 int main()
 {
-    // ANSI escape code for blue text
     std::cout << "\033[34m";
-
-    // ASCII Art copied from the C# string array
     std::cout << R"(
                                                        _    _  __ ____           
                                                       | |  | |/ /|_  /           
@@ -20,9 +17,6 @@ int main()
                                          
     )" << std::endl;
 
-    // Reset color to default
     std::cout << "\033[0m";
-
-    // Start the server
     Server::Start();
 }

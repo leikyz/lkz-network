@@ -3,10 +3,11 @@
 #include <vector>
 #include <iostream>
 #include <winsock2.h>
+#include "Server.h"
 
 struct Message
 {
-    Message() = default; // Default constructor
+    Message() = default; 
 
     virtual int getId() const = 0;
     virtual std::vector<uint8_t>& serialize(std::vector<uint8_t>& buffer) const = 0;

@@ -21,7 +21,6 @@ private:
     template<typename T>
     static void handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr);
 
-    // This function should be declared but moved outside to avoid compilation issues
     template<typename T>
     static void registerHandler(int id);
 };

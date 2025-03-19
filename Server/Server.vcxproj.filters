@@ -46,6 +46,9 @@
     <Filter Include="Fichiers d%27en-tête\Protocol\Messages">
       <UniqueIdentifier>{ebb2852b-f64a-469b-a8c8-41c4f7208aba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Network\Session">
+      <UniqueIdentifier>{5e04335e-41d4-45d9-a0f9-670c98a4e76e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -63,6 +66,9 @@
     <ClCompile Include="EventManager.cpp">
       <Filter>Fichiers sources\Protocol\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="LobbyManager.cpp">
+      <Filter>Fichiers sources\Network\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -71,14 +77,20 @@
     <ClInclude Include="ClientManager.h">
       <Filter>Fichiers d%27en-tête\Network\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Fichiers d%27en-tête\Network</Filter>
-    </ClInclude>
     <ClInclude Include="EventManager.h">
       <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Message.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Fichiers d%27en-tête\Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>Fichiers d%27en-tête\Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyManager.h">
+      <Filter>Fichiers d%27en-tête\Network\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

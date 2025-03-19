@@ -3,7 +3,6 @@
 #include <vector>
 #include <iostream>
 #include <winsock2.h>
-#include "Server.h"
 
 struct Message
 {

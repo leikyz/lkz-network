@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -129,7 +129,9 @@
   <ItemGroup>
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="CreateClientMessage.cpp" />
+    <ClCompile Include="CreateLobbyMessage.cpp" />
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="LobbyManager.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
@@ -137,6 +139,8 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LobbyManager.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Server.h" />
   </ItemGroup>

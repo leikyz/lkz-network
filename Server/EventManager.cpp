@@ -1,12 +1,13 @@
 ﻿#include "EventManager.h"
 #include <iostream>
 #include "CreateClientMessage.cpp"
-
+#include "CreateLobbyMessage.cpp"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
     EventManager::registerHandler<CreateClientMessage>(1);
+    EventManager::registerHandler<CreateLobbyMessage>(2);
 }
 
 template<typename T>

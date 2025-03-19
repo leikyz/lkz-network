@@ -64,9 +64,12 @@ void Server::Start()
             unsigned short port = ntohs(clientAddr.sin_port);
 
             ClientManager::addClient(clientAddr);
+            EventManager::processMessage(receivedData, clientAddr);
         }
-
-        EventManager::processMessage(receivedData, clientAddr);     
+        else
+        {
+            EventManager::processMessage(receivedData, clientAddr);
+        }
     }
     closesocket(serverSocket);
     WSACleanup();

@@ -1,13 +1,13 @@
 #include "Message.h"
 #include "../Server/ClientManager.h"
 #include "Server.h"
+#include "LobbyManager.h"
 
-
-struct CreateClientMessage : public Message
+struct CreateLobbyMessage : public Message
 {
-    static constexpr int ID = 1;
+    static constexpr int ID = 2;
 
-    CreateClientMessage(){}
+    CreateLobbyMessage() {}
 
     int getId() const override { return ID; }
 
@@ -31,7 +31,12 @@ struct CreateClientMessage : public Message
 
     void process(const sockaddr_in& senderAddr) const override
     {
-        CreateClientMessage message;
+     
+        LobbyManager::createLobby(1);
+        LobbyManager::addClientToLobby(1, ClientManager::getClientByAddress(senderAddr));
+
+        CreateLobbyMessage message;
         Server::Send(senderAddr, message);
+
     }
 };

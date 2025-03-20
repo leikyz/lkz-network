@@ -5,25 +5,36 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include "ClientManager.h"  // Inclut le ClientManager pour pouvoir ajouter des clients
+#include <list> 
+#include "ClientManager.h"  
 
 struct Lobby
 {
     std::string lobbyName;
-    std::unordered_map<std::string, std::shared_ptr<Client>> clients;  // Liste des clients dans le lobby
+    std::list<std::shared_ptr<Client>> clients;  
 
     Lobby(const std::string& name) : lobbyName(name) {}
 
     void addClient(const std::shared_ptr<Client>& client) {
-        clients[client->ipAddress] = client;
+        clients.push_back(client);  
         std::cout << "Client " << client->ipAddress << " ajouté au lobby: " << lobbyName << std::endl;
     }
 
-    void displayClients() {
-        std::cout << "Clients dans le lobby " << lobbyName << " :\n";
-        for (const auto& pair : clients) {
-            std::cout << "Client: " << pair.first << std::endl;
+    std::shared_ptr<Client> getClientByIp(const std::string& ipAddress) const
+    {
+        for (const auto& client : clients)
+        {
+            if (client->ipAddress == ipAddress) 
+            {
+                return client;  
+            }
         }
+        return nullptr; 
+    }
+
+    std::list<std::shared_ptr<Client>> getClients() const
+    {
+        return clients;
     }
 };
 

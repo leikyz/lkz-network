@@ -13,14 +13,12 @@ struct CreateClientMessage : public Message
 
     int getId() const override { return ID; }
 
-    // Sérialiser directement dans un buffer passé par le Serializer
     std::vector<uint8_t>& serialize(Serializer& serializer) const override
     {
         serializer.writeInt(ID);
         return serializer.buffer; // Retourner le buffer de serializer
     }
 
-    // Désérialiser en utilisant le Deserializer
     void deserialize(Deserializer& deserializer) override
     {
         int receivedId = deserializer.readInt();
@@ -29,13 +27,12 @@ struct CreateClientMessage : public Message
         }
     }
 
-    // Processus du message (sérialisation optimisée)
     void process(const sockaddr_in& senderAddr) const override
     {
         Serializer serializer;
         serialize(serializer);  
 
-        Server::Send(senderAddr, serializer.buffer);
+       // Server::Send(senderAddr, serializer.buffer);
     }
 };
 

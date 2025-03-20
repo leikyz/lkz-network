@@ -11,32 +11,26 @@ struct CreateLobbyMessage : public Message
 
     int getId() const override { return ID; }
 
-    std::vector<uint8_t>& serialize(std::vector<uint8_t>& buffer) const override
+    std::vector<uint8_t>& serialize(Serializer& serializer) const override
     {
-        buffer.clear();
-
-        buffer.push_back(static_cast<uint8_t>(ID & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((ID >> 8) & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((ID >> 16) & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((ID >> 24) & 0xFF));
-
-
-        return buffer;
+        serializer.writeInt(ID);
+        return serializer.buffer; // Retourner le buffer de serializer
     }
 
-    void deserialize(const std::vector<uint8_t>& buffer) override
+    void deserialize(Deserializer& deserializer) override
     {
-
+        int receivedId = deserializer.readInt();
+        if (receivedId != ID) {
+            throw std::runtime_error("Mauvais ID de message reçu !");
+        }
     }
 
     void process(const sockaddr_in& senderAddr) const override
     {
-     
         LobbyManager::createLobby(1);
         LobbyManager::addClientToLobby(1, ClientManager::getClientByAddress(senderAddr));
 
-        CreateLobbyMessage message;
-        Server::Send(senderAddr, message);
-
+        Serializer serializer;
+        serialize(serializer);     
     }
 };

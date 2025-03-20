@@ -26,10 +26,9 @@ void EventManager::processMessage(const std::vector<uint8_t>& buffer, const sock
 {
     if (buffer.empty()) return;
 
-    // Création du deserializer pour lire le message
     Deserializer deserializer(buffer);
 
-    int id = deserializer.readInt();  // Lire l'ID du message
+    int id = deserializer.readInt();  
 
     auto it = messageHandlers.find(id);
     if (it != messageHandlers.end()) {

@@ -9,7 +9,7 @@ void LobbyManager::createLobby(int lobbyId)
         return;
     }
 
-    auto lobby = std::make_shared<Lobby>(std::to_string(lobbyId));  // Utilise le lobby ID comme nom
+    auto lobby = std::make_shared<Lobby>(std::to_string(lobbyId));  
     lobbies[lobbyId] = lobby;
 
     std::cout << "Lobby créé avec l'ID: " << lobbyId << std::endl;
@@ -33,13 +33,4 @@ std::shared_ptr<Lobby> LobbyManager::getLobby(int lobbyId)
         return it->second;
     }
     return nullptr;
-}
-
-void LobbyManager::displayLobbies()
-{
-    std::cout << "Lobbies existants :\n";
-    for (const auto& pair : lobbies) {
-        std::cout << "Lobby ID: " << pair.first << std::endl;
-        pair.second->displayClients();  // Affiche les clients de chaque lobby
-    }
 }

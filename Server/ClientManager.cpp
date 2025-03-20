@@ -37,9 +37,12 @@ std::shared_ptr<Client> ClientManager::getClientByAddress(const sockaddr_in& cli
     return nullptr;
 }
 
-void ClientManager::displayClients()
+std::vector<std::shared_ptr<Client>> ClientManager::getClients()
 {
+    std::vector<std::shared_ptr<Client>> clientList;
+    clientList.reserve(clients.size());  
     for (const auto& pair : clients) {
-        std::cout << "Client: " << pair.first << std::endl;
+        clientList.push_back(pair.second);
     }
+    return clientList;
 }

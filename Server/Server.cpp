@@ -16,7 +16,7 @@ void Server::Start()
 
     // Create UDP Socket
     serverSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (serverSocket == INVALID_SOCKET) 
+    if (serverSocket == INVALID_SOCKET)
     {
         printf("Erreur lors de la création du socket: %d\n", WSAGetLastError());
         WSACleanup();
@@ -29,7 +29,7 @@ void Server::Start()
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(PORT); // Convert port to network format
 
-    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) 
+    if (bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
     {
         printf("Échec du bind: %d\n", WSAGetLastError());
         closesocket(serverSocket);
@@ -46,7 +46,7 @@ void Server::Start()
     while (true)
     {
         int bytesReceived = recvfrom(serverSocket, buffer, BUFFER_SIZE, 0, (sockaddr*)&clientAddr, &clientAddrSize);
-        if (bytesReceived == SOCKET_ERROR) 
+        if (bytesReceived == SOCKET_ERROR)
         {
             printf("Message receive error: %d\n", WSAGetLastError());
             break;
@@ -75,8 +75,6 @@ void Server::Start()
     WSACleanup();
 }
 
-
-// Send function to a specific client
 void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
 {
     auto client = ClientManager::getClientByAddress(clientAddr);
@@ -92,7 +90,6 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
         return;
     }
 
-    // Envoi du message sérialisé sous forme de buffer
     int bytesSent = sendto(serverSocket, reinterpret_cast<const char*>(buffer.data()), buffer.size(), 0,
         reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
@@ -106,4 +103,57 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
     }
 }
 
+void Server::SendToAllInLobby(int lobbyId, const std::vector<uint8_t>& buffer)
+{
+    auto lobby = LobbyManager::getLobby(lobbyId);
+    if (!lobby)
+    {
+        std::cerr << "Lobby introuvable avec l'ID: " << lobbyId << std::endl;
+        return;
+    }
 
+    for (const auto& client : lobby->getClients())
+    {
+        Send(client->address, buffer);
+    }
+}
+
+void Server::SendToAllInLobbyExcept(int lobbyId, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
+{
+    auto lobby = LobbyManager::getLobby(lobbyId);
+    if (!lobby)
+    {
+        std::cerr << "Lobby introuvable avec l'ID: " << lobbyId << std::endl;
+        return;
+    }
+
+    for (const auto& client : lobby->getClients())
+    {
+        if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||
+            client->address.sin_port != excludedClientAddr.sin_port)
+        {
+            Send(client->address, buffer);
+        }
+    }
+}
+
+void Server::SendToAllClients(const std::vector<uint8_t>& buffer)
+{
+    for (const auto& pair : ClientManager::getClients())
+    {
+        Send(pair->address, buffer);
+    }
+}
+
+void Server::SendToAllClientsExcept(const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
+{
+    for (const auto& pair : ClientManager::getClients())
+    {
+        const auto& client = pair;
+        if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||
+            client->address.sin_port != excludedClientAddr.sin_port)
+        {
+            Send(client->address, buffer);
+        }
+    }
+}

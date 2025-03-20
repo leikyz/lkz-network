@@ -15,7 +15,7 @@ class ClientManager
 public:
     static void addClient(sockaddr_in clientAddr);
     static std::shared_ptr<Client> getClientByAddress(const sockaddr_in& clientAddr);
-    static void displayClients();
+    static std::vector<std::shared_ptr<Client>> getClients();
 
 private:
     static std::unordered_map<std::string, std::shared_ptr<Client>> clients;

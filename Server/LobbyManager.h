@@ -13,10 +13,19 @@ public:
     static void addClientToLobby(int lobbyId, const std::shared_ptr<Client>& client);
     static std::shared_ptr<Lobby> getLobby(int lobbyId);
     static int nextLobbyId;
+
     static int getLastLobbyId()
     {
         return nextLobbyId - 1;
     }
+
+    static int getLobbyCount() 
+    {
+        return static_cast<int>(lobbies.size());
+    }
+
+    static std::vector<std::shared_ptr<Lobby>> getAllLobbies();
+
 
 private:
     static std::unordered_map<int, std::shared_ptr<Lobby>> lobbies;

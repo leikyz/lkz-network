@@ -14,6 +14,12 @@ public:
         buffer.push_back(static_cast<uint8_t>((value >> 16) & 0xFF));
         buffer.push_back(static_cast<uint8_t>((value >> 24) & 0xFF));
     }
+
+    void writeFloat(float value) {
+        uint8_t bytes[sizeof(float)];
+        std::memcpy(bytes, &value, sizeof(float)); // Copie les octets du float dans un tableau de bytes
+        buffer.insert(buffer.end(), bytes, bytes + sizeof(float)); // Ajoute les octets au buffer
+    }
 };
 
 #endif // SERIALIZER_H

@@ -10,6 +10,13 @@ struct Entity
 {
     uint32_t id;   
     EntityEnum type;   
+    float posX;
+    float posY;
+    float posZ;
+
+    float rotaX;
+    float rotaY;
+    float rotaZ;
 
     // Constructeur
     Entity(EntityEnum type)

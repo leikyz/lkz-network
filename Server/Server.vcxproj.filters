@@ -78,6 +78,9 @@
     <ClCompile Include="JoinLobbyMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
     </ClCompile>
+    <ClCompile Include="LobbyListMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">

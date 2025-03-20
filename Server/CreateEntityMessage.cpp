@@ -9,9 +9,12 @@ struct CreateEntityMessage : public Message
 
     CreateEntityMessage() {}
 
-    int lobbyId;
     int entityId;
     int entityTypeId;
+
+    float posX;
+    float posY;
+    float posZ;
 
     int getId() const override { return ID; }
 
@@ -20,23 +23,30 @@ struct CreateEntityMessage : public Message
         serializer.writeInt(ID);
         serializer.writeInt(entityId);
         serializer.writeInt(entityTypeId);
+        serializer.writeFloat(posX);
+        serializer.writeFloat(posY);
+        serializer.writeFloat(posZ);
 
         return serializer.buffer;
     }
 
     void deserialize(Deserializer& deserializer) override
     {
-        lobbyId = deserializer.readInt();
+
     }
 
     void process(const sockaddr_in& senderAddr) override
     {
-        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(lobbyId);
+        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
         std::shared_ptr<Entity> entity = std::make_shared<Entity>(EntityEnum::Player);
         lobby->addEntity(entity);
 
         entityId = entity->id;
         entityTypeId = entity->type;
+
+        posX = 120.0f;
+        posY = 100.0f;
+        posZ = 100.0f;
 
         // Sérialisation
         Serializer serializer;

@@ -27,6 +27,19 @@ public:
         position += 4;
         return value;
     }
+
+    float readFloat()
+    {
+        if (position + sizeof(float) > buffer.size()) {
+            throw std::out_of_range("Buffer overflow in readFloat");
+        }
+
+        float value;
+        std::memcpy(&value, &buffer[position], sizeof(float));
+        position += sizeof(float);
+        return value;
+    }
+
 };
 
 #endif // DESERIALIZER_H

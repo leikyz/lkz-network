@@ -57,19 +57,19 @@ void Server::Start()
         int id = static_cast<int>(buffer[0]);
 
         // To create client
-        if (id == 1)
+        /*if (id == 1)
         {
             char ipAddress[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, &clientAddr.sin_addr, ipAddress, INET_ADDRSTRLEN);
             unsigned short port = ntohs(clientAddr.sin_port);
 
-            ClientManager::addClient(clientAddr);
+
             EventManager::processMessage(receivedData, clientAddr);
         }
         else
-        {
+        {*/
             EventManager::processMessage(receivedData, clientAddr);
-        }
+        /*}*/
     }
     closesocket(serverSocket);
     WSACleanup();

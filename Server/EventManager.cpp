@@ -2,46 +2,59 @@
 #include <iostream>
 #include "CreateClientMessage.cpp"
 #include "CreateLobbyMessage.cpp"
-
-std::unordered_map<int, EventManager::MessageHandler> EventManager::messageHandlers;
+EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
-    registerHandler<CreateClientMessage>(1);
-    registerHandler<CreateLobbyMessage>(2);
+    EventManager::registerHandler<CreateClientMessage>(1);
+    EventManager::registerHandler<CreateLobbyMessage>(2);
 }
 
 template<typename T>
 void EventManager::registerHandler(int id)
 {
-    if (id >= 0)
+    if (id >= 0 && id < 256)
     {
-        messageHandlers[id] = [](Deserializer& deserializer, const sockaddr_in& senderAddr) {
-            handleMessage<T>(deserializer, senderAddr);
-            };
+        messageHandlers[id] = &handleMessage<T>;
     }
 }
 
-void EventManager::processMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
+void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
-    if (buffer.empty()) return;
-
-    Deserializer deserializer(buffer);
-
-    int id = deserializer.readInt();  
-
-    auto it = messageHandlers.find(id);
-    if (it != messageHandlers.end()) {
-        it->second(deserializer, senderAddr); 
+    if (buffer.size() < 4) { // Vérifie qu'on a au moins un int (4 octets)
+        return;
     }
+
+    // Lire l'ID en utilisant les 4 premiers octets
+    int id = buffer[0] |
+        (buffer[1] << 8) |
+        (buffer[2] << 16) |
+        (buffer[3] << 24);
+
+    // Vérifie si l'ID est valide
+    if (id < 0 || id >= 256 || !messageHandlers[id]) {
+        return;
+    }
+
+    // Supprime les 4 premiers octets du buffer (l'ID)
+    buffer.erase(buffer.begin(), buffer.begin() + 4);
+
+    // Appelle le gestionnaire de message avec le buffer modifié (ne contient plus l'ID)
+    messageHandlers[id](buffer, senderAddr);
 }
+
 
 template<typename T>
-void EventManager::handleMessage(Deserializer& deserializer, const sockaddr_in& senderAddr)
+void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
     T msg;
-    msg.deserialize(deserializer);  
+    Deserializer deserializer(buffer);
+    msg.deserialize(deserializer);
     msg.process(senderAddr);
 
-    std::cout << "\033[38;5;226mMessage reçu : {" << typeid(msg).name() << "}" << std::endl;
+    const char* yellowColor = "\033[38;5;226m"; // This is a yellow color
+
+    std::cout << yellowColor << "Message received: {"
+        << typeid(msg).name() << "}" << std::endl;
 }
+

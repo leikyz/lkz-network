@@ -12,7 +12,7 @@ struct Message
     virtual int getId() const = 0;
     virtual std::vector<uint8_t>& serialize(Serializer& serializer) const = 0;
     virtual void deserialize(Deserializer& deserializer) = 0;
-    virtual void process(const sockaddr_in& senderAddr) const = 0;
+    virtual void process(const sockaddr_in& senderAddr)  = 0;
 
     virtual ~Message() = default;
 };

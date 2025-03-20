@@ -16,23 +16,22 @@ struct CreateClientMessage : public Message
     std::vector<uint8_t>& serialize(Serializer& serializer) const override
     {
         serializer.writeInt(ID);
-        return serializer.buffer; // Retourner le buffer de serializer
+        return serializer.buffer; 
     }
 
     void deserialize(Deserializer& deserializer) override
     {
-        int receivedId = deserializer.readInt();
-        if (receivedId != ID) {
-            throw std::runtime_error("Mauvais ID de message reçu !");
-        }
+
     }
 
-    void process(const sockaddr_in& senderAddr) const override
+    void process(const sockaddr_in& senderAddr) override
     {
+        ClientManager::addClient(senderAddr);
+
         Serializer serializer;
         serialize(serializer);  
 
-       // Server::Send(senderAddr, serializer.buffer);
+        Server::Send(senderAddr, serializer.buffer);
     }
 };
 

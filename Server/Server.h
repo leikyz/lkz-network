@@ -18,19 +18,19 @@ private:
 
 public:
     static void Start();
-    void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
+    static void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
 
     // Nouvelle fonction pour envoyer à tous les clients d'un lobby
-    void SendToAllInLobby(int lobbyId, const std::vector<uint8_t>& buffer);
+    static void SendToAllInLobby(int lobbyId, const std::vector<uint8_t>& buffer);
 
     // Nouvelle fonction pour envoyer à tous les clients d'un lobby sauf un
-    void SendToAllInLobbyExcept(int lobbyId, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
+    static void SendToAllInLobbyExcept(int lobbyId, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
 
     // Nouvelle fonction pour envoyer à tous les clients
-    void SendToAllClients(const std::vector<uint8_t>& buffer);
+    static void SendToAllClients(const std::vector<uint8_t>& buffer);
 
     // Nouvelle fonction pour envoyer à tous les clients sauf un
-    void SendToAllClientsExcept(const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
+    static void SendToAllClientsExcept(const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
 };
 
 #endif // SERVER_H

@@ -13,7 +13,8 @@ private:
 public:
     explicit Deserializer(const std::vector<uint8_t>& buf) : buffer(buf) {}
 
-    int readInt() {
+    int readInt() 
+    {
         if (position + 4 > buffer.size()) {
             throw std::out_of_range("Buffer overflow in readInt");
         }

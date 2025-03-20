@@ -9,28 +9,40 @@ struct CreateLobbyMessage : public Message
 
     CreateLobbyMessage() {}
 
+    int lobbyId;
+
     int getId() const override { return ID; }
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override
     {
         serializer.writeInt(ID);
-        return serializer.buffer; // Retourner le buffer de serializer
+        serializer.writeInt(lobbyId);
+
+        return serializer.buffer; 
     }
 
     void deserialize(Deserializer& deserializer) override
     {
-        int receivedId = deserializer.readInt();
-        if (receivedId != ID) {
-            throw std::runtime_error("Mauvais ID de message reçu !");
-        }
+
     }
 
-    void process(const sockaddr_in& senderAddr) const override
+    void process(const sockaddr_in& senderAddr) override
     {
-        LobbyManager::createLobby(1);
-        LobbyManager::addClientToLobby(1, ClientManager::getClientByAddress(senderAddr));
+        // Créer un lobby
+        LobbyManager::createLobby();
 
+        // Récupérer l'ID du dernier lobby créé
+        int lastLobbyId = LobbyManager::getLastLobbyId();
+
+        LobbyManager::addClientToLobby(lastLobbyId, ClientManager::getClientByAddress(senderAddr));
+
+        lobbyId = lastLobbyId;
+
+        // Sérialisation
         Serializer serializer;
-        serialize(serializer);     
+        serialize(serializer);
+
+        // Envoyer le message de création de lobby au client
+        Server::Send(senderAddr, serializer.buffer);
     }
 };

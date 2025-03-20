@@ -3,41 +3,40 @@
 #include "Server.h"
 #include "LobbyManager.h"
 
-struct CreateLobbyMessage : public Message
+struct CreateEntityMessage : public Message
 {
-    static constexpr int ID = 2;
+    static constexpr int ID = 4;
 
-    CreateLobbyMessage() {}
+    CreateEntityMessage() {}
 
     int lobbyId;
+    int entityId;
+    int entityTypeId;
 
     int getId() const override { return ID; }
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override
     {
         serializer.writeInt(ID);
-        serializer.writeInt(lobbyId);
+        serializer.writeInt(entityId);
+        serializer.writeInt(entityTypeId);
 
-        return serializer.buffer; 
+        return serializer.buffer;
     }
 
     void deserialize(Deserializer& deserializer) override
     {
-
+        lobbyId = deserializer.readInt();
     }
 
     void process(const sockaddr_in& senderAddr) override
     {
-        // Créer un lobby
-        LobbyManager::createLobby();
+        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(lobbyId);
+        std::shared_ptr<Entity> entity = std::make_shared<Entity>(EntityEnum::Player);
+        lobby->addEntity(entity);
 
-        // Récupérer l'ID du dernier lobby créé
-        int lastLobbyId = LobbyManager::getLastLobbyId();
-
-        LobbyManager::addClientToLobby(lastLobbyId, ClientManager::getClientByAddress(senderAddr));
-
-
-        lobbyId = lastLobbyId;
+        entityId = entity->id;
+        entityTypeId = entity->type;
 
         // Sérialisation
         Serializer serializer;

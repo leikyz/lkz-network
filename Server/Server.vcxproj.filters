@@ -49,6 +49,9 @@
     <Filter Include="Fichiers d%27en-tête\Network\Session">
       <UniqueIdentifier>{5e04335e-41d4-45d9-a0f9-670c98a4e76e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages\Entities">
+      <UniqueIdentifier>{697de612-829b-4c22-a852-7d7c16f0783b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -70,6 +73,9 @@
       <Filter>Fichiers sources\Network\Manager</Filter>
     </ClCompile>
     <ClCompile Include="CreateLobbyMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
+    <ClCompile Include="JoinLobbyMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="Deserializer.h">
       <Filter>Fichiers d%27en-tête\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Fichiers d%27en-tête\Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateEntityMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

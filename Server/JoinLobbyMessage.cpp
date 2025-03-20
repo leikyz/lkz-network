@@ -3,11 +3,11 @@
 #include "Server.h"
 #include "LobbyManager.h"
 
-struct CreateLobbyMessage : public Message
+struct JoinLobbyMessage : public Message
 {
-    static constexpr int ID = 2;
+    static constexpr int ID = 3;
 
-    CreateLobbyMessage() {}
+    JoinLobbyMessage() {}
 
     int lobbyId;
 
@@ -18,27 +18,17 @@ struct CreateLobbyMessage : public Message
         serializer.writeInt(ID);
         serializer.writeInt(lobbyId);
 
-        return serializer.buffer; 
+        return serializer.buffer;
     }
 
     void deserialize(Deserializer& deserializer) override
     {
-
+        lobbyId = deserializer.readInt();
     }
 
     void process(const sockaddr_in& senderAddr) override
     {
-        // Créer un lobby
-        LobbyManager::createLobby();
-
-        // Récupérer l'ID du dernier lobby créé
-        int lastLobbyId = LobbyManager::getLastLobbyId();
-
-        LobbyManager::addClientToLobby(lastLobbyId, ClientManager::getClientByAddress(senderAddr));
-
-
-        lobbyId = lastLobbyId;
-
+        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(lobbyId);
         // Sérialisation
         Serializer serializer;
         serialize(serializer);

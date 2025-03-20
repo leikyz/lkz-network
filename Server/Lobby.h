@@ -5,36 +5,64 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include <list> 
+#include <list>
 #include "ClientManager.h"  
+#include "Entity.h" 
 
 struct Lobby
 {
     std::string lobbyName;
     std::list<std::shared_ptr<Client>> clients;  
+    std::list<std::shared_ptr<Entity>> entities;  
+    int nextEntityId = 1;  
 
+    // Constructeur
     Lobby(const std::string& name) : lobbyName(name) {}
 
+    // Ajouter un client au lobby
     void addClient(const std::shared_ptr<Client>& client) {
-        clients.push_back(client);  
+        clients.push_back(client);
         std::cout << "Client " << client->ipAddress << " ajouté au lobby: " << lobbyName << std::endl;
     }
 
+    // Ajouter une entité au lobby
+    void addEntity(const std::shared_ptr<Entity>& entity) {
+        entity->id = nextEntityId++;  
+        entities.push_back(entity);
+        std::cout << "Entité avec ID " << entity->id << " ajoutée au lobby: " << lobbyName << std::endl;
+    }
+
+    // Supprimer une entité par son ID
+    void removeEntity(uint32_t entityId) {
+        entities.remove_if([entityId](const std::shared_ptr<Entity>& entity) {
+            return entity->id == entityId;
+            });
+        std::cout << "Entité avec ID " << entityId << " supprimée du lobby: " << lobbyName << std::endl;
+    }
+
+    // Récupérer un client par adresse IP
     std::shared_ptr<Client> getClientByIp(const std::string& ipAddress) const
     {
         for (const auto& client : clients)
         {
-            if (client->ipAddress == ipAddress) 
+            if (client->ipAddress == ipAddress)
             {
-                return client;  
+                return client;
             }
         }
-        return nullptr; 
+        return nullptr;
     }
 
+    // Récupérer la liste des clients
     std::list<std::shared_ptr<Client>> getClients() const
     {
         return clients;
+    }
+
+    // Récupérer la liste des entités
+    std::list<std::shared_ptr<Entity>> getEntities() const
+    {
+        return entities;
     }
 };
 

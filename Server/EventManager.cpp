@@ -2,51 +2,47 @@
 #include <iostream>
 #include "CreateClientMessage.cpp"
 #include "CreateLobbyMessage.cpp"
-EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
+
+std::unordered_map<int, EventManager::MessageHandler> EventManager::messageHandlers;
 
 void EventManager::BindEvents()
 {
-    EventManager::registerHandler<CreateClientMessage>(1);
-    EventManager::registerHandler<CreateLobbyMessage>(2);
+    registerHandler<CreateClientMessage>(1);
+    registerHandler<CreateLobbyMessage>(2);
 }
 
 template<typename T>
 void EventManager::registerHandler(int id)
 {
-    if (id >= 0 && id < 256)
+    if (id >= 0)
     {
-        messageHandlers[id] = &handleMessage<T>;
+        messageHandlers[id] = [](Deserializer& deserializer, const sockaddr_in& senderAddr) {
+            handleMessage<T>(deserializer, senderAddr);
+            };
     }
 }
 
-void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
+void EventManager::processMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
-    if (buffer.empty()) {
-        return;
+    if (buffer.empty()) return;
+
+    // Création du deserializer pour lire le message
+    Deserializer deserializer(buffer);
+
+    int id = deserializer.readInt();  // Lire l'ID du message
+
+    auto it = messageHandlers.find(id);
+    if (it != messageHandlers.end()) {
+        it->second(deserializer, senderAddr); 
     }
-
-    int id = static_cast<int>(buffer[0]);
-
-    // Check if it's in range
-    if (id < 0 || id >= 256 || !messageHandlers[id])
-        return;
-
-    buffer.erase(buffer.begin());
-
-    messageHandlers[id](buffer, senderAddr);
 }
 
 template<typename T>
-void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
+void EventManager::handleMessage(Deserializer& deserializer, const sockaddr_in& senderAddr)
 {
     T msg;
-    msg.deserialize(buffer);
+    msg.deserialize(deserializer);  
     msg.process(senderAddr);
 
-    const char* yellowColor = "\033[38;5;226m"; // This is a yellow color
-
-    std::cout << yellowColor << "Message received: {"
-        << typeid(msg).name() << "}" << std::endl;
+    std::cout << "\033[38;5;226mMessage reçu : {" << typeid(msg).name() << "}" << std::endl;
 }
-
-

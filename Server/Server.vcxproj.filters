@@ -69,6 +69,9 @@
     <ClCompile Include="LobbyManager.cpp">
       <Filter>Fichiers sources\Network\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="CreateLobbyMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -91,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="LobbyManager.h">
       <Filter>Fichiers d%27en-tête\Network\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializer.h">
+      <Filter>Fichiers d%27en-tête\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Deserializer.h">
+      <Filter>Fichiers d%27en-tête\Protocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

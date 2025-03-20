@@ -77,12 +77,12 @@ void Server::Start()
 
 
 // Send function to a specific client
-void Server::Send(sockaddr_in clientAddr, Message& message)
+void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
 {
     auto client = ClientManager::getClientByAddress(clientAddr);
-    if (!client) 
+    if (!client)
     {
-        char ipStr[INET_ADDRSTRLEN]; 
+        char ipStr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &clientAddr.sin_addr, ipStr, INET_ADDRSTRLEN);
 
         std::cerr << "Client not found"
@@ -92,19 +92,17 @@ void Server::Send(sockaddr_in clientAddr, Message& message)
         return;
     }
 
-    std::vector<uint8_t> buffer;
-    std::vector<uint8_t> data = message.serialize(buffer);
-
-    int bytesSent = sendto(serverSocket, reinterpret_cast<const char*>(data.data()), data.size(), 0,
+    // Envoi du message sérialisé sous forme de buffer
+    int bytesSent = sendto(serverSocket, reinterpret_cast<const char*>(buffer.data()), buffer.size(), 0,
         reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
-    if (bytesSent == SOCKET_ERROR) 
+    if (bytesSent == SOCKET_ERROR)
         std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
-    else 
+    else
     {
-        const char* purpleColor = "\033[38;5;129m"; 
+        const char* purpleColor = "\033[38;5;129m";
         std::cout << purpleColor << "(" << client->ipAddress << ") Message sent: {"
-            << typeid(message).name() << "}" << std::endl;
+            << buffer.size() << " bytes}" << std::endl;
     }
 }
 

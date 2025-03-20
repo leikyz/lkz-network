@@ -1,37 +1,42 @@
+#ifndef CREATE_CLIENT_MESSAGE_H
+#define CREATE_CLIENT_MESSAGE_H
+
 #include "Message.h"
 #include "../Server/ClientManager.h"
 #include "Server.h"
-
 
 struct CreateClientMessage : public Message
 {
     static constexpr int ID = 1;
 
-    CreateClientMessage(){}
+    CreateClientMessage() {}
 
     int getId() const override { return ID; }
 
-    std::vector<uint8_t>& serialize(std::vector<uint8_t>& buffer) const override
+    // Sérialiser directement dans un buffer passé par le Serializer
+    std::vector<uint8_t>& serialize(Serializer& serializer) const override
     {
-        buffer.clear();
-
-        buffer.push_back(static_cast<uint8_t>(ID & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((ID >> 8) & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((ID >> 16) & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((ID >> 24) & 0xFF));
-
-
-        return buffer;
+        serializer.writeInt(ID);
+        return serializer.buffer; // Retourner le buffer de serializer
     }
 
-    void deserialize(const std::vector<uint8_t>& buffer) override
+    // Désérialiser en utilisant le Deserializer
+    void deserialize(Deserializer& deserializer) override
     {
-
+        int receivedId = deserializer.readInt();
+        if (receivedId != ID) {
+            throw std::runtime_error("Mauvais ID de message reçu !");
+        }
     }
 
+    // Processus du message (sérialisation optimisée)
     void process(const sockaddr_in& senderAddr) const override
     {
-        CreateClientMessage message;
-        Server::Send(senderAddr, message);
+        Serializer serializer;
+        serialize(serializer);  
+
+        Server::Send(senderAddr, serializer.buffer);
     }
 };
+
+#endif // CREATE_CLIENT_MESSAGE_H

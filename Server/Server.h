@@ -17,7 +17,7 @@ private:
 
 public:
     static void Start();
-    static void Send(sockaddr_in clientAddr, Message& message);
+    void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
 };
 
 #endif // SERVER_H

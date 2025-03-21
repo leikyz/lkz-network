@@ -2,8 +2,8 @@
 
 enum EntityEnum
 {
-    Player = 1,
-    Fish
+    Olise = 1,
+    Elisa
 };
 
 struct Entity
@@ -15,7 +15,6 @@ struct Entity
     float posY;
     float posZ;
 
-    // Constructeur
     Entity(EntityEnum type)
         : type(type)
     {

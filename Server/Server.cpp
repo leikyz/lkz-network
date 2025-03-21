@@ -1,7 +1,5 @@
 ﻿#include "Server.h"
 #include "EventManager.h"
-#include "Message.h"
-
 SOCKET Server::serverSocket = INVALID_SOCKET;
 
 void Server::Start()
@@ -56,20 +54,7 @@ void Server::Start()
 
         int id = static_cast<int>(buffer[0]);
 
-        // To create client
-        /*if (id == 1)
-        {
-            char ipAddress[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, &clientAddr.sin_addr, ipAddress, INET_ADDRSTRLEN);
-            unsigned short port = ntohs(clientAddr.sin_port);
-
-
             EventManager::processMessage(receivedData, clientAddr);
-        }
-        else
-        {*/
-            EventManager::processMessage(receivedData, clientAddr);
-        /*}*/
     }
     closesocket(serverSocket);
     WSACleanup();
@@ -97,9 +82,12 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
         std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
     else
     {
-        const char* purpleColor = "\033[38;5;129m";
-        std::cout << purpleColor << "(" << client->ipAddress << ") Message sent: {"
-            << buffer.size() << " bytes}" << std::endl;
+        const char* greenColor = "\033[38;5;46m"; 
+        const char* resetColor = "\033[0m";  
+
+        std::cout << greenColor << "(" << client->ipAddress << ") Message sent: {"
+            << buffer.size() << " bytes}" << resetColor << std::endl;
+
     }
 }
 

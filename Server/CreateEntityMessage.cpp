@@ -1,61 +1,70 @@
-#include "Message.h"
-#include "../Server/ClientManager.h"
-#include "Server.h"
-#include "LobbyManager.h"
+#include "CreateEntityMessage.h"
+#include <cstdlib> 
+#include <ctime>   
 
-struct CreateEntityMessage : public Message
+CreateEntityMessage::CreateEntityMessage() {};
+
+CreateEntityMessage::CreateEntityMessage(int entityId, int entityTypeId, float posX, float posY, float posZ)
+    : entityId(entityId), entityTypeId(entityTypeId), posX(posX), posY(posY), posZ(posZ)
 {
-    static constexpr int ID = 4;
+}
 
-    CreateEntityMessage() = default;
+int CreateEntityMessage::getId() const
+{
+    return ID;
+}
 
-    CreateEntityMessage(int entityId, int entityTypeId, float posX, float posY, float posZ)
-        : entityId(entityId), entityTypeId(entityTypeId), posX(posX), posY(posY), posZ(posZ) {}
+std::vector<uint8_t>& CreateEntityMessage::serialize(Serializer& serializer) const
+{
+    serializer.writeInt(ID);
+    serializer.writeInt(entityId);
+    serializer.writeInt(entityTypeId);
+    serializer.writeFloat(posX);
+    serializer.writeFloat(posY);
+    serializer.writeFloat(posZ);
 
-    int entityId;
-    int entityTypeId;
+    return serializer.buffer;
+}
 
-    float posX;
-    float posY;
-    float posZ;
+void CreateEntityMessage::deserialize(Deserializer& deserializer)
+{
+}
 
-    int getId() const override { return ID; }
 
-    std::vector<uint8_t>& serialize(Serializer& serializer) const override
+void CreateEntityMessage::process(const sockaddr_in& senderAddr)
+{
+    //to delete
+    srand(time(0));
+
+    std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
+    std::shared_ptr<Entity> entity;
+
+    if (lobby->clients.size() == 1)
     {
-        serializer.writeInt(ID);
-        serializer.writeInt(entityId);
-        serializer.writeInt(entityTypeId);
-        serializer.writeFloat(posX);
-        serializer.writeFloat(posY);
-        serializer.writeFloat(posZ);
-
-        return serializer.buffer;
+        entity = std::make_shared<Entity>(EntityEnum::Olise);
+    }
+    else
+    {
+        entity = std::make_shared<Entity>(EntityEnum::Elisa);
     }
 
-    void deserialize(Deserializer& deserializer) override
-    {
+    entity->posX = 100.0f + rand() % 10;
+    entity->posY = 20;
+    entity->posZ = 100.0f + rand() % 10;
 
-    }
+    lobby->addEntity(entity);
 
-    void process(const sockaddr_in& senderAddr) override
-    {
-        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-        std::shared_ptr<Entity> entity = std::make_shared<Entity>(EntityEnum::Player);
-        lobby->addEntity(entity);
+    entityId = entity->id;
+    entityTypeId = entity->type;
+    posX = entity->posX;
+    posY = entity->posY;
+    posZ = entity->posZ;
 
-        entityId = entity->id;
-        entityTypeId = entity->type;
+    ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
 
-        posX = 120.0f;
-        posY = 100.0f;
-        posZ = 100.0f;
+    Serializer serializer;
+    serialize(serializer);
 
-        // Sérialisation
-        Serializer serializer;
-        serialize(serializer);
+    Server::Send(senderAddr, serializer.buffer);
+}
 
-        // Envoyer le message de création de lobby au client
-        Server::Send(senderAddr, serializer.buffer);
-    }
-};

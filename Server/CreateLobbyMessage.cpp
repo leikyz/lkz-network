@@ -1,43 +1,35 @@
-#include "Message.h"
-#include "../Server/ClientManager.h"
-#include "Server.h"
-#include "LobbyManager.h"
+#include "CreateLobbyMessage.h"
 
-struct CreateLobbyMessage : public Message
+CreateLobbyMessage::CreateLobbyMessage() : lobbyId(0) {}
+
+int CreateLobbyMessage::getId() const
 {
-    static constexpr int ID = 2;
+    return ID;
+}
 
-    CreateLobbyMessage() {}
+std::vector<uint8_t>& CreateLobbyMessage::serialize(Serializer& serializer) const
+{
+    serializer.writeInt(ID);
+    serializer.writeInt(lobbyId);
 
-    int lobbyId;
+    return serializer.buffer;
+}
 
-    int getId() const override { return ID; }
+void CreateLobbyMessage::deserialize(Deserializer& deserializer)
+{
+    
+}
 
-    std::vector<uint8_t>& serialize(Serializer& serializer) const override
-    {
-        serializer.writeInt(ID);
-        serializer.writeInt(lobbyId);
+void CreateLobbyMessage::process(const sockaddr_in& senderAddr)
+{
+    LobbyManager::createLobby();
 
-        return serializer.buffer; 
-    }
+    int lastLobbyId = LobbyManager::getLastLobbyId();
 
-    void deserialize(Deserializer& deserializer) override
-    {
+    lobbyId = lastLobbyId;
 
-    }
+    Serializer serializer;
+    serialize(serializer);
 
-    void process(const sockaddr_in& senderAddr) override
-    {
-        LobbyManager::createLobby();
-
-        int lastLobbyId = LobbyManager::getLastLobbyId();
-
-        lobbyId = lastLobbyId;
-
-        // Sérialisation
-        Serializer serializer;
-        serialize(serializer);
-
-        Server::Send(senderAddr, serializer.buffer);
-    }
-};
+    Server::Send(senderAddr, serializer.buffer);
+}

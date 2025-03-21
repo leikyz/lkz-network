@@ -1,9 +1,11 @@
 #pragma once
 
-#include <vector>
 #include <winsock2.h>
 #include "Serializer.h"
 #include "Deserializer.h"
+#include "Server.h"
+#include "ClientManager.h"
+#include "LobbyManager.h"
 
 struct Message
 {

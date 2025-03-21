@@ -1,54 +1,44 @@
-#include "Message.h"
-#include "Server.h"
-#include "LobbyManager.h"
+#include "LobbyListMessage.h"
 
-struct LobbyListMessage : public Message
+LobbyListMessage::LobbyListMessage() {}
+
+int LobbyListMessage::getId() const
 {
-    static constexpr int ID = 5;
+    return ID;
+}
 
-    LobbyListMessage() {}
+std::vector<uint8_t>& LobbyListMessage::serialize(Serializer& serializer) const
+{
+    serializer.writeInt(ID);
+    serializer.writeInt(static_cast<int>(lobbies.size())); 
 
-    std::vector<std::pair<int, int>> lobbies; // Stocke les paires (lobbyId, nombre de clients)
-
-    int getId() const override { return ID; }
-
-    std::vector<uint8_t>& serialize(Serializer& serializer) const override
+    for (const auto& lobby : lobbies)
     {
-        serializer.writeInt(ID);
-        serializer.writeInt(static_cast<int>(lobbies.size())); // Écrire le nombre de lobbys
-
-        for (const auto& lobby : lobbies)
-        {
-            serializer.writeInt(lobby.first);  // ID du lobby
-            serializer.writeInt(lobby.second); // Nombre de clients dans le lobby
-        }
-
-        return serializer.buffer;
+        serializer.writeInt(lobby.first); 
+        serializer.writeInt(lobby.second);
     }
 
-    void deserialize(Deserializer& deserializer) override
-    {
+    return serializer.buffer;
+}
 
+void LobbyListMessage::deserialize(Deserializer& deserializer)
+{
+}
+
+void LobbyListMessage::process(const sockaddr_in& senderAddr)
+{
+    lobbies.clear();
+    const auto& allLobbies = LobbyManager::getAllLobbies(); 
+
+    for (const auto& lobby : allLobbies)
+    {
+        int id = lobby->id;
+        int clients = lobby->clients.size();
+        lobbies.emplace_back(id, clients);
     }
 
-    void process(const sockaddr_in& senderAddr) override
-    {
-        lobbies.clear();
-        const auto& allLobbies = LobbyManager::getAllLobbies(); // Supposons que cette méthode existe
+    Serializer serializer;
+    serialize(serializer);
 
-        for (const auto& lobby : allLobbies)
-        {
-            int id = lobby->id;
-            int clients = lobby->clients.size();
-            lobbies.emplace_back(id, clients);
-        }
-
-        // Sérialisation
-        Serializer serializer;
-        serialize(serializer);
-
-        // Envoyer la liste des lobbys au client
-        Server::Send(senderAddr, serializer.buffer);
-    }
-};
-
+    Server::Send(senderAddr, serializer.buffer);
+}

@@ -17,8 +17,8 @@ public:
 
     void writeFloat(float value) {
         uint8_t bytes[sizeof(float)];
-        std::memcpy(bytes, &value, sizeof(float)); // Copie les octets du float dans un tableau de bytes
-        buffer.insert(buffer.end(), bytes, bytes + sizeof(float)); // Ajoute les octets au buffer
+        std::memcpy(bytes, &value, sizeof(float)); 
+        buffer.insert(buffer.end(), bytes, bytes + sizeof(float));
     }
 };
 

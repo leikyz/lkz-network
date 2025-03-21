@@ -10,7 +10,7 @@ void LobbyManager::createLobby()
     auto lobby = std::make_shared<Lobby>(lobbyId);
     lobbies[lobbyId] = lobby;
 
-    std::cout << "Lobby créé avec l'ID: " << lobbyId << std::endl;
+    std::cout << "Lobby created with ID: " << lobbyId << std::endl;
 }
 
 
@@ -22,7 +22,7 @@ void LobbyManager::addClientToLobby(int lobbyId, const std::shared_ptr<Client>& 
         client->lobbyId = lobbyId;
     }
     else {
-        std::cout << "Lobby introuvable avec l'ID: " << lobbyId << std::endl;
+        std::cout << "Lobby nto found with ID: " << lobbyId << std::endl;
     }
 }
 

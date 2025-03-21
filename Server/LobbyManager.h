@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include "Lobby.h"  // Inclut le fichier Lobby.h
+#include "Lobby.h"
 
 class LobbyManager
 {

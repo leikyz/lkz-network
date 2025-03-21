@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="CreateClientMessage.cpp" />
+    <ClCompile Include="CreateEntityMessage.cpp" />
     <ClCompile Include="CreateLobbyMessage.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="JoinLobbyMessage.cpp" />
@@ -141,15 +142,20 @@
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientManager.h" />
-    <ClInclude Include="CreateEntityMessage.cpp" />
+    <ClInclude Include="CreateClientMessage.h" />
+    <ClInclude Include="CreateEntityMessage.h" />
+    <ClInclude Include="CreateLobbyMessage.h" />
     <ClInclude Include="Deserializer.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="JoinLobbyMessage.h" />
     <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LobbyListMessage.h" />
     <ClInclude Include="LobbyManager.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="SynchronizeEntitiesMessage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,39 +1,31 @@
-#include "Message.h"
-#include "../Server/ClientManager.h"
-#include "Server.h"
-#include "LobbyManager.h"
+#include "JoinLobbyMessage.h"
 
-struct JoinLobbyMessage : public Message
+JoinLobbyMessage::JoinLobbyMessage() : lobbyId(0) {}
+
+int JoinLobbyMessage::getId() const
 {
-    static constexpr int ID = 3;
+    return ID;
+}
 
-    JoinLobbyMessage() {}
+std::vector<uint8_t>& JoinLobbyMessage::serialize(Serializer& serializer) const
+{
+    serializer.writeInt(ID);
+    serializer.writeInt(lobbyId);
 
-    int lobbyId;
+    return serializer.buffer;
+}
 
-    int getId() const override { return ID; }
+void JoinLobbyMessage::deserialize(Deserializer& deserializer)
+{
+    lobbyId = deserializer.readInt();
+}
 
-    std::vector<uint8_t>& serialize(Serializer& serializer) const override
-    {
-        serializer.writeInt(ID);
-        serializer.writeInt(lobbyId);
+void JoinLobbyMessage::process(const sockaddr_in& senderAddr)
+{
+    LobbyManager::addClientToLobby(lobbyId, ClientManager::getClientByAddress(senderAddr));
 
-        return serializer.buffer;
-    }
+    Serializer serializer;
+    serialize(serializer);
 
-    void deserialize(Deserializer& deserializer) override
-    {
-        lobbyId = deserializer.readInt();
-    }
-
-    void process(const sockaddr_in& senderAddr) override
-    {
-        LobbyManager::addClientToLobby(lobbyId, ClientManager::getClientByAddress(senderAddr));
-        // Sérialisation
-        Serializer serializer;
-        serialize(serializer);
-
-        // Envoyer le message de création de lobby au client
-        Server::Send(senderAddr, serializer.buffer);
-    }
-};
+    Server::Send(senderAddr, serializer.buffer);
+}

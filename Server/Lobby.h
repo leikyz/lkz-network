@@ -16,31 +16,26 @@ struct Lobby
     std::list<std::shared_ptr<Entity>> entities;  
     int nextEntityId = 1;  
 
-    // Constructeur
     Lobby(int lobbyId) : id(lobbyId) {}
 
-    // Ajouter un client au lobby
     void addClient(const std::shared_ptr<Client>& client) {
         clients.push_back(client);
-        std::cout << "Client " << client->ipAddress << " ajouté au lobby: " << id << std::endl;
+        std::cout << "Client " << client->ipAddress << " added to lobby: " << id << std::endl;
     }
 
-    // Ajouter une entité au lobby
     void addEntity(const std::shared_ptr<Entity>& entity) {
         entity->id = nextEntityId++;  
         entities.push_back(entity);
-        std::cout << "Entité avec ID " << entity->id << " ajoutée au lobby: " << id << std::endl;
+        std::cout << "Entity with ID " << entity->id << " added to lobby: " << id << std::endl;
     }
 
-    // Supprimer une entité par son ID
     void removeEntity(uint32_t entityId) {
         entities.remove_if([entityId](const std::shared_ptr<Entity>& entity) {
             return entity->id == entityId;
             });
-        std::cout << "Entité avec ID " << entityId << " supprimée du lobby: " << id << std::endl;
+        std::cout << "Entity with ID " << entityId << " removed to lobby: " << id << std::endl;
     }
 
-    // Récupérer un client par adresse IP
     std::shared_ptr<Client> getClientByIp(const std::string& ipAddress) const
     {
         for (const auto& client : clients)
@@ -53,13 +48,11 @@ struct Lobby
         return nullptr;
     }
 
-    // Récupérer la liste des clients
     std::list<std::shared_ptr<Client>> getClients() const
     {
         return clients;
     }
 
-    // Récupérer la liste des entités
     std::list<std::shared_ptr<Entity>> getEntities() const
     {
         return entities;

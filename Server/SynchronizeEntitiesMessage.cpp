@@ -1,50 +1,44 @@
-#include "Message.h"
-#include "../Server/ClientManager.h"
-#include "Server.h"
-#include "LobbyManager.h"
-#include "CreateEntityMessage.cpp"
+#include "SynchronizeEntitiesMessage.h"
+#include "CreateEntityMessage.h"
 
-struct SynchronizeEntitiesMessage : public Message
+SynchronizeEntitiesMessage::SynchronizeEntitiesMessage() {}
+
+int SynchronizeEntitiesMessage::getId() const
 {
-    static constexpr int ID = 6;
+    return ID;
+}
 
-    SynchronizeEntitiesMessage() {}
+std::vector<uint8_t>& SynchronizeEntitiesMessage::serialize(Serializer& serializer) const
+{
+    serializer.writeInt(ID);
+    return serializer.buffer;
+}
 
-    int getId() const override { return ID; }
+void SynchronizeEntitiesMessage::deserialize(Deserializer& deserializer)
+{
 
-    std::vector<uint8_t>& serialize(Serializer& serializer) const override
+}
+
+void SynchronizeEntitiesMessage::process(const sockaddr_in& senderAddr)
+{
+    std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
+
+    if (!lobby)
     {
-        serializer.writeInt(ID);
-        return serializer.buffer;
+        std::cerr << "Lobby introuvable pour le client." << std::endl;
+        return;
     }
 
-    void deserialize(Deserializer& deserializer) override
+    for (const auto& entity : lobby->entities)
     {
-
-    }
-
-    void process(const sockaddr_in& senderAddr) override
-    {
-        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-
-        if (!lobby)
+        if (entity->id != ClientManager::getClientByAddress(senderAddr)->playerEntityId)
         {
-            std::cerr << "Lobby introuvable pour le client." << std::endl;
-            return;
-        }
+            CreateEntityMessage createEntityMessage(entity->id, entity->type, entity->posX, entity->posY, entity->posZ);
 
-        for (const auto& entity : lobby->entities)
-        {
-            if (entity)
-            {
-                // Initialisation correcte
-                CreateEntityMessage createEntityMessage(entity->id, entity->type, entity->posX, entity->posY, entity->posZ);
+            Serializer serializer;
+            createEntityMessage.serialize(serializer);
 
-                Serializer serializer;
-                createEntityMessage.serialize(serializer);
-                Server::Send(senderAddr, serializer.buffer);
-            }
+            Server::Send(senderAddr, serializer.buffer);
         }
     }
-
-};
+}

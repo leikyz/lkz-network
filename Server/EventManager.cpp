@@ -1,11 +1,11 @@
 ﻿#include "EventManager.h"
 #include <iostream>
-#include "CreateClientMessage.cpp"
-#include "CreateLobbyMessage.cpp"
-#include "JoinLobbyMessage.cpp";
-#include "CreateEntityMessage.cpp";
-#include "LobbyListMessage.cpp"
-#include "SynchronizeEntitiesMessage.cpp"
+#include "CreateClientMessage.h"
+#include "CreateLobbyMessage.h"
+#include "JoinLobbyMessage.h";
+#include "CreateEntityMessage.h";
+#include "LobbyListMessage.h"
+#include "SynchronizeEntitiesMessage.h"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
@@ -56,9 +56,11 @@ void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const socka
     msg.deserialize(deserializer);
     msg.process(senderAddr);
 
-    const char* yellowColor = "\033[38;5;226m"; // This is a yellow color
+    const char* blueColor = "\033[38;5;32m"; 
+    const char* resetColor = "\033[0m";      
 
-    std::cout << yellowColor << "Message received: {"
-        << typeid(msg).name() << "}" << std::endl;
+    std::cout << blueColor << "Message received: {"
+        << typeid(msg).name() << "}" << resetColor << std::endl;
 }
+
 

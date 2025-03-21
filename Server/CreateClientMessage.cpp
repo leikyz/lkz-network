@@ -1,38 +1,29 @@
-#ifndef CREATE_CLIENT_MESSAGE_H
-#define CREATE_CLIENT_MESSAGE_H
+#include "CreateClientMessage.h"
 
-#include "Message.h"
-#include "../Server/ClientManager.h"
-#include "Server.h"
+CreateClientMessage::CreateClientMessage() {}
 
-struct CreateClientMessage : public Message
+int CreateClientMessage::getId() const
 {
-    static constexpr int ID = 1;
+    return ID;
+}
 
-    CreateClientMessage() {}
+std::vector<uint8_t>& CreateClientMessage::serialize(Serializer& serializer) const
+{
+    serializer.writeInt(ID);
+    return serializer.buffer;
+}
 
-    int getId() const override { return ID; }
+void CreateClientMessage::deserialize(Deserializer& deserializer)
+{
+   
+}
 
-    std::vector<uint8_t>& serialize(Serializer& serializer) const override
-    {
-        serializer.writeInt(ID);
-        return serializer.buffer; 
-    }
+void CreateClientMessage::process(const sockaddr_in& senderAddr)
+{
+    ClientManager::addClient(senderAddr);
 
-    void deserialize(Deserializer& deserializer) override
-    {
+    Serializer serializer;
+    serialize(serializer);
 
-    }
-
-    void process(const sockaddr_in& senderAddr) override
-    {
-        ClientManager::addClient(senderAddr);
-
-        Serializer serializer;
-        serialize(serializer);  
-
-        Server::Send(senderAddr, serializer.buffer);
-    }
-};
-
-#endif // CREATE_CLIENT_MESSAGE_H
+    Server::Send(senderAddr, serializer.buffer);
+}

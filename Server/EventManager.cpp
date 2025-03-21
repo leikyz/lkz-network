@@ -4,6 +4,8 @@
 #include "CreateLobbyMessage.cpp"
 #include "JoinLobbyMessage.cpp";
 #include "CreateEntityMessage.cpp";
+#include "LobbyListMessage.cpp"
+#include "SynchronizeEntitiesMessage.cpp"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
@@ -12,6 +14,8 @@ void EventManager::BindEvents()
     EventManager::registerHandler<CreateLobbyMessage>(2);
     EventManager::registerHandler<JoinLobbyMessage>(3);
     EventManager::registerHandler<CreateEntityMessage>(4);
+    EventManager::registerHandler<LobbyListMessage>(5);
+    EventManager::registerHandler<SynchronizeEntitiesMessage>(6);
 }
 
 template<typename T>

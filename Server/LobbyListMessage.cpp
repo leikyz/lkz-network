@@ -1,11 +1,10 @@
 #include "Message.h"
-#include "../Server/ClientManager.h"
 #include "Server.h"
 #include "LobbyManager.h"
 
 struct LobbyListMessage : public Message
 {
-    static constexpr int ID = 2;
+    static constexpr int ID = 5;
 
     LobbyListMessage() {}
 

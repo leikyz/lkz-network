@@ -28,14 +28,9 @@ struct CreateLobbyMessage : public Message
 
     void process(const sockaddr_in& senderAddr) override
     {
-        // Créer un lobby
         LobbyManager::createLobby();
 
-        // Récupérer l'ID du dernier lobby créé
         int lastLobbyId = LobbyManager::getLastLobbyId();
-
-        LobbyManager::addClientToLobby(lastLobbyId, ClientManager::getClientByAddress(senderAddr));
-
 
         lobbyId = lastLobbyId;
 
@@ -43,7 +38,6 @@ struct CreateLobbyMessage : public Message
         Serializer serializer;
         serialize(serializer);
 
-        // Envoyer le message de création de lobby au client
         Server::Send(senderAddr, serializer.buffer);
     }
 };

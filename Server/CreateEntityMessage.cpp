@@ -7,7 +7,10 @@ struct CreateEntityMessage : public Message
 {
     static constexpr int ID = 4;
 
-    CreateEntityMessage() {}
+    CreateEntityMessage() = default;
+
+    CreateEntityMessage(int entityId, int entityTypeId, float posX, float posY, float posZ)
+        : entityId(entityId), entityTypeId(entityTypeId), posX(posX), posY(posY), posZ(posZ) {}
 
     int entityId;
     int entityTypeId;

@@ -136,6 +136,7 @@
     <ClCompile Include="LobbyManager.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />

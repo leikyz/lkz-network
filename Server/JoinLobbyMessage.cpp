@@ -28,7 +28,7 @@ struct JoinLobbyMessage : public Message
 
     void process(const sockaddr_in& senderAddr) override
     {
-        std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(lobbyId);
+        LobbyManager::addClientToLobby(lobbyId, ClientManager::getClientByAddress(senderAddr));
         // Sérialisation
         Serializer serializer;
         serialize(serializer);

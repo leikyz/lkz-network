@@ -135,7 +135,9 @@
     <ClCompile Include="JoinLobbyMessage.cpp" />
     <ClCompile Include="LobbyListMessage.cpp" />
     <ClCompile Include="LobbyManager.cpp" />
+    <ClCompile Include="MoveEntityMessage.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="RotateEntityMessage.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
   </ItemGroup>
@@ -153,6 +155,8 @@
     <ClInclude Include="LobbyListMessage.h" />
     <ClInclude Include="LobbyManager.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="MoveEntityMessage.h" />
+    <ClInclude Include="RotateEntityMessage.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="SynchronizeEntitiesMessage.h" />

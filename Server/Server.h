@@ -20,9 +20,9 @@ public:
     static void Start();
     static void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
 
-    static void SendToAllInLobby(int lobbyId, const std::vector<uint8_t>& buffer);
+    static void SendToAllInLobby(std::shared_ptr<Lobby>, const std::vector<uint8_t>& buffer);
 
-    static void SendToAllInLobbyExcept(int lobbyId, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
+    static void SendToAllInLobbyExcept(std::shared_ptr<Lobby>, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
 
     static void SendToAllClients(const std::vector<uint8_t>& buffer);
 

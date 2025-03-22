@@ -33,38 +33,40 @@ void CreateEntityMessage::deserialize(Deserializer& deserializer)
 
 void CreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    //to delete
-    srand(time(0));
-
     std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-    std::shared_ptr<Entity> entity;
-
-    if (lobby->clients.size() == 1)
+    
+    if (lobby != nullptr)
     {
-        entity = std::make_shared<Entity>(EntityEnum::Olise);
+        srand(time(0));
+        std::shared_ptr<Entity> entity;
+
+        if (lobby->clients.size() == 1)
+        {
+            entity = std::make_shared<Entity>(EntityEnum::Olise);
+        }
+        else
+        {
+            entity = std::make_shared<Entity>(EntityEnum::Elisa);
+        }
+
+        entity->posX = 100.0f + rand() % 10;
+        entity->posY = 20;
+        entity->posZ = 100.0f + rand() % 10;
+
+        lobby->addEntity(entity);
+
+        entityId = entity->id;
+        entityTypeId = entity->type;
+        posX = entity->posX;
+        posY = entity->posY;
+        posZ = entity->posZ;
+
+        ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
+
+        Serializer serializer;
+        serialize(serializer);
+
+        Server::SendToAllInLobby(lobby, serializer.buffer);
     }
-    else
-    {
-        entity = std::make_shared<Entity>(EntityEnum::Elisa);
-    }
-
-    entity->posX = 100.0f + rand() % 10;
-    entity->posY = 20;
-    entity->posZ = 100.0f + rand() % 10;
-
-    lobby->addEntity(entity);
-
-    entityId = entity->id;
-    entityTypeId = entity->type;
-    posX = entity->posX;
-    posY = entity->posY;
-    posZ = entity->posZ;
-
-    ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
-
-    Serializer serializer;
-    serialize(serializer);
-
-    Server::Send(senderAddr, serializer.buffer);
 }
 

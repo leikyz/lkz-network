@@ -91,30 +91,16 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
     }
 }
 
-void Server::SendToAllInLobby(int lobbyId, const std::vector<uint8_t>& buffer)
+void Server::SendToAllInLobby(std::shared_ptr<Lobby> lobby, const std::vector<uint8_t>& buffer)
 {
-    auto lobby = LobbyManager::getLobby(lobbyId);
-    if (!lobby)
-    {
-        std::cerr << "Lobby introuvable avec l'ID: " << lobbyId << std::endl;
-        return;
-    }
-
     for (const auto& client : lobby->getClients())
     {
         Send(client->address, buffer);
     }
 }
 
-void Server::SendToAllInLobbyExcept(int lobbyId, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
+void Server::SendToAllInLobbyExcept(std::shared_ptr<Lobby> lobby, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
 {
-    auto lobby = LobbyManager::getLobby(lobbyId);
-    if (!lobby)
-    {
-        std::cerr << "Lobby introuvable avec l'ID: " << lobbyId << std::endl;
-        return;
-    }
-
     for (const auto& client : lobby->getClients())
     {
         if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||

@@ -57,6 +57,19 @@ struct Lobby
     {
         return entities;
     }
+
+    std::shared_ptr<Entity> getEntityById(uint32_t entityId) const
+    {
+        for (const auto& entity : entities)
+        {
+            if (entity->id == entityId)
+            {
+                return entity;
+            }
+        }
+        return nullptr;
+    }
+
 };
 
 #endif // LOBBY_H

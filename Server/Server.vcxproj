@@ -133,6 +133,7 @@
     <ClCompile Include="CreateLobbyMessage.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="JoinLobbyMessage.cpp" />
+    <ClCompile Include="LastEntityPositionMessage.cpp" />
     <ClCompile Include="LobbyListMessage.cpp" />
     <ClCompile Include="LobbyManager.cpp" />
     <ClCompile Include="MoveEntityMessage.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="JoinLobbyMessage.h" />
+    <ClInclude Include="LastEntityPositionMessage.h" />
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="LobbyListMessage.h" />
     <ClInclude Include="LobbyManager.h" />

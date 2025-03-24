@@ -8,6 +8,8 @@
 #include "SynchronizeEntitiesMessage.h"
 #include "MoveEntityMessage.h"
 #include "RotateEntityMessage.h"
+#include "LastEntityPositionMessage.h"
+
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
@@ -20,6 +22,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);
     EventManager::registerHandler<MoveEntityMessage>(7);
     EventManager::registerHandler<RotateEntityMessage>(8);
+    EventManager::registerHandler<LastEntityPositionMessage>(9);
 }
 
 template<typename T>

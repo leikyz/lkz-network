@@ -99,6 +99,9 @@
     <ClCompile Include="RotateEntityMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="LastEntityPositionMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -153,6 +156,9 @@
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
     </ClInclude>
     <ClInclude Include="RotateEntityMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="LastEntityPositionMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
     </ClInclude>
   </ItemGroup>

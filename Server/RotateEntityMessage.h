@@ -9,12 +9,11 @@ struct RotateEntityMessage : public Message
 
     RotateEntityMessage();
 
-    RotateEntityMessage(int entityId, float mouseInputX, float mouseInputY);
+    RotateEntityMessage(int entityId, float rotaY);
 
     int entityId;
 
-    float mouseInputX;
-    float mouseInputY;
+    float rotaY;
 
     int getId() const override;
 

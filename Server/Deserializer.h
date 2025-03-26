@@ -40,6 +40,17 @@ public:
         return value;
     }
 
+    bool readBool()
+    {
+        if (position + 1 > buffer.size()) {
+            throw std::out_of_range("Buffer overflow in readBool");
+        }
+
+        bool value = buffer[position] != 0;
+        position += 1;
+        return value;
+    }
+
 };
 
 #endif // DESERIALIZER_H

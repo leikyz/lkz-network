@@ -20,6 +20,10 @@ public:
         std::memcpy(bytes, &value, sizeof(float)); 
         buffer.insert(buffer.end(), bytes, bytes + sizeof(float));
     }
+
+    void writeBool(bool value) {
+        buffer.push_back(value ? 1 : 0);
+    }
 };
 
 #endif // SERIALIZER_H

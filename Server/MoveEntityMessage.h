@@ -9,12 +9,14 @@ struct MoveEntityMessage : public Message
 
     MoveEntityMessage();
 
-    MoveEntityMessage(int entityId, float inputX, float inputY);
+    MoveEntityMessage(int entityId, float inputX, float inputY, bool isRunning);
 
     int entityId;
 
     float inputX;
     float inputY;
+
+    bool isRunning;
 
     int getId() const override;
 

@@ -1,13 +1,13 @@
-#ifndef DISCONNECT_CLIENT_MESSAGE_H
-#define DISCONNECT_CLIENT_MESSAGE_H
+#ifndef START_MATCHMAKING_MESSAGE_H
+#define START_MATCHMAKING_MESSAGE_H
 
 #include "Message.h"
 
-struct DisconnectClientMessage : public Message
+struct StartMatchmakingMessage : public Message
 {
-    static constexpr int ID = 3;
+    static constexpr int ID = 4;
 
-    DisconnectClientMessage();
+    StartMatchmakingMessage();
 
     byte getId() const override;
 

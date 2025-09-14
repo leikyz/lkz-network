@@ -23,6 +23,7 @@ public:
     {
         return static_cast<int>(lobbies.size());
     }
+    static std::shared_ptr<Lobby> getAvailableLobby();
 
     static std::vector<std::shared_ptr<Lobby>> getAllLobbies();
 

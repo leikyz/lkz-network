@@ -25,6 +25,18 @@ void LobbyManager::addClientToLobby(int lobbyId, const std::shared_ptr<Client>& 
         std::cout << "Lobby nto found with ID: " << lobbyId << std::endl;
     }
 }
+std::shared_ptr<Lobby> LobbyManager::getAvailableLobby()
+{
+    for (const auto& pair : lobbies)
+    {
+        const auto& lobby = pair.second;
+        if (lobby->clients.size() < Lobby::MAX_PLAYER)
+        {
+            return lobby;
+        }
+    }
+    return nullptr;
+}
 
 std::shared_ptr<Lobby> LobbyManager::getLobby(int lobbyId)
 {

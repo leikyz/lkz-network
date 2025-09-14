@@ -11,6 +11,7 @@
 
 struct Lobby
 {
+    static constexpr int MAX_PLAYER = 4;
     int id;
     std::list<std::shared_ptr<Client>> clients;  
     std::list<std::shared_ptr<Entity>> entities;  

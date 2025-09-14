@@ -58,6 +58,12 @@
     <Filter Include="Fichiers d%27en-tête\Protocol\Messages\Entities">
       <UniqueIdentifier>{9ce47b77-30e2-4151-b3af-4aab559fd3c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Protocol\Messages\Matchmaking">
+      <UniqueIdentifier>{a36b541d-66b1-45f6-98ba-5367915dbf3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Protocol\Messages\Matchmaking">
+      <UniqueIdentifier>{0f8a2a68-6a79-4fce-83bc-47ac166d6e0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -101,6 +107,15 @@
     </ClCompile>
     <ClCompile Include="DisconnectClientMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
+    </ClCompile>
+    <ClCompile Include="LastEntityPositionMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="StartMatchmakingMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    </ClCompile>
+    <ClCompile Include="MatchmakingManager.cpp">
+      <Filter>Fichiers sources\Protocol\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +175,15 @@
     </ClInclude>
     <ClInclude Include="DisconnectClientMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
+    </ClInclude>
+    <ClInclude Include="LastEntityPositionMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="StartMatchmakingMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    </ClInclude>
+    <ClInclude Include="MatchmakingManager.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

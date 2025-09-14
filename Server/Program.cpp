@@ -1,5 +1,17 @@
 ﻿#include <iostream>
 #include "Server.h"
+#include "MatchmakingManager.h"
+#include <thread>
+
+void MatchmakingLoop()
+{
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+        MatchmakingManager::Update();
+     
+    }
+}
 
 int main()
 {
@@ -18,5 +30,9 @@ int main()
     )" << std::endl;
 
     std::cout << "\033[0m";
+
+    std::thread matchmakingThread(MatchmakingLoop);
+    matchmakingThread.detach(); // start matchmaking in a separate thread
+
     Server::Start();
 }

@@ -131,6 +131,7 @@
     <ClCompile Include="CreateClientMessage.cpp" />
     <ClCompile Include="CreateEntityMessage.cpp" />
     <ClCompile Include="DisconnectClientMessage.cpp" />
+    <ClCompile Include="MatchmakingManager.cpp" />
     <ClCompile Include="ServerInformationsMessage.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="JoinLobbyMessage.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="RotateEntityMessage.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="StartMatchmakingMessage.cpp" />
     <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +151,7 @@
     <ClInclude Include="CreateClientMessage.h" />
     <ClInclude Include="CreateEntityMessage.h" />
     <ClInclude Include="DisconnectClientMessage.h" />
+    <ClInclude Include="MatchmakingManager.h" />
     <ClInclude Include="ServerInformationsMessage.h" />
     <ClInclude Include="Deserializer.h" />
     <ClInclude Include="Entity.h" />
@@ -163,6 +166,7 @@
     <ClInclude Include="RotateEntityMessage.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="StartMatchmakingMessage.h" />
     <ClInclude Include="SynchronizeEntitiesMessage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

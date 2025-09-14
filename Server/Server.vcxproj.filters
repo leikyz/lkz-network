@@ -78,7 +78,7 @@
     <ClCompile Include="LobbyManager.cpp">
       <Filter>Fichiers sources\Network\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="CreateLobbyMessage.cpp">
+    <ClCompile Include="ServerInformationsMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
     </ClCompile>
     <ClCompile Include="JoinLobbyMessage.cpp">
@@ -98,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="RotateEntityMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="DisconnectClientMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -134,7 +137,7 @@
     <ClInclude Include="CreateClientMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
     </ClInclude>
-    <ClInclude Include="CreateLobbyMessage.h">
+    <ClInclude Include="ServerInformationsMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
     </ClInclude>
     <ClInclude Include="JoinLobbyMessage.h">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="RotateEntityMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="DisconnectClientMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

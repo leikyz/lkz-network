@@ -3,14 +3,14 @@
 RotateEntityMessage::RotateEntityMessage() {};
 
 
-int RotateEntityMessage::getId() const
+byte RotateEntityMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& RotateEntityMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     serializer.writeInt(entityId);
     serializer.writeFloat(mouseInputX);
     serializer.writeFloat(mouseInputY);

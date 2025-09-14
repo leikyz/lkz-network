@@ -2,14 +2,14 @@
 
 CreateClientMessage::CreateClientMessage() {}
 
-int CreateClientMessage::getId() const
+byte CreateClientMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& CreateClientMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     return serializer.buffer;
 }
 

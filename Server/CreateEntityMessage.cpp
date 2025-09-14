@@ -9,14 +9,14 @@ CreateEntityMessage::CreateEntityMessage(int entityId, int entityTypeId, float p
 {
 }
 
-int CreateEntityMessage::getId() const
+byte CreateEntityMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& CreateEntityMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     serializer.writeInt(entityId);
     serializer.writeInt(entityTypeId);
     serializer.writeFloat(posX);

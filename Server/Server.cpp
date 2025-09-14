@@ -79,7 +79,7 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
         reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
     if (bytesSent == SOCKET_ERROR)
-        std::cerr << "Erreur lors de l'envoi du message: " << WSAGetLastError() << std::endl;
+        std::cerr << "Error when message was sent : " << WSAGetLastError() << std::endl;
     else
     {
         const char* greenColor = "\033[38;5;46m"; 

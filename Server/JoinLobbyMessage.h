@@ -11,7 +11,7 @@ struct JoinLobbyMessage : public Message
 
     int lobbyId;
 
-    int getId() const override;
+    byte getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

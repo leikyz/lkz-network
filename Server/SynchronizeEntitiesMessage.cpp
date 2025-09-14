@@ -3,14 +3,14 @@
 
 SynchronizeEntitiesMessage::SynchronizeEntitiesMessage() {}
 
-int SynchronizeEntitiesMessage::getId() const
+byte SynchronizeEntitiesMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& SynchronizeEntitiesMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     return serializer.buffer;
 }
 

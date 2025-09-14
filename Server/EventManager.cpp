@@ -1,56 +1,54 @@
 ﻿#include "EventManager.h"
 #include <iostream>
 #include "CreateClientMessage.h"
-#include "CreateLobbyMessage.h"
-#include "JoinLobbyMessage.h";
-#include "CreateEntityMessage.h";
+#include "ServerInformationsMessage.h"
+#include "JoinLobbyMessage.h"
+#include "CreateEntityMessage.h"
 #include "LobbyListMessage.h"
 #include "SynchronizeEntitiesMessage.h"
 #include "MoveEntityMessage.h"
 #include "RotateEntityMessage.h"
+#include "DisconnectClientMessage.h"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
     EventManager::registerHandler<CreateClientMessage>(1);
-    EventManager::registerHandler<CreateLobbyMessage>(2);
-    EventManager::registerHandler<JoinLobbyMessage>(3);
-    EventManager::registerHandler<CreateEntityMessage>(4);
+    EventManager::registerHandler<ServerInformationsMessage>(2);
+    EventManager::registerHandler<DisconnectClientMessage>(3);
+   /* EventManager::registerHandler<JoinLobbyMessage>(3);*/
+  /*  EventManager::registerHandler<CreateEntityMessage>(4);
     EventManager::registerHandler<LobbyListMessage>(5);
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);
     EventManager::registerHandler<MoveEntityMessage>(7);
-    EventManager::registerHandler<RotateEntityMessage>(8);
+    EventManager::registerHandler<RotateEntityMessage>(8);*/
 }
 
 template<typename T>
-void EventManager::registerHandler(int id)
+void EventManager::registerHandler(uint8_t id) 
 {
-    if (id >= 0 && id < 256)
-    {
-        messageHandlers[id] = &handleMessage<T>;
-    }
+    messageHandlers[id] = &handleMessage<T>;
 }
 
 void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
-    if (buffer.size() < 4) {
+    if (buffer.empty()) {
         return;
     }
 
-    int id = buffer[0] |
-        (buffer[1] << 8) |
-        (buffer[2] << 16) |
-        (buffer[3] << 24);
+    uint8_t id = buffer[0]; 
 
-    if (id < 0 || id >= 256 || !messageHandlers[id]) {
+    if (!messageHandlers[id]) {
+        std::cout << "failed: " << static_cast<int>(id) << std::endl;
         return;
     }
 
-    buffer.erase(buffer.begin(), buffer.begin() + 4);
+  /*  std::cout << "Processing message with ID: " << static_cast<int>(id) << std::endl;*/
+
+    buffer.erase(buffer.begin()); 
 
     messageHandlers[id](buffer, senderAddr);
 }
-
 
 template<typename T>
 void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
@@ -60,11 +58,9 @@ void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const socka
     msg.deserialize(deserializer);
     msg.process(senderAddr);
 
-    const char* blueColor = "\033[38;5;32m"; 
-    const char* resetColor = "\033[0m";      
+    const char* blueColor = "\033[38;5;32m";
+    const char* resetColor = "\033[0m";
 
     std::cout << blueColor << "Message received: {"
         << typeid(msg).name() << "}" << resetColor << std::endl;
 }
-
-

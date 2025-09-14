@@ -22,7 +22,7 @@ private:
     static void handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr);
 
     template<typename T>
-    static void registerHandler(int id);
+    static void registerHandler(uint8_t id);
 };
 
 #endif // EVENT_MANAGER_H

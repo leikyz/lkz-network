@@ -2,14 +2,14 @@
 
 JoinLobbyMessage::JoinLobbyMessage() : lobbyId(0) {}
 
-int JoinLobbyMessage::getId() const
+byte JoinLobbyMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& JoinLobbyMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     serializer.writeInt(lobbyId);
 
     return serializer.buffer;

@@ -16,6 +16,7 @@ public:
     static void addClient(sockaddr_in clientAddr);
     static std::shared_ptr<Client> getClientByAddress(const sockaddr_in& clientAddr);
     static std::vector<std::shared_ptr<Client>> getClients();
+    static void removeClient(const sockaddr_in& clientAddr);
 
 private:
     static std::unordered_map<std::string, std::shared_ptr<Client>> clients;

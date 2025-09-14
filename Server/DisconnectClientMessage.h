@@ -1,13 +1,13 @@
-#ifndef CREATE_CLIENT_MESSAGE_H
-#define CREATE_CLIENT_MESSAGE_H
+#ifndef DISCONNECT_CLIENT_MESSAGE_H
+#define DISCONNECT_CLIENT_MESSAGE_H
 
 #include "Message.h"
 
-struct CreateClientMessage : public Message
+struct DisconnectClientMessage : public Message
 {
     static constexpr int ID = 1;
 
-    CreateClientMessage();
+    DisconnectClientMessage();
 
     byte getId() const override;
 
@@ -16,4 +16,4 @@ struct CreateClientMessage : public Message
     void process(const sockaddr_in& senderAddr) override;
 };
 
-#endif // CREATE_CLIENT_MESSAGE_H
+#endif // DISCONNECT_CLIENT_MESSAGE_H

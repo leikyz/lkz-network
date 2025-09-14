@@ -2,14 +2,14 @@
 
 LobbyListMessage::LobbyListMessage() {}
 
-int LobbyListMessage::getId() const
+byte LobbyListMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& LobbyListMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     serializer.writeInt(static_cast<int>(lobbies.size())); 
 
     for (const auto& lobby : lobbies)

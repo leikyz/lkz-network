@@ -1,11 +1,11 @@
 #include "LobbyManager.h"
 
 std::unordered_map<int, std::shared_ptr<Lobby>> LobbyManager::lobbies;
-int LobbyManager::nextLobbyId = 0; // Initialisation du compteur
+int LobbyManager::nextLobbyId = 0; 
 
 void LobbyManager::createLobby()
 {
-    int lobbyId = nextLobbyId++; // Génère un nouvel ID et l'incrémente
+    int lobbyId = nextLobbyId++;
 
     auto lobby = std::make_shared<Lobby>(lobbyId);
     lobbies[lobbyId] = lobby;

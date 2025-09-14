@@ -3,14 +3,14 @@
 MoveEntityMessage::MoveEntityMessage() {};
 
 
-int MoveEntityMessage::getId() const
+byte MoveEntityMessage::getId() const
 {
     return ID;
 }
 
 std::vector<uint8_t>& MoveEntityMessage::serialize(Serializer& serializer) const
 {
-    serializer.writeInt(ID);
+    serializer.writeByte(ID);
     serializer.writeInt(entityId);
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);

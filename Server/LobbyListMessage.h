@@ -13,7 +13,7 @@ struct LobbyListMessage : public Message
 
     std::vector<std::pair<int, int>> lobbies; // lobby id and clients count
 
-    int getId() const override;
+    byte getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

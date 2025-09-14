@@ -14,6 +14,7 @@ std::vector<uint8_t>& MoveEntityMessage::serialize(Serializer& serializer) const
     serializer.writeInt(entityId);
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);
+    serializer.writeBool(isRunning);
 
     return serializer.buffer;
 }
@@ -23,6 +24,7 @@ void MoveEntityMessage::deserialize(Deserializer& deserializer)
     entityId = deserializer.readInt();
     inputX = deserializer.readFloat();
     inputY = deserializer.readFloat();
+    isRunning = deserializer.readBool();
 }
 
 

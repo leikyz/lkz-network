@@ -12,8 +12,7 @@ std::vector<uint8_t>& RotateEntityMessage::serialize(Serializer& serializer) con
 {
     serializer.writeByte(ID);
     serializer.writeInt(entityId);
-    serializer.writeFloat(mouseInputX);
-    serializer.writeFloat(mouseInputY);
+    serializer.writeFloat(rotaY);
 
     return serializer.buffer;
 }
@@ -21,8 +20,7 @@ std::vector<uint8_t>& RotateEntityMessage::serialize(Serializer& serializer) con
 void RotateEntityMessage::deserialize(Deserializer& deserializer)
 {
     entityId = deserializer.readInt();
-    mouseInputX = deserializer.readFloat();
-    mouseInputY = deserializer.readFloat();
+    rotaY = deserializer.readFloat();
 }
 
 

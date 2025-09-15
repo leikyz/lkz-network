@@ -24,7 +24,7 @@ void StartMatchmakingMessage::process(const sockaddr_in& senderAddr)
     Serializer serializer;
     serialize(serializer);
 
-	std::shared_ptr<Client> client = ClientManager::getClientByAddress(senderAddr);
+	Client* client = ClientManager::getClientByAddress(senderAddr);
 	client->matchmakingMapIdRequest = mapId;
 	MatchmakingManager::AddPlayerToQueue(*client);
 

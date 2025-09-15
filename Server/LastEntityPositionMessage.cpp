@@ -36,8 +36,8 @@ void LastEntityPositionMessage::deserialize(Deserializer& deserializer)
 
 void LastEntityPositionMessage::process(const sockaddr_in& senderAddr)
 {
-    std::shared_ptr<Lobby> lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-    std::shared_ptr<Entity> entity = lobby->getEntityById(entityId);
+    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
+    Entity* entity = lobby->getEntityById(entityId);
 
     if (lobby != nullptr && entity != nullptr)
     {

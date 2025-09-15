@@ -10,8 +10,8 @@ class LobbyManager
 {
 public:
     static void createLobby(byte mapId);
-    static void addClientToLobby(int lobbyId, const std::shared_ptr<Client>& client);
-    static std::shared_ptr<Lobby> getLobby(int lobbyId);
+    static void addClientToLobby(int lobbyId, Client* client);
+    static Lobby* getLobby(int lobbyId);
     static int nextLobbyId;
 
     static int getLastLobbyId()
@@ -23,13 +23,13 @@ public:
     {
         return static_cast<int>(lobbies.size());
     }
-    static std::shared_ptr<Lobby> getAvailableLobby(byte mapId);
+    static Lobby* getAvailableLobby(byte mapId);
 
-    static std::vector<std::shared_ptr<Lobby>> getAllLobbies();
+    static std::vector<Lobby*> getAllLobbies();
 
 
 private:
-    static std::unordered_map<int, std::shared_ptr<Lobby>> lobbies;
+    static std::unordered_map<int, Lobby*> lobbies;
 };
 
 #endif // LOBBY_MANAGER_H

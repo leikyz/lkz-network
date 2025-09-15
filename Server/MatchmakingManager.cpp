@@ -25,7 +25,7 @@ void MatchmakingManager::Update()
 
     for (const auto& p : waitingPlayers)
     {
-        std::shared_ptr<Lobby> getFirstAvailableLobby = LobbyManager::getAvailableLobby(p.matchmakingMapIdRequest);
+        Lobby* getFirstAvailableLobby = LobbyManager::getAvailableLobby(p.matchmakingMapIdRequest);
 
         if (getFirstAvailableLobby != nullptr)
         {

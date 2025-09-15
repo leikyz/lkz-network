@@ -20,5 +20,7 @@ void DisconnectClientMessage::deserialize(Deserializer& deserializer)
 
 void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
 {
+    Client* currentClient = ClientManager::getClientByAddress(senderAddr);
+
     ClientManager::removeClient(senderAddr);
 }

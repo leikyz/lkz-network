@@ -1,6 +1,6 @@
-#include "ClientManager.h"
+﻿#include "ClientManager.h"
 
-std::unordered_map<std::string, std::shared_ptr<Client>> ClientManager::clients;
+std::unordered_map<std::string, Client*> ClientManager::clients;
 
 std::string ClientManager::getClientKey(const sockaddr_in& clientAddr)
 {
@@ -18,22 +18,24 @@ void ClientManager::addClient(sockaddr_in clientAddr)
         return;
     }
 
-    auto client = std::make_shared<Client>();
+    Client* client = new Client();
     client->address = clientAddr;
-    client->ipAddress = key; 
+    client->ipAddress = key;
 
     clients[key] = client;
 }
+
 void ClientManager::removeClient(const sockaddr_in& clientAddr)
 {
     std::string key = getClientKey(clientAddr);
     auto it = clients.find(key);
     if (it != clients.end()) {
+        delete it->second;        // ⚠️ très important : libérer la mémoire
         clients.erase(it);
     }
 }
 
-std::shared_ptr<Client> ClientManager::getClientByAddress(const sockaddr_in& clientAddr)
+Client* ClientManager::getClientByAddress(const sockaddr_in& clientAddr)
 {
     std::string key = getClientKey(clientAddr);
     auto it = clients.find(key);
@@ -43,10 +45,10 @@ std::shared_ptr<Client> ClientManager::getClientByAddress(const sockaddr_in& cli
     return nullptr;
 }
 
-std::vector<std::shared_ptr<Client>> ClientManager::getClients()
+std::vector<Client*> ClientManager::getClients()
 {
-    std::vector<std::shared_ptr<Client>> clientList;
-    clientList.reserve(clients.size());  
+    std::vector<Client*> clientList;
+    clientList.reserve(clients.size());
     for (const auto& pair : clients) {
         clientList.push_back(pair.second);
     }

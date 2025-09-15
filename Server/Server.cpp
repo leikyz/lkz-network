@@ -93,7 +93,7 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
     }
 }
 
-void Server::SendToAllInLobby(std::shared_ptr<Lobby> lobby, const std::vector<uint8_t>& buffer)
+void Server::SendToAllInLobby(Lobby* lobby, const std::vector<uint8_t>& buffer)
 {
     for (const auto& client : lobby->getClients())
     {
@@ -101,7 +101,7 @@ void Server::SendToAllInLobby(std::shared_ptr<Lobby> lobby, const std::vector<ui
     }
 }
 
-void Server::SendToAllInLobbyExcept(std::shared_ptr<Lobby> lobby, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
+void Server::SendToAllInLobbyExcept(Lobby* lobby, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
 {
     for (const auto& client : lobby->getClients())
     {

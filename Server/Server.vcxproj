@@ -127,16 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChangeReadyStatusMessage.cpp" />
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="CreateClientMessage.cpp" />
     <ClCompile Include="CreateEntityMessage.cpp" />
     <ClCompile Include="DisconnectClientMessage.cpp" />
+    <ClCompile Include="LeaveLobbyMessage.cpp" />
     <ClCompile Include="MatchmakingManager.cpp" />
     <ClCompile Include="ServerInformationsMessage.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="JoinLobbyMessage.cpp" />
     <ClCompile Include="LastEntityPositionMessage.cpp" />
-    <ClCompile Include="LobbyListMessage.cpp" />
     <ClCompile Include="LobbyManager.cpp" />
     <ClCompile Include="MoveEntityMessage.cpp" />
     <ClCompile Include="Program.cpp" />
@@ -146,11 +147,13 @@
     <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChangeReadyStatusMessage.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="CreateClientMessage.h" />
     <ClInclude Include="CreateEntityMessage.h" />
     <ClInclude Include="DisconnectClientMessage.h" />
+    <ClInclude Include="LeaveLobbyMessage.h" />
     <ClInclude Include="MatchmakingManager.h" />
     <ClInclude Include="ServerInformationsMessage.h" />
     <ClInclude Include="Deserializer.h" />
@@ -159,7 +162,6 @@
     <ClInclude Include="JoinLobbyMessage.h" />
     <ClInclude Include="LastEntityPositionMessage.h" />
     <ClInclude Include="Lobby.h" />
-    <ClInclude Include="LobbyListMessage.h" />
     <ClInclude Include="LobbyManager.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="MoveEntityMessage.h" />

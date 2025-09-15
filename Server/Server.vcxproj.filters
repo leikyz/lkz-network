@@ -87,12 +87,6 @@
     <ClCompile Include="ServerInformationsMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
     </ClCompile>
-    <ClCompile Include="JoinLobbyMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyListMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
-    </ClCompile>
     <ClCompile Include="CreateEntityMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
     </ClCompile>
@@ -116,6 +110,15 @@
     </ClCompile>
     <ClCompile Include="MatchmakingManager.cpp">
       <Filter>Fichiers sources\Protocol\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="JoinLobbyMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    </ClCompile>
+    <ClCompile Include="ChangeReadyStatusMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    </ClCompile>
+    <ClCompile Include="LeaveLobbyMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,12 +158,6 @@
     <ClInclude Include="ServerInformationsMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
     </ClInclude>
-    <ClInclude Include="JoinLobbyMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyListMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
-    </ClInclude>
     <ClInclude Include="CreateEntityMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
     </ClInclude>
@@ -184,6 +181,15 @@
     </ClInclude>
     <ClInclude Include="MatchmakingManager.h">
       <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="JoinLobbyMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    </ClInclude>
+    <ClInclude Include="ChangeReadyStatusMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    </ClInclude>
+    <ClInclude Include="LeaveLobbyMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

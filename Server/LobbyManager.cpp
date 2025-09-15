@@ -36,6 +36,23 @@ Lobby* LobbyManager::getAvailableLobby(byte mapId)
     }
     return nullptr;
 }
+void LobbyManager::removeLobby(int lobbyId)
+{
+    auto it = lobbies.find(lobbyId);
+    if (it != lobbies.end())
+    {
+        Lobby* lobby = it->second;
+
+        delete lobby;
+        lobbies.erase(it);
+
+        std::cout << "Lobby supprimé avec l'ID: " << lobbyId << std::endl;
+    }
+    else
+    {
+        std::cout << "Aucun lobby trouvé avec l'ID: " << lobbyId << std::endl;
+    }
+}
 
 Lobby* LobbyManager::getLobby(int lobbyId)
 {

@@ -1,15 +1,13 @@
-#ifndef JOIN_LOBBY_MESSAGE_H
-#define JOIN_LOBBY_MESSAGE_H
+#ifndef LEAVE_LOBBY_MESSAGE_H
+#define LEAVE_LOBBY_MESSAGE_H
 
 #include "Message.h"
 
-struct JoinLobbyMessage : public Message
+struct LeaveLobbyMessage : public Message
 {
-    static constexpr int ID = 5;
+    static constexpr int ID = 7;
 
-    JoinLobbyMessage();
-
-	byte positionInLobby;
+    LeaveLobbyMessage();
 
     byte getId() const override;
 
@@ -18,5 +16,5 @@ struct JoinLobbyMessage : public Message
     void process(const sockaddr_in& senderAddr) override;
 };
 
-#endif // JOIN_LOBBY_MESSAGE_H
+#endif // LEAVE_LOBBY_MESSAGE_H
 

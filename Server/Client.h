@@ -7,8 +7,9 @@ struct Client
     int id;
     sockaddr_in address;
     std::string ipAddress;
-    int lobbyId;
+    byte positionInLobby = -1;
+    byte matchmakingMapIdRequest;
+    int lobbyId = -1;
     int playerEntityId;
-	byte matchmakingMapIdRequest;
-  //  std::shared_ptr<Lobby> lobby;
+	bool isReady = false;
 };

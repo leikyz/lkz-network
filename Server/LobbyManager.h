@@ -12,6 +12,7 @@ public:
     static void createLobby(byte mapId);
     static void addClientToLobby(int lobbyId, Client* client);
     static Lobby* getLobby(int lobbyId);
+    static void removeLobby(int lobbyId);
     static int nextLobbyId;
 
     static int getLastLobbyId()

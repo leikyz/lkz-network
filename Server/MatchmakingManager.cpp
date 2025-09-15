@@ -1,6 +1,7 @@
 #include "MatchmakingManager.h"
 #include "Server.h"
 #include "Serializer.h"
+#include "JoinLobbyMessage.h"
 
 std::vector<Client> MatchmakingManager::waitingPlayers;
 
@@ -9,7 +10,7 @@ void MatchmakingManager::AddPlayerToQueue(Client& playerAddr)
 	// avoid double entries
     for (const auto& p : waitingPlayers)
     {
-        if (p.address.sin_addr.s_addr == playerAddr.address.sin_addr.s_addr)
+        if (p.address.sin_addr.s_addr == playerAddr.address.sin_addr.s_addr && p.address.sin_port == playerAddr.address.sin_port)
             return; 
     }
 
@@ -22,22 +23,37 @@ void MatchmakingManager::Update()
     std::cout << "[MATCHMAKING] Update players : " << waitingPlayers.size() << std::endl;
     std::cout << "\033[0m";
 
+    std::vector<Client> playersToRemove;
 
-    for (const auto& p : waitingPlayers)
+    for (auto& p : waitingPlayers)
     {
-        Lobby* getFirstAvailableLobby = LobbyManager::getAvailableLobby(p.matchmakingMapIdRequest);
-
-        if (getFirstAvailableLobby != nullptr)
-        {
-            getFirstAvailableLobby->addClient(ClientManager::getClientByAddress(p.address));
-        }
-        else
+        Lobby* lobby = LobbyManager::getAvailableLobby(p.matchmakingMapIdRequest);
+        if (!lobby)
         {
             LobbyManager::createLobby(p.matchmakingMapIdRequest);
             int lastLobbyId = LobbyManager::getLastLobbyId();
-            LobbyManager::getLobby(lastLobbyId)->addClient(ClientManager::getClientByAddress(p.address));
+            lobby = LobbyManager::getLobby(lastLobbyId);
         }
 
+        Client* client = ClientManager::getClientByAddress(p.address);
+        if (client)
+        {
+			client->lobbyId = lobby->id;
+            lobby->addClient(client);
+			client->positionInLobby = static_cast<byte>(lobby->clients.size());
+            JoinLobbyMessage joinLobbyMsg;
+            joinLobbyMsg.positionInLobby = client->positionInLobby;
+            Serializer serializer;
+            std::vector<uint8_t> buffer = joinLobbyMsg.serialize(serializer);
+
+            Server::SendToAllInLobby(lobby, buffer);
+        }
+
+        playersToRemove.push_back(p);
+    }
+
+    for (const auto& p : playersToRemove)
+    {
         waitingPlayers.erase(
             std::remove_if(waitingPlayers.begin(), waitingPlayers.end(),
                 [&](const Client& c) {
@@ -48,6 +64,8 @@ void MatchmakingManager::Update()
         );
     }
 }
+
+
 
 
 void MatchmakingManager::StartMatch(const std::vector<sockaddr_in>& players)

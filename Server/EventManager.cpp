@@ -4,12 +4,13 @@
 #include "ServerInformationsMessage.h"
 #include "JoinLobbyMessage.h"
 #include "CreateEntityMessage.h"
-#include "LobbyListMessage.h"
 #include "SynchronizeEntitiesMessage.h"
 #include "MoveEntityMessage.h"
 #include "RotateEntityMessage.h"
 #include "DisconnectClientMessage.h"
 #include "StartMatchmakingMessage.h"
+#include "ChangeReadyStatusMessage.h"
+#include "LeaveLobbyMessage.h"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
@@ -18,7 +19,9 @@ void EventManager::BindEvents()
     EventManager::registerHandler<ServerInformationsMessage>(2);
     EventManager::registerHandler<DisconnectClientMessage>(3);
     EventManager::registerHandler<StartMatchmakingMessage>(4);
-   /* EventManager::registerHandler<JoinLobbyMessage>(3);*/
+    EventManager::registerHandler<JoinLobbyMessage>(5);
+    EventManager::registerHandler<ChangeReadyStatusMessage>(6);
+    EventManager::registerHandler<LeaveLobbyMessage>(7);
   /*  EventManager::registerHandler<CreateEntityMessage>(4);
     EventManager::registerHandler<LobbyListMessage>(5);
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);

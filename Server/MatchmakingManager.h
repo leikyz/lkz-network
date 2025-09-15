@@ -1,15 +1,16 @@
 #pragma once
 #include <vector>
 #include <WinSock2.h>
+#include "Client.h"
 
 class MatchmakingManager
 {
 public:
-    static void AddPlayerToQueue(const sockaddr_in& playerAddr);
+    static void AddPlayerToQueue(Client& playerAddr);
     static void Update(); 
 
 private:
-    static std::vector<sockaddr_in> waitingPlayers;
+    static std::vector<Client> waitingPlayers;
 
     static void StartMatch(const std::vector<sockaddr_in>& players);
 };

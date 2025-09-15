@@ -16,7 +16,7 @@ std::vector<uint8_t>& StartMatchmakingMessage::serialize(Serializer& serializer)
 
 void StartMatchmakingMessage::deserialize(Deserializer& deserializer)
 {
-
+    mapId = deserializer.readByte();
 }
 
 void StartMatchmakingMessage::process(const sockaddr_in& senderAddr)
@@ -24,7 +24,9 @@ void StartMatchmakingMessage::process(const sockaddr_in& senderAddr)
     Serializer serializer;
     serialize(serializer);
 
-	MatchmakingManager::AddPlayerToQueue(senderAddr);
+	std::shared_ptr<Client> client = ClientManager::getClientByAddress(senderAddr);
+	client->matchmakingMapIdRequest = mapId;
+	MatchmakingManager::AddPlayerToQueue(*client);
 
     Server::Send(senderAddr, serializer.buffer);
 }

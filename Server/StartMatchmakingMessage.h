@@ -7,6 +7,8 @@ struct StartMatchmakingMessage : public Message
 {
     static constexpr int ID = 4;
 
+    byte mapId;
+
     StartMatchmakingMessage();
 
     byte getId() const override;

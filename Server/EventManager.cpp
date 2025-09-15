@@ -63,6 +63,6 @@ void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const socka
     const char* blueColor = "\033[38;5;32m";
     const char* resetColor = "\033[0m";
 
-    std::cout << blueColor << "Message received: {"
+    std::cout << blueColor << "[RECEIVED] {"
         << typeid(msg).name() << "}" << resetColor << std::endl;
 }

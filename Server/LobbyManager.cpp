@@ -3,14 +3,13 @@
 std::unordered_map<int, std::shared_ptr<Lobby>> LobbyManager::lobbies;
 int LobbyManager::nextLobbyId = 0; 
 
-void LobbyManager::createLobby()
+void LobbyManager::createLobby(byte mapId)
 {
     int lobbyId = nextLobbyId++;
 
     auto lobby = std::make_shared<Lobby>(lobbyId);
+	lobby->mapId = mapId;
     lobbies[lobbyId] = lobby;
-
-    std::cout << "Lobby created with ID: " << lobbyId << std::endl;
 }
 
 
@@ -25,12 +24,12 @@ void LobbyManager::addClientToLobby(int lobbyId, const std::shared_ptr<Client>& 
         std::cout << "Lobby nto found with ID: " << lobbyId << std::endl;
     }
 }
-std::shared_ptr<Lobby> LobbyManager::getAvailableLobby()
+std::shared_ptr<Lobby> LobbyManager::getAvailableLobby(byte mapId)
 {
     for (const auto& pair : lobbies)
     {
         const auto& lobby = pair.second;
-        if (lobby->clients.size() < Lobby::MAX_PLAYER)
+        if (lobby->clients.size() < Lobby::MAX_PLAYER && mapId == lobby->mapId)
         {
             return lobby;
         }

@@ -35,7 +35,8 @@ void Server::Start()
         return;
     }
 
-    printf("UDP Server listening on port %d...\n", PORT);
+    printf("\033[31m[INITIALIZATION] UDP Server listening on port %d\033[0m\n", PORT);
+
 
     sockaddr_in clientAddr;
     int clientAddrSize = sizeof(clientAddr);
@@ -82,11 +83,12 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
         std::cerr << "Error when message was sent : " << WSAGetLastError() << std::endl;
     else
     {
-        const char* greenColor = "\033[38;5;46m"; 
-        const char* resetColor = "\033[0m";  
+        const char* blueLightColor = "\033[38;5;153m";
+        const char* resetColor = "\033[0m";
 
-        std::cout << greenColor << "(" << client->ipAddress << ") Message sent: {"
+        std::cout << blueLightColor << "[SENT] (" << client->ipAddress << ") {"
             << buffer.size() << " bytes}" << resetColor << std::endl;
+
 
     }
 }

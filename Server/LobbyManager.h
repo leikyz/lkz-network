@@ -9,7 +9,7 @@
 class LobbyManager
 {
 public:
-    static void createLobby();
+    static void createLobby(byte mapId);
     static void addClientToLobby(int lobbyId, const std::shared_ptr<Client>& client);
     static std::shared_ptr<Lobby> getLobby(int lobbyId);
     static int nextLobbyId;
@@ -23,7 +23,7 @@ public:
     {
         return static_cast<int>(lobbies.size());
     }
-    static std::shared_ptr<Lobby> getAvailableLobby();
+    static std::shared_ptr<Lobby> getAvailableLobby(byte mapId);
 
     static std::vector<std::shared_ptr<Lobby>> getAllLobbies();
 

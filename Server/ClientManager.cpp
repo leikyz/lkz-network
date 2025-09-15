@@ -23,8 +23,6 @@ void ClientManager::addClient(sockaddr_in clientAddr)
     client->ipAddress = key; 
 
     clients[key] = client;
-
-    std::cout << "Client added: " << key << std::endl;
 }
 void ClientManager::removeClient(const sockaddr_in& clientAddr)
 {
@@ -32,10 +30,6 @@ void ClientManager::removeClient(const sockaddr_in& clientAddr)
     auto it = clients.find(key);
     if (it != clients.end()) {
         clients.erase(it);
-        std::cout << "Client removed: " << key << std::endl;
-    }
-    else {
-        std::cout << "Client not found: " << key << std::endl;
     }
 }
 

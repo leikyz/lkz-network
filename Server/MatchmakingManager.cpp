@@ -2,18 +2,15 @@
 #include "Server.h"
 #include "Serializer.h"
 
-std::vector<sockaddr_in> MatchmakingManager::waitingPlayers;
+std::vector<Client> MatchmakingManager::waitingPlayers;
 
-void MatchmakingManager::AddPlayerToQueue(const sockaddr_in& playerAddr)
+void MatchmakingManager::AddPlayerToQueue(Client& playerAddr)
 {
 	// avoid double entries
     for (const auto& p : waitingPlayers)
     {
-        if (p.sin_addr.s_addr == playerAddr.sin_addr.s_addr &&
-            p.sin_port == playerAddr.sin_port)
-        {
+        if (p.address.sin_addr.s_addr == playerAddr.address.sin_addr.s_addr)
             return; 
-        }
     }
 
     waitingPlayers.push_back(playerAddr);
@@ -21,35 +18,37 @@ void MatchmakingManager::AddPlayerToQueue(const sockaddr_in& playerAddr)
 
 void MatchmakingManager::Update()
 {
-	std::cout << "[MATCHMAKING] Number of players waiting : " << waitingPlayers.size() << std::endl;
+    std::cout << "\033[38;5;216m";
+    std::cout << "[MATCHMAKING] Update players : " << waitingPlayers.size() << std::endl;
+    std::cout << "\033[0m";
+
+
     for (const auto& p : waitingPlayers)
     {
-		std::shared_ptr<Lobby> getFirstAvailableLobby = LobbyManager::getAvailableLobby();
+        std::shared_ptr<Lobby> getFirstAvailableLobby = LobbyManager::getAvailableLobby(p.matchmakingMapIdRequest);
 
         if (getFirstAvailableLobby != nullptr)
         {
-            getFirstAvailableLobby->addClient(ClientManager::getClientByAddress(p));       
-			std::cout << "Ajout du joueur au lobby existant avec l'ID : " << getFirstAvailableLobby->id << std::endl;
-            continue; 
-		}
+            getFirstAvailableLobby->addClient(ClientManager::getClientByAddress(p.address));
+        }
         else
         {
-			LobbyManager::createLobby();
+            LobbyManager::createLobby(p.matchmakingMapIdRequest);
             int lastLobbyId = LobbyManager::getLastLobbyId();
-			LobbyManager::getLobby(lastLobbyId)->addClient(ClientManager::getClientByAddress(p));
-			std::cout << "Création d'un nouveau lobby avec l'ID : " << lastLobbyId << std::endl;
+            LobbyManager::getLobby(lastLobbyId)->addClient(ClientManager::getClientByAddress(p.address));
         }
 
         waitingPlayers.erase(
             std::remove_if(waitingPlayers.begin(), waitingPlayers.end(),
-                [&](const sockaddr_in& addr) {
-                    return addr.sin_addr.s_addr == p.sin_addr.s_addr
-                        && addr.sin_port == p.sin_port;
+                [&](const Client& c) {
+                    return c.address.sin_addr.s_addr == p.address.sin_addr.s_addr
+                        && c.address.sin_port == p.address.sin_port;
                 }),
             waitingPlayers.end()
         );
     }
 }
+
 
 void MatchmakingManager::StartMatch(const std::vector<sockaddr_in>& players)
 {

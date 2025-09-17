@@ -28,6 +28,18 @@ public:
 
     static std::vector<Lobby*> getAllLobbies();
 
+    static bool IsEveryoneReadyInLobby(int lobbyId)
+    {
+        Lobby* lobby = getLobby(lobbyId);
+        if (!lobby) return false;
+        for (Client* c : lobby->clients)
+        {
+            if (!c || !c->isReady)
+                return false;
+        }
+        return true;
+	}
+
 
 private:
     static std::unordered_map<int, Lobby*> lobbies;

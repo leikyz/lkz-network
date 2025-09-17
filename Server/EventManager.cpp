@@ -11,6 +11,7 @@
 #include "ChangeReadyStatusMessage.h"
 #include "LeaveLobbyMessage.h"
 #include "UpdateLobbyMessage.h"
+#include "StartGameMessage.h"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
@@ -19,6 +20,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<ServerInformationsMessage>(2);
     EventManager::registerHandler<DisconnectClientMessage>(3);
     EventManager::registerHandler<StartMatchmakingMessage>(4);
+    EventManager::registerHandler<StartGameMessage>(5);
     EventManager::registerHandler<ChangeReadyStatusMessage>(6);
     EventManager::registerHandler<LeaveLobbyMessage>(7);
     EventManager::registerHandler<UpdateLobbyMessage>(8);

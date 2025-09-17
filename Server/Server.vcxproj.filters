@@ -120,6 +120,9 @@
     <ClCompile Include="UpdateLobbyMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
     </ClCompile>
+    <ClCompile Include="StartGameMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -189,6 +192,9 @@
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
     </ClInclude>
     <ClInclude Include="UpdateLobbyMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    </ClInclude>
+    <ClInclude Include="StartGameMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
     </ClInclude>
   </ItemGroup>

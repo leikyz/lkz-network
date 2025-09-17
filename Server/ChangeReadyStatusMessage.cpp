@@ -1,5 +1,5 @@
 #include "ChangeReadyStatusMessage.h"
-
+#include "StartGameMessage.h"
 ChangeReadyStatusMessage::ChangeReadyStatusMessage() {}
 
 byte ChangeReadyStatusMessage::getId() const
@@ -31,10 +31,21 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
     {
         currentClient->isReady = isReady;
 		positionInLobby = currentClient->positionInLobby;
-        std::cout << "Position in lobby : " << (int)positionInLobby << std::endl;
 
         Serializer serializer;
         serialize(serializer);
         Server::SendToAllInLobby(lobby, serializer.buffer);
+
+        if (LobbyManager::IsEveryoneReadyInLobby(lobby->id))
+        {
+            StartGameMessage startGameMsg;
+			startGameMsg.mapId = lobby->mapId;
+            Serializer s;
+            std::vector<uint8_t> buf = startGameMsg.serialize(s);
+
+			Server::SendToAllInLobby(lobby, buf);
+        }
 	}
+
+
 }

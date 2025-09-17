@@ -64,9 +64,26 @@ void MatchmakingManager::Update()
         {
             if (!c) continue;
 
+            if (c->isReady)
+            {
+                ChangeReadyStatusMessage changeReadyMsg;
+                changeReadyMsg.isReady = false;
+                changeReadyMsg.positionInLobby = c->positionInLobby;
+                Serializer s;
+                std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
+                Server::Send(c->address, buf);
+				c->isReady = false;
+            }
+        }
+
+        for (Client* c : lobby->clients)
+        {
+            if (!c) continue;
+
+
             UpdateLobbyMessage updateLobbyMsg;
             updateLobbyMsg.updatedLobbyPos = c->positionInLobby;
-			updateLobbyMsg.playersCount = static_cast<byte>(allPositions.size());
+            updateLobbyMsg.playersCount = static_cast<byte>(allPositions.size());
             updateLobbyMsg.playersInLobby = allPositions;
 
             Serializer s;

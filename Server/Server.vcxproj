@@ -143,6 +143,7 @@
     <ClCompile Include="RotateEntityMessage.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="StartMatchmakingMessage.cpp" />
+    <ClCompile Include="StartGameMessage.cpp" />
     <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
     <ClCompile Include="UpdateLobbyMessage.cpp" />
   </ItemGroup>
@@ -167,6 +168,7 @@
     <ClInclude Include="RotateEntityMessage.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="StartGameMessage.h" />
     <ClInclude Include="StartMatchmakingMessage.h" />
     <ClInclude Include="SynchronizeEntitiesMessage.h" />
     <ClInclude Include="UpdateLobbyMessage.h" />

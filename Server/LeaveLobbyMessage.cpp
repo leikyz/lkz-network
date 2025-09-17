@@ -1,5 +1,6 @@
 #include "LeaveLobbyMessage.h"
 #include "UpdateLobbyMessage.h"
+#include "ChangeReadyStatusMessage.h"
 
 LeaveLobbyMessage::LeaveLobbyMessage() {}
 
@@ -27,6 +28,23 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
     byte removedPosition = currentClient->positionInLobby;
     if (lobby)
     {
+        for (Client* c : lobby->clients)
+        {
+            if (!c) continue;
+
+            if (c->isReady)
+            {
+                c->isReady = false;
+                ChangeReadyStatusMessage changeReadyMsg;
+                changeReadyMsg.isReady = c->isReady;
+                changeReadyMsg.positionInLobby = c->positionInLobby;
+                Serializer s;
+                std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
+                Server::SendToAllInLobby(lobby, buf);
+              
+            }
+        }
+
         lobby->clients.remove(currentClient);
 
         if (lobby->clients.empty())
@@ -48,9 +66,12 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
               
             }        
 
+         
+
             for (Client* c : lobby->clients)
             {
                 if (!c) continue;
+
 
                 UpdateLobbyMessage updateLobbyMsg;
                 updateLobbyMsg.updatedLobbyPos = c->positionInLobby;
@@ -60,7 +81,6 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
                 Serializer s;
                 std::vector<uint8_t> buf = updateLobbyMsg.serialize(s);
                 Server::Send(c->address, buf);
-
             }
         }
 

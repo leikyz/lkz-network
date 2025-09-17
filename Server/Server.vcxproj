@@ -136,7 +136,6 @@
     <ClCompile Include="MatchmakingManager.cpp" />
     <ClCompile Include="ServerInformationsMessage.cpp" />
     <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="JoinLobbyMessage.cpp" />
     <ClCompile Include="LastEntityPositionMessage.cpp" />
     <ClCompile Include="LobbyManager.cpp" />
     <ClCompile Include="MoveEntityMessage.cpp" />
@@ -145,6 +144,7 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="StartMatchmakingMessage.cpp" />
     <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
+    <ClCompile Include="UpdateLobbyMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChangeReadyStatusMessage.h" />
@@ -159,7 +159,6 @@
     <ClInclude Include="Deserializer.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventManager.h" />
-    <ClInclude Include="JoinLobbyMessage.h" />
     <ClInclude Include="LastEntityPositionMessage.h" />
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="LobbyManager.h" />
@@ -170,6 +169,7 @@
     <ClInclude Include="Server.h" />
     <ClInclude Include="StartMatchmakingMessage.h" />
     <ClInclude Include="SynchronizeEntitiesMessage.h" />
+    <ClInclude Include="UpdateLobbyMessage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

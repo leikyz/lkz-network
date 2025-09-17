@@ -12,4 +12,5 @@ struct Client
     int lobbyId = -1;
     int playerEntityId;
 	bool isReady = false;
+	std::string name = "Anonymous";
 };

@@ -8,6 +8,7 @@ class MatchmakingManager
 public:
     static void AddPlayerToQueue(Client& playerAddr);
     static void Update(); 
+    static void RemovePlayerFromQueue(const sockaddr_in& addr);
 
 private:
     static std::vector<Client> waitingPlayers;

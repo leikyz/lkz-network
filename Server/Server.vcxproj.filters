@@ -111,13 +111,13 @@
     <ClCompile Include="MatchmakingManager.cpp">
       <Filter>Fichiers sources\Protocol\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="JoinLobbyMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
-    </ClCompile>
     <ClCompile Include="ChangeReadyStatusMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
     </ClCompile>
     <ClCompile Include="LeaveLobbyMessage.cpp">
+      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateLobbyMessage.cpp">
       <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,13 +182,13 @@
     <ClInclude Include="MatchmakingManager.h">
       <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="JoinLobbyMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
-    </ClInclude>
     <ClInclude Include="ChangeReadyStatusMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
     </ClInclude>
     <ClInclude Include="LeaveLobbyMessage.h">
+      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateLobbyMessage.h">
       <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
     </ClInclude>
   </ItemGroup>

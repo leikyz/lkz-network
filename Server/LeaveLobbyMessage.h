@@ -9,6 +9,8 @@ struct LeaveLobbyMessage : public Message
 
     LeaveLobbyMessage();
 
+	byte positionInLobby;
+
     byte getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;

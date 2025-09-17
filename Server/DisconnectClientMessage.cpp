@@ -1,4 +1,6 @@
 #include "DisconnectClientMessage.h"
+#include "MatchmakingManager.h"
+#include "LeaveLobbyMessage.h"
 
 DisconnectClientMessage::DisconnectClientMessage() {}
 
@@ -20,25 +22,61 @@ void DisconnectClientMessage::deserialize(Deserializer& deserializer)
 
 void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
 {
+    // Retirer le client de la file d'attente
+    MatchmakingManager::RemovePlayerFromQueue(senderAddr);
+
     Client* currentClient = ClientManager::getClientByAddress(senderAddr);
+    if (!currentClient)
+    {
+        std::cout << "[DISCONNECT] Client already removed." << std::endl;
+        return;
+    }
 
     if (currentClient->lobbyId != -1)
     {
         Lobby* lobby = LobbyManager::getLobby(currentClient->lobbyId);
         if (lobby)
         {
+            // Retirer le client du lobby
+            byte removedPosition = currentClient->positionInLobby;
             lobby->clients.remove(currentClient);
-            Serializer serializer;
-            serialize(serializer);
-            Server::SendToAllInLobby(lobby, serializer.buffer);
+            currentClient->lobbyId = -1;
+
             if (lobby->clients.empty())
             {
-                std::cout << "Lobby " << lobby->id << " is now empty and will be deleted." << std::endl;
-                delete lobby;
-				LobbyManager::removeLobby(lobby->id);
+                LobbyManager::removeLobby(lobby->id);
+            }
+            else
+            {
+                byte pos = 1;
+                for (Client* c : lobby->clients)
+                {
+                    if (!c) continue;
+                    if (c->positionInLobby > removedPosition)
+                    {
+                        c->positionInLobby--; // décaler vers le bas
+                    }
+                }
+
+                LeaveLobbyMessage leaveLobbyMsg;
+                leaveLobbyMsg.positionInLobby = removedPosition;
+                Serializer serializer;
+                std::vector<uint8_t> buffer = leaveLobbyMsg.serialize(serializer);
+
+                // Copie sécurisée pour éviter les pointeurs invalides
+                std::vector<Client*> clientsCopy(lobby->clients.begin(), lobby->clients.end());
+                for (Client* c : clientsCopy)
+                {
+                    if (!c) continue;
+                    Server::Send(c->address, buffer);
+                }
             }
         }
-	}
+    }
 
+    // Supprimer le client du ClientManager
     ClientManager::removeClient(senderAddr);
 }
+
+
+

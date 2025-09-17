@@ -31,6 +31,8 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
     {
         currentClient->isReady = isReady;
 		positionInLobby = currentClient->positionInLobby;
+        std::cout << "Position in lobby : " << (int)positionInLobby << std::endl;
+
         Serializer serializer;
         serialize(serializer);
         Server::SendToAllInLobby(lobby, serializer.buffer);

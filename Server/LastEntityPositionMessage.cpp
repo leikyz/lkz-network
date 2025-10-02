@@ -22,7 +22,7 @@ std::vector<uint8_t>& LastEntityPositionMessage::serialize(Serializer& serialize
     serializer.writeFloat(posY);
     serializer.writeFloat(posZ);
 
-    return serializer.buffer;
+    return serializer.getBuffer();
 }
 
 void LastEntityPositionMessage::deserialize(Deserializer& deserializer)
@@ -36,19 +36,19 @@ void LastEntityPositionMessage::deserialize(Deserializer& deserializer)
 
 void LastEntityPositionMessage::process(const sockaddr_in& senderAddr)
 {
-    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
+    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->m_lobbyId);
     Entity* entity = lobby->getEntityById(entityId);
 
     if (lobby != nullptr && entity != nullptr)
     {
-        entity->posX = posX;
-        entity->posY = posY;
-        entity->posZ = posZ;
+        entity->m_posX = posX;
+        entity->m_posY = posY;
+        entity->m_posZ = posZ;
 
         Serializer serializer;
         serialize(serializer);
 
-        Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.buffer);
+        Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());
     }
   
 }

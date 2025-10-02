@@ -13,7 +13,7 @@ std::vector<uint8_t>& ServerInformationsMessage::serialize(Serializer& serialize
     serializer.writeBool(status);
     serializer.writeInt(playersCount);
 
-    return serializer.buffer;
+    return serializer.getBuffer();
 }
 
 void ServerInformationsMessage::deserialize(Deserializer& deserializer)
@@ -34,5 +34,5 @@ void ServerInformationsMessage::process(const sockaddr_in& senderAddr)
     Serializer serializer;
     serialize(serializer);
 
-    Server::Send(senderAddr, serializer.buffer);
+    Server::Send(senderAddr, serializer.getBuffer());
 }

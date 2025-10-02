@@ -7,58 +7,58 @@
 
 class Deserializer {
 private:
-    const std::vector<uint8_t>& buffer;
-    size_t position = 0;
+    const std::vector<uint8_t>& m_buffer;
+    size_t m_position = 0;
 
 public:
-    explicit Deserializer(const std::vector<uint8_t>& buf) : buffer(buf) {}
+    explicit Deserializer(const std::vector<uint8_t>& buf) : m_buffer(buf) {}
 
     int readInt() 
     {
-        if (position + 4 > buffer.size()) {
+        if (m_position + 4 > m_buffer.size()) {
             throw std::out_of_range("Buffer overflow in readInt");
         }
 
-        int value = buffer[position] |
-            (buffer[position + 1] << 8) |
-            (buffer[position + 2] << 16) |
-            (buffer[position + 3] << 24);
+        int value = m_buffer[m_position] |
+            (m_buffer[m_position + 1] << 8) |
+            (m_buffer[m_position + 2] << 16) |
+            (m_buffer[m_position + 3] << 24);
 
-        position += 4;
+        m_position += 4;
         return value;
     }
 
     float readFloat()
     {
-        if (position + sizeof(float) > buffer.size()) {
+        if (m_position + sizeof(float) > m_buffer.size()) {
             throw std::out_of_range("Buffer overflow in readFloat");
         }
 
         float value;
-        std::memcpy(&value, &buffer[position], sizeof(float));
-        position += sizeof(float);
+        std::memcpy(&value, &m_buffer[m_position], sizeof(float));
+        m_position += sizeof(float);
         return value;
     }
 
     bool readBool()
     {
-        if (position + 1 > buffer.size()) {
+        if (m_position + 1 > m_buffer.size()) {
             throw std::out_of_range("Buffer overflow in readBool");
         }
 
-        bool value = buffer[position] != 0;
-        position += 1;
+        bool value = m_buffer[m_position] != 0;
+        m_position += 1;
         return value;
     }
 
     uint8_t readByte()
     {
-        if (position + 1 > buffer.size()) {
+        if (m_position + 1 > m_buffer.size()) {
             throw std::out_of_range("Buffer overflow in readByte");
         }
 
-        uint8_t value = buffer[position];
-        position += 1;
+        uint8_t value = m_buffer[m_position];
+        m_position += 1;
         return value;
     }
 

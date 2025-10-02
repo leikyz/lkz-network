@@ -12,31 +12,31 @@
 struct Lobby
 {
     static constexpr int MAX_PLAYER = 4;
-    int id;
-    byte mapId;
-    std::list<Client*> clients;  
-    std::list<Entity*> entities;  
-    int nextEntityId = 1;  
+    int m_id;
+    byte m_mapId;
+    std::list<Client*> m_clients;  
+    std::list<Entity*> m_entities;  
+    int m_nextEntityId = 1;  
 
-    Lobby(int lobbyId) : id(lobbyId) {}
+    Lobby(int lobbyId) : m_id(lobbyId) {}
 
     void addClient(Client* client) {
-        clients.push_back(client);
-        std::cout << "Client " << client->ipAddress << " added to lobby: " << id << std::endl;
+        m_clients.push_back(client);
+        std::cout << "Client " << client->m_ipAddress << " added to lobby: " << m_id << std::endl;
     }
 
     void addEntity(Entity* entity) {
-        entity->id = nextEntityId++;  
-        entities.push_back(entity);
-        std::cout << "Entity with ID " << entity->id << " added to lobby: " << id << std::endl;
+        entity->m_id = m_nextEntityId++;  
+        m_entities.push_back(entity);
+        std::cout << "Entity with ID " << entity->m_id << " added to lobby: " << m_id << std::endl;
     }
 
     void removeEntity(uint32_t entityId) {
-        for (auto it = entities.begin(); it != entities.end(); ) {
-            if ((*it)->id == entityId) {
+        for (auto it = m_entities.begin(); it != m_entities.end(); ) {
+            if ((*it)->m_id == entityId) {
                 delete* it;              
-                it = entities.erase(it); 
-                std::cout << "Entity with ID " << entityId << " removed from lobby: " << id << std::endl;
+                it = m_entities.erase(it); 
+                std::cout << "Entity with ID " << entityId << " removed from lobby: " << m_id << std::endl;
             }
             else {
                 ++it;
@@ -47,9 +47,9 @@ struct Lobby
 
     Client* getClientByIp(const std::string& ipAddress) const
     {
-        for (const auto& client : clients)
+        for (const auto& client : m_clients)
         {
-            if (client->ipAddress == ipAddress)
+            if (client->m_ipAddress == ipAddress)
             {
                 return client;
             }
@@ -59,19 +59,19 @@ struct Lobby
 
     std::list<Client*> getClients() const
     {
-        return clients;
+        return m_clients;
     }
 
     std::list<Entity*> getEntities() const
     {
-        return entities;
+        return m_entities;
     }
 
     Entity* getEntityById(uint32_t entityId) const
     {
-        for (const auto& entity : entities)
+        for (const auto& entity : m_entities)
         {
-            if (entity->id == entityId)
+            if (entity->m_id == entityId)
             {
                 return entity;
             }

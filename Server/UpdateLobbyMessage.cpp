@@ -15,7 +15,7 @@ std::vector<uint8_t>& UpdateLobbyMessage::serialize(Serializer& serializer) cons
         serializer.writeByte(index);
     }
 
-    return serializer.buffer;
+    return serializer.getBuffer();
 }
 
 void UpdateLobbyMessage::deserialize(Deserializer& deserializer)

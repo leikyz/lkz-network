@@ -8,18 +8,18 @@ enum EntityEnum
 
 struct Entity
 {
-    uint32_t id;   
-    EntityEnum type;   
+    uint32_t m_id;   
+    EntityEnum m_type;   
 
-    float posX;
-    float posY;
-    float posZ;
+    float m_posX;
+    float m_posY;
+    float m_posZ;
 
     Entity(EntityEnum type)
-        : type(type)
+        : m_type(type)
     {
     }
 
-    EntityEnum getType() const { return type; }
-    void setType(EntityEnum t) { type = t; }
+    EntityEnum getType() const { return m_type; }
+    void setType(EntityEnum t) { m_type = t; }
 };

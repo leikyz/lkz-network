@@ -4,13 +4,13 @@
 #pragma once
 struct Client 
 {
-    int id;
-    sockaddr_in address;
-    std::string ipAddress;
-    byte positionInLobby = -1;
-    byte matchmakingMapIdRequest;
-    int lobbyId = -1;
-    int playerEntityId;
-	bool isReady = false;
-	std::string name = "Anonymous";
+    int m_id;
+    sockaddr_in m_address;
+    std::string m_ipAddress;
+    byte m_positionInLobby = -1;
+    byte m_matchmakingMapIdRequest;
+    int m_lobbyId = -1;
+    int m_playerEntityId;
+	bool m_isReady = false;
+	std::string m_name = "Anonymous";
 };

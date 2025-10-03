@@ -3,7 +3,7 @@
 #include "Serializer.h"
 #include "UpdateLobbyMessage.h"
 #include "ChangeReadyStatusMessage.h"
-
+#include "Client.h"
 std::vector<Client> MatchmakingManager::waitingPlayers;
 
 void MatchmakingManager::AddPlayerToQueue(Client& playerAddr)
@@ -11,7 +11,7 @@ void MatchmakingManager::AddPlayerToQueue(Client& playerAddr)
 	// avoid double entries
     for (const auto& p : waitingPlayers)
     {
-        if (p.m_address.sin_addr.s_addr == playerAddr.m_address.sin_addr.s_addr && p.m_address.sin_port == playerAddr.m_address.sin_port)
+        if (p.address.sin_addr.s_addr == playerAddr.address.sin_addr.s_addr && p.address.sin_port == playerAddr.address.sin_port)
             return; 
     }
 
@@ -28,17 +28,17 @@ void MatchmakingManager::Update()
 
     for (auto& p : waitingPlayers)
     {
-        Client* client = ClientManager::getClientByAddress(p.m_address);
+        Client* client = ClientManager::getClientByAddress(p.address);
         if (!client)
         {
             playersToRemove.push_back(p);
             continue;
         }
 
-        Lobby* lobby = LobbyManager::getAvailableLobby(p.m_matchmakingMapIdRequest);
+        Lobby* lobby = LobbyManager::getAvailableLobby(p.matchmakingMapIdRequest);
         if (!lobby)
         {
-            LobbyManager::createLobby(p.m_matchmakingMapIdRequest);
+            LobbyManager::createLobby(p.matchmakingMapIdRequest);
             int lastLobbyId = LobbyManager::getLastLobbyId();
             lobby = LobbyManager::getLobby(lastLobbyId);
         }
@@ -49,46 +49,46 @@ void MatchmakingManager::Update()
             continue;
         }
 
-        client->m_lobbyId = lobby->m_id;
+        client->lobbyId = lobby->id;
         lobby->addClient(client);
-        client->m_positionInLobby = static_cast<byte>(lobby->m_clients.size() - 1);
+        client->positionInLobby = static_cast<byte>(lobby->clients.size() - 1);
 
         std::vector<byte> allPositions;
-        for (Client* c : lobby->m_clients)
+        for (Client* c : lobby->clients)
         {
             if (!c) continue;
-            allPositions.push_back(c->m_positionInLobby);
+            allPositions.push_back(c->positionInLobby);
         }
 
-        for (Client* c : lobby->m_clients)
+        for (Client* c : lobby->clients)
         {
             if (!c) continue;
 
-            if (c->m_isReady)
+            if (c->isReady)
             {
                 ChangeReadyStatusMessage changeReadyMsg;
                 changeReadyMsg.isReady = false;
-                changeReadyMsg.positionInLobby = c->m_positionInLobby;
+                changeReadyMsg.positionInLobby = c->positionInLobby;
                 Serializer s;
                 std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
-                Server::Send(c->m_address, buf);
-				c->m_isReady = false;
+                Server::Send(c->address, buf);
+				c->isReady = false;
             }
         }
 
-        for (Client* c : lobby->m_clients)
+        for (Client* c : lobby->clients)
         {
             if (!c) continue;
 
 
             UpdateLobbyMessage updateLobbyMsg;
-            updateLobbyMsg.updatedLobbyPos = c->m_positionInLobby;
+            updateLobbyMsg.updatedLobbyPos = c->positionInLobby;
             updateLobbyMsg.playersCount = static_cast<byte>(allPositions.size());
             updateLobbyMsg.playersInLobby = allPositions;
 
             Serializer s;
             std::vector<uint8_t> buf = updateLobbyMsg.serialize(s);
-            Server::Send(c->m_address, buf);
+            Server::Send(c->address, buf);
         }
 
         playersToRemove.push_back(p);
@@ -99,8 +99,8 @@ void MatchmakingManager::Update()
         waitingPlayers.erase(
             std::remove_if(waitingPlayers.begin(), waitingPlayers.end(),
                 [&](const Client& c) {
-                    return c.m_address.sin_addr.s_addr == p.m_address.sin_addr.s_addr
-                        && c.m_address.sin_port == p.m_address.sin_port;
+                    return c.address.sin_addr.s_addr == p.address.sin_addr.s_addr
+                        && c.address.sin_port == p.address.sin_port;
                 }),
             waitingPlayers.end()
         );
@@ -114,8 +114,8 @@ void MatchmakingManager::RemovePlayerFromQueue(const sockaddr_in& addr)
     waitingPlayers.erase(
         std::remove_if(waitingPlayers.begin(), waitingPlayers.end(),
             [&](const Client& c) {
-                return c.m_address.sin_addr.s_addr == addr.sin_addr.s_addr
-                    && c.m_address.sin_port == addr.sin_port;
+                return c.address.sin_addr.s_addr == addr.sin_addr.s_addr
+                    && c.address.sin_port == addr.sin_port;
             }),
         waitingPlayers.end()
     );

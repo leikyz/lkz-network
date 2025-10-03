@@ -60,9 +60,7 @@ void Server::Start()
     closesocket(serverSocket);
     WSACleanup();
 }
-void Server::SendToMultiple(const std::vector<Client*>& clients,
-    const std::vector<uint8_t>& buffer,
-    const sockaddr_in* excludedClientAddr = nullptr)
+void Server::SendToMultiple(const std::vector<Client*>& clients, const std::vector<uint8_t>& buffer, const sockaddr_in* excludedClientAddr)
 {
     for (const auto& client : clients)
     {
@@ -92,7 +90,7 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
     }
 
     int bytesSent = sendto(serverSocket, reinterpret_cast<const char*>(buffer.data()), buffer.size(), 0,
-        reinterpret_cast<const sockaddr*>(&client->m_address), sizeof(client->m_address));
+        reinterpret_cast<const sockaddr*>(&client->address), sizeof(client->address));
 
     if (bytesSent == SOCKET_ERROR)
         std::cerr << "Error when message was sent : " << WSAGetLastError() << std::endl;
@@ -101,7 +99,7 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
         const char* blueLightColor = "\033[38;5;153m";
         const char* resetColor = "\033[0m";
 
-        std::cout << blueLightColor << "[SENT] (" << client->m_ipAddress << ") {"
+        std::cout << blueLightColor << "[SENT] (" << client->ipAddress << ") {"
             << buffer.size() << " bytes}" << resetColor << std::endl;
 
 
@@ -115,33 +113,15 @@ void Server::SendToAllInLobby(Lobby* lobby, const std::vector<uint8_t>& buffer)
 
 void Server::SendToAllInLobbyExcept(Lobby* lobby, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
 {
-    for (const auto& client : lobby->getClients())
-    {
-        if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||
-            client->address.sin_port != excludedClientAddr.sin_port)
-        {
-            Send(client->address, buffer);
-        }
-    }
+    SendToMultiple(lobby->getClients(), buffer, &excludedClientAddr);
 }
 
 void Server::SendToAllClients(const std::vector<uint8_t>& buffer)
 {
-    for (const auto& pair : ClientManager::getClients())
-    {
-        Send(pair->address, buffer);
-    }
+    SendToMultiple(ClientManager::getClients(), buffer);
 }
 
 void Server::SendToAllClientsExcept(const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
 {
-    for (const auto& pair : ClientManager::getClients())
-    {
-        const auto& client = pair;
-        if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||
-            client->address.sin_port != excludedClientAddr.sin_port)
-        {
-            Send(client->address, buffer);
-        }
-    }
+    SendToMultiple(ClientManager::getClients(), buffer, &excludedClientAddr);
 }

@@ -25,7 +25,7 @@ void StartMatchmakingMessage::process(const sockaddr_in& senderAddr)
     serialize(serializer);
 
 	Client* client = ClientManager::getClientByAddress(senderAddr);
-	client->m_matchmakingMapIdRequest = mapId;
+	client->matchmakingMapIdRequest = mapId;
 	MatchmakingManager::AddPlayerToQueue(*client);
 
     Server::Send(senderAddr, serializer.getBuffer());

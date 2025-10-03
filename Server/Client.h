@@ -1,6 +1,10 @@
+#include <string>
+#include <memory>
+
+#pragma once
 struct Client
 {
-    int id;
+    uint32_t id;
     int lobbyId;
     int playerEntityId;
     sockaddr_in address;
@@ -9,10 +13,15 @@ struct Client
     uint8_t matchmakingMapIdRequest;
     bool isReady;
 
-    Client(int id, const sockaddr_in& addr, const std::string& ip)
-        : id(id), lobbyId(-1), playerEntityId(-1),
-        address(addr), ipAddress(ip),
-        positionInLobby(255), matchmakingMapIdRequest(0), isReady(false)
+    Client(uint32_t _id, const sockaddr_in& _address, const std::string& _ipAddress, int _lobbyId = -1, int _playerEntityId = -1
+        , uint8_t _positionInLobby = 0, uint8_t _matchmakingMapIdRequest = 0, bool _isReady = false) : id(_id),
+        lobbyId(_lobbyId),
+        playerEntityId(_playerEntityId),
+        address(_address),
+        ipAddress(_ipAddress),
+        positionInLobby(_positionInLobby),
+        matchmakingMapIdRequest(_matchmakingMapIdRequest),
+        isReady(_isReady)
     {
     }
 };

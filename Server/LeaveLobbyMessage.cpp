@@ -24,20 +24,20 @@ void LeaveLobbyMessage::deserialize(Deserializer& deserializer)
 void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
 {
     Client* currentClient = ClientManager::getClientByAddress(senderAddr);
-    Lobby* lobby = LobbyManager::getLobby(currentClient->m_lobbyId);
-    byte removedPosition = currentClient->m_positionInLobby;
+    Lobby* lobby = LobbyManager::getLobby(currentClient->lobbyId);
+    byte removedPosition = currentClient->positionInLobby;
     if (lobby)
     {
-        for (Client* c : lobby->m_clients)
+        for (Client* c : lobby->clients)
         {
             if (!c) continue;
 
-            if (c->m_isReady)
+            if (c->isReady)
             {
-                c->m_isReady = false;
+                c->isReady = false;
                 ChangeReadyStatusMessage changeReadyMsg;
-                changeReadyMsg.isReady = c->m_isReady;
-                changeReadyMsg.positionInLobby = c->m_positionInLobby;
+                changeReadyMsg.isReady = c->isReady;
+                changeReadyMsg.positionInLobby = c->positionInLobby;
                 Serializer s;
                 std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
                 Server::SendToAllInLobby(lobby, buf);
@@ -45,47 +45,47 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
             }
         }
 
-        lobby->m_clients.remove(currentClient);
+        lobby->removeClient(currentClient);
 
-        if (lobby->m_clients.empty())
+        if (lobby->clients.empty())
         {
-            LobbyManager::removeLobby(lobby->m_id);
+            LobbyManager::removeLobby(lobby->id);
         }
         else
         {
             std::vector<byte> allPositions;
 
-            for (Client* c : lobby->m_clients)
+            for (Client* c : lobby->clients)
             {
                 if (!c) continue;
-                if (c->m_positionInLobby > removedPosition)
+                if (c->positionInLobby > removedPosition)
                 {
-                    c->m_positionInLobby--; 
+                    c->positionInLobby--; 
                 }
-                allPositions.push_back(c->m_positionInLobby);
+                allPositions.push_back(c->positionInLobby);
               
             }        
 
          
 
-            for (Client* c : lobby->m_clients)
+            for (Client* c : lobby->clients)
             {
                 if (!c) continue;
 
 
                 UpdateLobbyMessage updateLobbyMsg;
-                updateLobbyMsg.updatedLobbyPos = c->m_positionInLobby;
+                updateLobbyMsg.updatedLobbyPos = c->positionInLobby;
                 updateLobbyMsg.playersCount = static_cast<byte>(allPositions.size());
                 updateLobbyMsg.playersInLobby = allPositions;
 
                 Serializer s;
                 std::vector<uint8_t> buf = updateLobbyMsg.serialize(s);
-                Server::Send(c->m_address, buf);
+                Server::Send(c->address, buf);
             }
         }
 
-        currentClient->m_lobbyId = -1;
-        currentClient->m_positionInLobby = 0;
-        currentClient->m_matchmakingMapIdRequest = 0;   
+        currentClient->lobbyId = -1;
+        currentClient->positionInLobby = 0;
+        currentClient->matchmakingMapIdRequest = 0;   
     }
 }

@@ -34,14 +34,14 @@ void CreateEntityMessage::deserialize(Deserializer& deserializer)
 
 void CreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->m_lobbyId);
+    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
     
     if (lobby != nullptr)
     {
         srand(time(0));
         Entity* entity;
 
-        if (lobby->m_clients.size() == 1)
+        if (lobby->clients.size() == 1)
         {
             entity = new Entity(EntityEnum::Olise);
         }
@@ -50,21 +50,21 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
             entity = new Entity(EntityEnum::Olise);
         }
 
-        entity->m_posX = 100.0f + rand() % 10;
-        entity->m_posY = 10;
-        entity->m_posZ = 100.0f + rand() % 10;
+        entity->posX = 100.0f + rand() % 10;
+        entity->posY = 10;
+        entity->posZ = 100.0f + rand() % 10;
 
         lobby->addEntity(entity);
 
-        entityId = entity->m_id;
-        entityTypeId = entity->m_type;
-        posX = entity->m_posX;
-        posY = entity->m_posY;
-        posZ = entity->m_posZ;
+        entityId = entity->id;
+        entityTypeId = entity->type;
+        posX = entity->posX;
+        posY = entity->posY;
+        posZ = entity->posZ;
 
-        ClientManager::getClientByAddress(senderAddr)->m_playerEntityId = entityId;
+        ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
 
-        controlled = (ClientManager::getClientByAddress(senderAddr)->m_playerEntityId == entityId);
+        controlled = (ClientManager::getClientByAddress(senderAddr)->playerEntityId == entityId);
 
      
 

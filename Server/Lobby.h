@@ -1,6 +1,3 @@
-#ifndef LOBBY_H
-#define LOBBY_H
-
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -16,35 +13,54 @@ struct Lobby
 {
     static constexpr int MAX_PLAYER = 4;
     int id;
-    byte mapId;
-    std::vector<Client*> clients;  
+    uint8_t mapId;
+    std::vector<Client*> clients;
     std::vector<Entity*> entities;
-    int nextEntityId = 1;  
+    int nextEntityId = 1;
 
-    Lobby(int lobbyId) : id(lobbyId) {}
+    /**
+    * @brief Constructor for Lobby.
+    * @param lobbyId Unique identifier for the lobby.
+    */
 
-    void addClient(Client* client) {
+    Lobby(int lobbyId,uint8_t mapId) : id(lobbyId) {
+        clients.reserve(MAX_PLAYER);  // Prevents reallocations
+    }
+
+    /**
+    * @brief Add a client to the lobby.
+    * @param client Pointer to the client to be added.
+    */
+
+    void addClient(Client* client)
+    {
         clients.push_back(client);
         std::cout << "Client " << client->ipAddress << " added to lobby: " << id << std::endl;
     }
 
-	/**
-	* @brief Add an entity to the lobby and assign it a unique ID.
-	* @param Entity Pointer to the entity to be added.
+    /**
+    * @brief Add an entity to the lobby and assign it a unique ID.
+    * @param Entity Pointer to the entity to be added.
     **/
 
     void addEntity(Entity* entity) {
-        entity->m_id = m_nextEntityId++;  
-        m_entities.push_back(entity);
-        std::cout << "Entity with ID " << entity->m_id << " added to lobby: " << m_id << std::endl;
+        entity->id = nextEntityId++;
+        entities.push_back(entity);
+        std::cout << "Entity with ID " << entity->id << " added to lobby: " << id << std::endl;
     }
 
-    void removeEntity(uint32_t entityId) {
+    /**
+    * @brief Remove an entity from the lobby by its ID.
+    * @param EntityId Unique identifier of the entity to be removed.
+    */
+
+    void removeEntity(uint32_t entityId)
+    {
         for (auto it = entities.begin(); it != entities.end(); ) {
             if ((*it)->id == entityId) {
-                delete* it;              
-                it = m_entities.erase(it); 
-                std::cout << "Entity with ID " << entityId << " removed from lobby: " << m_id << std::endl;
+                delete* it;
+                it = entities.erase(it);
+                std::cout << "Entity with ID " << entityId << " removed from lobby: " << id << std::endl;
             }
             else {
                 ++it;
@@ -53,37 +69,26 @@ struct Lobby
     }
 
     /// <summary>
-	/// Remove client from lobby
+    /// Remove client from lobby
     /// </summary>
     /// <param name="client"></param>
 
-    Client* getClientByIp(const std::string& ipAddress) const
+    void removeClient(Client* client)
     {
-        for (const auto& client : clients)
-        {
-            if (client->ipAddress == ipAddress)
-            {
-                return client;
-            }
-        }
-        return nullptr;
+        clients.erase(std::remove(clients.begin(), clients.end(), client), clients.end());
     }
 
-    std::list<Client*> getClients() const
-    {
-        return clients;
-    }
+    // Getters
 
-    std::list<Entity*> getEntities() const
-    {
-        return entities;
-    }
+    const std::vector<Client*>& getClients() const { return clients; }
+
+    const std::vector<Entity*>& getEntities() const { return entities; }
 
     Entity* getEntityById(uint32_t entityId) const
     {
-        for (const auto& entity : m_entities)
+        for (const auto& entity : entities)
         {
-            if (entity->m_id == entityId)
+            if (entity->id == entityId)
             {
                 return entity;
             }
@@ -106,4 +111,3 @@ struct Lobby
 
 };
 
-#endif // LOBBY_H

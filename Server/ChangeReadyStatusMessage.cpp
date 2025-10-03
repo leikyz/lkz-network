@@ -25,21 +25,21 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
 {
 	Client* currentClient = ClientManager::getClientByAddress(senderAddr);
 
-	Lobby* lobby = LobbyManager::getLobby(currentClient->m_lobbyId);
+	Lobby* lobby = LobbyManager::getLobby(currentClient->lobbyId);
 
     if (currentClient && lobby)
     {
-        currentClient->m_isReady = isReady;
-		positionInLobby = currentClient->m_positionInLobby;
+        currentClient->isReady = isReady;
+		positionInLobby = currentClient->positionInLobby;
 
         Serializer serializer;
         serialize(serializer);
         Server::SendToAllInLobby(lobby, serializer.getBuffer());
 
-        if (LobbyManager::IsEveryoneReadyInLobby(lobby->m_id))
+        if (LobbyManager::IsEveryoneReadyInLobby(lobby->id))
         {
             StartGameMessage startGameMsg;
-			startGameMsg.mapId = lobby->m_mapId;
+			startGameMsg.mapId = lobby->mapId;
             Serializer s;
             std::vector<uint8_t> buf = startGameMsg.serialize(s);
 

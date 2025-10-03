@@ -32,29 +32,29 @@ void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
         return;
     }
 
-    if (currentClient->m_lobbyId != -1)
+    if (currentClient->lobbyId != -1)
     {
-        Lobby* lobby = LobbyManager::getLobby(currentClient->m_lobbyId);
+        Lobby* lobby = LobbyManager::getLobby(currentClient->lobbyId);
         if (lobby)
         {
             // Retirer le client du lobby
-            byte removedPosition = currentClient->m_positionInLobby;
-            lobby->m_clients.remove(currentClient);
-            currentClient->m_lobbyId = -1;
+            byte removedPosition = currentClient->positionInLobby;
+            lobby->removeClient(currentClient);
+            currentClient->lobbyId = -1;
 
-            if (lobby->m_clients.empty())
+            if (lobby->clients.empty())
             {
-                LobbyManager::removeLobby(lobby->m_id);
+                LobbyManager::removeLobby(lobby->id);
             }
             else
             {
                 byte pos = 1;
-                for (Client* c : lobby->m_clients)
+                for (Client* c : lobby->clients)
                 {
                     if (!c) continue;
-                    if (c->m_positionInLobby > removedPosition)
+                    if (c->positionInLobby > removedPosition)
                     {
-                        c->m_positionInLobby--; // décaler vers le bas
+                        c->positionInLobby--; // décaler vers le bas
                     }
                 }
 
@@ -64,11 +64,11 @@ void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
                 std::vector<uint8_t> buffer = leaveLobbyMsg.serialize(serializer);
 
                 // Copie sécurisée pour éviter les pointeurs invalides
-                std::vector<Client*> clientsCopy(lobby->m_clients.begin(), lobby->m_clients.end());
+                std::vector<Client*> clientsCopy(lobby->clients.begin(), lobby->clients.end());
                 for (Client* c : clientsCopy)
                 {
                     if (!c) continue;
-                    Server::Send(c->m_address, buffer);
+                    Server::Send(c->address, buffer);
                 }
             }
         }

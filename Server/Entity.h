@@ -24,6 +24,6 @@ struct Entity
     {
     }
 
-    EntityEnum getType() const { return m_type; }
-    void setType(EntityEnum t) { m_type = t; }
+    EntityEnum getType() const { return type; }
+    void setType(EntityEnum t) { type = t; }
 };

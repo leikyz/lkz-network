@@ -5,29 +5,34 @@
 #include <cstdint>
 
 class Serializer {
+private :
+    std::vector<uint8_t> m_buffer;
 public:
-    std::vector<uint8_t> buffer;
-
+    
     void writeInt(int value) {
-        buffer.push_back(static_cast<uint8_t>(value & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((value >> 16) & 0xFF));
-        buffer.push_back(static_cast<uint8_t>((value >> 24) & 0xFF));
+        m_buffer.push_back(static_cast<uint8_t>(value & 0xFF));
+        m_buffer.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));
+        m_buffer.push_back(static_cast<uint8_t>((value >> 16) & 0xFF));
+        m_buffer.push_back(static_cast<uint8_t>((value >> 24) & 0xFF));
     }
 
     void writeFloat(float value) {
         uint8_t bytes[sizeof(float)];
         std::memcpy(bytes, &value, sizeof(float)); 
-        buffer.insert(buffer.end(), bytes, bytes + sizeof(float));
+        m_buffer.insert(m_buffer.end(), bytes, bytes + sizeof(float));
     }
 
     void writeBool(bool value) {
-        buffer.push_back(value ? 1 : 0);
+        m_buffer.push_back(value ? 1 : 0);
     }
 
     void writeByte(uint8_t value) {
-        buffer.push_back(value);
+        m_buffer.push_back(value);
     }
+
+    std::vector<uint8_t>& getBuffer() {
+        return m_buffer;
+	}
 };
 
 #endif // SERIALIZER_H

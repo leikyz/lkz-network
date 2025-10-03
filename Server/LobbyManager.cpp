@@ -8,7 +8,7 @@ void LobbyManager::createLobby(byte mapId)
     int lobbyId = nextLobbyId++;
 
     Lobby* lobby = new Lobby(lobbyId);
-	lobby->mapId = mapId;
+	lobby->m_mapId = mapId;
     lobbies[lobbyId] = lobby;
 }
 
@@ -18,7 +18,7 @@ void LobbyManager::addClientToLobby(int lobbyId, Client* client)
     auto lobby = getLobby(lobbyId);
     if (lobby) {
         lobby->addClient(client);
-        client->lobbyId = lobbyId;
+        client->m_lobbyId = lobbyId;
     }
     else {
         std::cout << "Lobby nto found with ID: " << lobbyId << std::endl;
@@ -29,7 +29,7 @@ Lobby* LobbyManager::getAvailableLobby(byte mapId)
     for (const auto& pair : lobbies)
     {
         const auto& lobby = pair.second;
-        if (lobby->clients.size() < Lobby::MAX_PLAYER && mapId == lobby->mapId)
+        if (lobby->m_clients.size() < Lobby::MAX_PLAYER && mapId == lobby->m_mapId)
         {
             return lobby;
         }

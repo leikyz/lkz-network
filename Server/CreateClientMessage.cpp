@@ -10,7 +10,7 @@ byte CreateClientMessage::getId() const
 std::vector<uint8_t>& CreateClientMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
-    return serializer.buffer;
+    return serializer.getBuffer();
 }
 
 void CreateClientMessage::deserialize(Deserializer& deserializer)
@@ -25,5 +25,5 @@ void CreateClientMessage::process(const sockaddr_in& senderAddr)
     Serializer serializer;
     serialize(serializer);
 
-    Server::Send(senderAddr, serializer.buffer);
+    Server::Send(senderAddr, serializer.getBuffer());
 }

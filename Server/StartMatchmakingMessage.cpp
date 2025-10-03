@@ -11,7 +11,7 @@ byte StartMatchmakingMessage::getId() const
 std::vector<uint8_t>& StartMatchmakingMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
-    return serializer.buffer;
+    return serializer.getBuffer();
 }
 
 void StartMatchmakingMessage::deserialize(Deserializer& deserializer)
@@ -25,8 +25,8 @@ void StartMatchmakingMessage::process(const sockaddr_in& senderAddr)
     serialize(serializer);
 
 	Client* client = ClientManager::getClientByAddress(senderAddr);
-	client->matchmakingMapIdRequest = mapId;
+	client->m_matchmakingMapIdRequest = mapId;
 	MatchmakingManager::AddPlayerToQueue(*client);
 
-    Server::Send(senderAddr, serializer.buffer);
+    Server::Send(senderAddr, serializer.getBuffer());
 }

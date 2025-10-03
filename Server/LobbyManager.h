@@ -32,9 +32,9 @@ public:
     {
         Lobby* lobby = getLobby(lobbyId);
         if (!lobby) return false;
-        for (Client* c : lobby->clients)
+        for (Client* c : lobby->m_clients)
         {
-            if (!c || !c->isReady)
+            if (!c || !c->m_isReady)
                 return false;
         }
         return true;

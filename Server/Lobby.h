@@ -21,22 +21,9 @@ struct Lobby
     std::vector<Entity*> entities;
     int nextEntityId = 1;  
 
-    /**
-	* @brief Constructor for Lobby.
-	* @param lobbyId Unique identifier for the lobby.
-    */
-    
-    Lobby(int lobbyId) : id(lobbyId) {
-        clients.reserve(MAX_PLAYER);  // Prevents reallocations
-    }
+    Lobby(int lobbyId) : id(lobbyId) {}
 
-    /**
-    * @brief Add a client to the lobby.
-    * @param client Pointer to the client to be added.
-    */
-
-    void addClient(Client* client) 
-    {
+    void addClient(Client* client) {
         clients.push_back(client);
         std::cout << "Client " << client->ipAddress << " added to lobby: " << id << std::endl;
     }
@@ -47,23 +34,17 @@ struct Lobby
     **/
 
     void addEntity(Entity* entity) {
-        entity->id = nextEntityId++;  
-        entities.push_back(entity);
-        std::cout << "Entity with ID " << entity->id << " added to lobby: " << id << std::endl;
+        entity->m_id = m_nextEntityId++;  
+        m_entities.push_back(entity);
+        std::cout << "Entity with ID " << entity->m_id << " added to lobby: " << m_id << std::endl;
     }
 
-    /**
-	* @brief Remove an entity from the lobby by its ID.
-	* @param EntityId Unique identifier of the entity to be removed.
-    */
-
-    void removeEntity(uint32_t entityId) 
-    {
+    void removeEntity(uint32_t entityId) {
         for (auto it = entities.begin(); it != entities.end(); ) {
             if ((*it)->id == entityId) {
                 delete* it;              
-                it = entities.erase(it); 
-                std::cout << "Entity with ID " << entityId << " removed from lobby: " << id << std::endl;
+                it = m_entities.erase(it); 
+                std::cout << "Entity with ID " << entityId << " removed from lobby: " << m_id << std::endl;
             }
             else {
                 ++it;
@@ -76,22 +57,33 @@ struct Lobby
     /// </summary>
     /// <param name="client"></param>
 
-    void removeClient(Client* client) 
+    Client* getClientByIp(const std::string& ipAddress) const
     {
-        clients.erase(std::remove(clients.begin(), clients.end(), client), clients.end());
+        for (const auto& client : clients)
+        {
+            if (client->ipAddress == ipAddress)
+            {
+                return client;
+            }
+        }
+        return nullptr;
     }
 
-	// Getters
+    std::list<Client*> getClients() const
+    {
+        return clients;
+    }
 
-    const std::vector<Client*>& getClients() const { return clients; }
-
-    const std::vector<Entity*>& getEntities() const { return entities; }
+    std::list<Entity*> getEntities() const
+    {
+        return entities;
+    }
 
     Entity* getEntityById(uint32_t entityId) const
     {
-        for (const auto& entity : entities)
+        for (const auto& entity : m_entities)
         {
-            if (entity->id == entityId)
+            if (entity->m_id == entityId)
             {
                 return entity;
             }

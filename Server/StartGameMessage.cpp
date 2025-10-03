@@ -11,7 +11,7 @@ std::vector<uint8_t>& StartGameMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
 	serializer.writeByte(mapId);
-    return serializer.buffer;
+    return serializer.getBuffer();
 }
 
 void StartGameMessage::deserialize(Deserializer& deserializer)

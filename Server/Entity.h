@@ -19,19 +19,11 @@ struct Entity
     float posZ;
     EntityEnum type;
 
-    /**
-     * @brief Constructor for Entity.
-     * @param t Type of the entity.
-     * @param id Unique identifier for the entity (default is 0).
-     * @param x X position (default is 0).
-     * @param y Y position (default is 0).
-     * @param z Z position (default is 0).
-	 */ 
-    Entity(EntityEnum t, uint32_t id = 0, float x = 0, float y = 0, float z = 0)
-        : id(id), posX(x), posY(y), posZ(z), type(t)
+    Entity(EntityEnum type)
+        : type(type)
     {
     }
 
-    EntityEnum getType() const { return type; }
-    void setType(EntityEnum t) { type = t; }
+    EntityEnum getType() const { return m_type; }
+    void setType(EntityEnum t) { m_type = t; }
 };

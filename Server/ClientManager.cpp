@@ -18,9 +18,9 @@ void ClientManager::addClient(sockaddr_in clientAddr)
         return;
     }
 
-    Client* client = new Client(, );
-    client->address = clientAddr;
-    client->ipAddress = key;
+    Client* client = new Client();
+    client->m_address = clientAddr;
+    client->m_ipAddress = key;
 
     clients[key] = client;
 }
@@ -30,7 +30,7 @@ void ClientManager::removeClient(const sockaddr_in& clientAddr)
     std::string key = getClientKey(clientAddr);
     auto it = clients.find(key);
     if (it != clients.end()) {
-        delete it->second;        // ⚠️ très important : libérer la mémoire
+        delete it->second; 
         clients.erase(it);
     }
 }

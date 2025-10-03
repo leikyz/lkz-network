@@ -20,6 +20,8 @@ public:
     static void Start();
     static void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
 
+    static void SendToMultiple(const std::vector<Client*>& clients, const std::vector<uint8_t>& buffer, const sockaddr_in* excludedClientAddr = nullptr);
+
     static void SendToAllInLobby(Lobby*, const std::vector<uint8_t>& buffer);
 
     static void SendToAllInLobbyExcept(Lobby*, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);

@@ -18,7 +18,7 @@ void ClientManager::addClient(sockaddr_in clientAddr)
         return;
     }
 
-    Client* client = new Client();
+    Client* client = new Client(, );
     client->address = clientAddr;
     client->ipAddress = key;
 

@@ -60,7 +60,22 @@ void Server::Start()
     closesocket(serverSocket);
     WSACleanup();
 }
+void Server::SendToMultiple(const std::vector<Client*>& clients,
+    const std::vector<uint8_t>& buffer,
+    const sockaddr_in* excludedClientAddr = nullptr)
+{
+    for (const auto& client : clients)
+    {
+        if (excludedClientAddr &&
+            client->address.sin_addr.s_addr == excludedClientAddr->sin_addr.s_addr &&
+            client->address.sin_port == excludedClientAddr->sin_port)
+        {
+            continue; // Skip excluded client
+        }
 
+        Send(client->address, buffer);
+    }
+}
 void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
 {
     auto client = ClientManager::getClientByAddress(clientAddr);
@@ -95,41 +110,20 @@ void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
 
 void Server::SendToAllInLobby(Lobby* lobby, const std::vector<uint8_t>& buffer)
 {
-    for (const auto& client : lobby->getClients())
-    {
-        Send(client->address, buffer);
-    }
+    SendToMultiple(lobby->getClients(), buffer);
 }
 
 void Server::SendToAllInLobbyExcept(Lobby* lobby, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
 {
-    for (const auto& client : lobby->getClients())
-    {
-        if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||
-            client->address.sin_port != excludedClientAddr.sin_port)
-        {
-            Send(client->address, buffer);
-        }
-    }
+    SendToMultiple(lobby->getClients(), buffer, &excludedClientAddr);
 }
 
 void Server::SendToAllClients(const std::vector<uint8_t>& buffer)
 {
-    for (const auto& pair : ClientManager::getClients())
-    {
-        Send(pair->address, buffer);
-    }
+    SendToMultiple(ClientManager::getClients(), buffer);
 }
 
 void Server::SendToAllClientsExcept(const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer)
 {
-    for (const auto& pair : ClientManager::getClients())
-    {
-        const auto& client = pair;
-        if (client->address.sin_addr.s_addr != excludedClientAddr.sin_addr.s_addr ||
-            client->address.sin_port != excludedClientAddr.sin_port)
-        {
-            Send(client->address, buffer);
-        }
-    }
+    SendToMultiple(ClientManager::getClients(), buffer, &excludedClientAddr);
 }

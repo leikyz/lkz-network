@@ -12,6 +12,7 @@
 #include "LeaveLobbyMessage.h"
 #include "UpdateLobbyMessage.h"
 #include "StartGameMessage.h"
+#include "CreateEntityMessage.h"
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
@@ -24,6 +25,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<ChangeReadyStatusMessage>(6);
     EventManager::registerHandler<LeaveLobbyMessage>(7);
     EventManager::registerHandler<UpdateLobbyMessage>(8);
+    EventManager::registerHandler<CreateEntityMessage>(9);
   /*  EventManager::registerHandler<CreateEntityMessage>(4);
     EventManager::registerHandler<LobbyListMessage>(5);
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);

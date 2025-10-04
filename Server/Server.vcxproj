@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,51 +128,51 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ChangeReadyStatusMessage.cpp" />
-    <ClCompile Include="ClientManager.cpp" />
-    <ClCompile Include="CreateClientMessage.cpp" />
-    <ClCompile Include="CreateEntityMessage.cpp" />
-    <ClCompile Include="DisconnectClientMessage.cpp" />
-    <ClCompile Include="LeaveLobbyMessage.cpp" />
-    <ClCompile Include="MatchmakingManager.cpp" />
-    <ClCompile Include="ServerInformationsMessage.cpp" />
-    <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="LastEntityPositionMessage.cpp" />
-    <ClCompile Include="LobbyManager.cpp" />
-    <ClCompile Include="MoveEntityMessage.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="RotateEntityMessage.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="StartMatchmakingMessage.cpp" />
-    <ClCompile Include="StartGameMessage.cpp" />
-    <ClCompile Include="SynchronizeEntitiesMessage.cpp" />
-    <ClCompile Include="UpdateLobbyMessage.cpp" />
+    <ClCompile Include="src\Core\Server.cpp" />
+    <ClCompile Include="src\Manager\ClientManager.cpp" />
+    <ClCompile Include="src\Manager\EventManager.cpp" />
+    <ClCompile Include="src\Manager\LobbyManager.cpp" />
+    <ClCompile Include="src\Manager\MatchmakingManager.cpp" />
+    <ClCompile Include="src\Protocol\Message\Approach\CreateClientMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Approach\DisconnectClientMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Approach\ServerInformationsMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\CreateEntityMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\LastEntityPositionMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\MoveEntityMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\RotateEntityMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\SynchronizeEntitiesMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Matchmaking\LeaveLobbyMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Matchmaking\StartGameMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Matchmaking\StartMatchmakingMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Matchmaking\UpdateLobbyMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ChangeReadyStatusMessage.h" />
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="ClientManager.h" />
-    <ClInclude Include="CreateClientMessage.h" />
-    <ClInclude Include="CreateEntityMessage.h" />
-    <ClInclude Include="DisconnectClientMessage.h" />
-    <ClInclude Include="LeaveLobbyMessage.h" />
-    <ClInclude Include="MatchmakingManager.h" />
-    <ClInclude Include="ServerInformationsMessage.h" />
-    <ClInclude Include="Deserializer.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="EventManager.h" />
-    <ClInclude Include="LastEntityPositionMessage.h" />
-    <ClInclude Include="Lobby.h" />
-    <ClInclude Include="LobbyManager.h" />
-    <ClInclude Include="Message.h" />
-    <ClInclude Include="MoveEntityMessage.h" />
-    <ClInclude Include="RotateEntityMessage.h" />
-    <ClInclude Include="Serializer.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="StartGameMessage.h" />
-    <ClInclude Include="StartMatchmakingMessage.h" />
-    <ClInclude Include="SynchronizeEntitiesMessage.h" />
-    <ClInclude Include="UpdateLobbyMessage.h" />
+    <ClInclude Include="include\Core\Server.h" />
+    <ClInclude Include="include\Manager\ClientManager.h" />
+    <ClInclude Include="include\Manager\EventManager.h" />
+    <ClInclude Include="include\Manager\LobbyManager.h" />
+    <ClInclude Include="include\Manager\MatchmakingManager.h" />
+    <ClInclude Include="include\NetworkObject\Client.h" />
+    <ClInclude Include="include\NetworkObject\Entity.h" />
+    <ClInclude Include="include\NetworkObject\Lobby.h" />
+    <ClInclude Include="include\Protocol\Codec\Deserializer.h" />
+    <ClInclude Include="include\Protocol\Codec\Serializer.h" />
+    <ClInclude Include="include\Protocol\Message\Approach\CreateClientMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Approach\DisconnectClientMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Approach\ServerInformationsMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Entity\CreateEntityMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Entity\LastEntityPositionMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Entity\MoveEntityMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Entity\RotateEntityMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Entity\SynchronizeEntitiesMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Matchmaking\LeaveLobbyMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Matchmaking\StartGameMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Matchmaking\StartMatchmakingMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Matchmaking\UpdateLobbyMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Message.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

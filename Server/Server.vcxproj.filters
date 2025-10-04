@@ -69,133 +69,133 @@
     <ClCompile Include="Program.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Fichiers sources\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientManager.cpp">
-      <Filter>Fichiers sources\Network\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="CreateClientMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
-    </ClCompile>
-    <ClCompile Include="EventManager.cpp">
-      <Filter>Fichiers sources\Protocol\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyManager.cpp">
-      <Filter>Fichiers sources\Network\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="ServerInformationsMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
-    </ClCompile>
-    <ClCompile Include="CreateEntityMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="SynchronizeEntitiesMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveEntityMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="RotateEntityMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="DisconnectClientMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Approach</Filter>
-    </ClCompile>
-    <ClCompile Include="LastEntityPositionMessage.cpp">
+    <ClCompile Include="src\Core\Server.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="StartMatchmakingMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    <ClCompile Include="src\Protocol\Message\Approach\CreateClientMessage.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="MatchmakingManager.cpp">
-      <Filter>Fichiers sources\Protocol\Manager</Filter>
+    <ClCompile Include="src\Protocol\Message\Approach\DisconnectClientMessage.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="ChangeReadyStatusMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    <ClCompile Include="src\Protocol\Message\Approach\ServerInformationsMessage.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="LeaveLobbyMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    <ClCompile Include="src\Protocol\Message\Entity\CreateEntityMessage.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateLobbyMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    <ClCompile Include="src\Protocol\Message\Entity\LastEntityPositionMessage.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="StartGameMessage.cpp">
-      <Filter>Fichiers sources\Protocol\Messages\Matchmaking</Filter>
+    <ClCompile Include="src\Protocol\Message\Entity\MoveEntityMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Entity\RotateEntityMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Entity\SynchronizeEntitiesMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Matchmaking\LeaveLobbyMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Matchmaking\StartGameMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Matchmaking\StartMatchmakingMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Matchmaking\UpdateLobbyMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Manager\ClientManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Manager\EventManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Manager\LobbyManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Manager\MatchmakingManager.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Server.h">
-      <Filter>Fichiers d%27en-tête\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientManager.h">
-      <Filter>Fichiers d%27en-tête\Network\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="EventManager.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Message.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Fichiers d%27en-tête\Network\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="Lobby.h">
-      <Filter>Fichiers d%27en-tête\Network\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyManager.h">
-      <Filter>Fichiers d%27en-tête\Network\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Serializer.h">
-      <Filter>Fichiers d%27en-tête\Protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="Deserializer.h">
-      <Filter>Fichiers d%27en-tête\Protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Fichiers d%27en-tête\Network\Session</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateClientMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
-    </ClInclude>
-    <ClInclude Include="ServerInformationsMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateEntityMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="SynchronizeEntitiesMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveEntityMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="RotateEntityMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="DisconnectClientMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Approach</Filter>
-    </ClInclude>
-    <ClInclude Include="LastEntityPositionMessage.h">
+    <ClInclude Include="include\Protocol\Message\Message.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="StartMatchmakingMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    <ClInclude Include="include\Protocol\Message\Matchmaking\UpdateLobbyMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="MatchmakingManager.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Manager</Filter>
+    <ClInclude Include="include\Protocol\Message\Matchmaking\StartMatchmakingMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="ChangeReadyStatusMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    <ClInclude Include="include\Protocol\Message\Matchmaking\StartGameMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="LeaveLobbyMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    <ClInclude Include="include\Protocol\Message\Matchmaking\LeaveLobbyMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateLobbyMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    <ClInclude Include="include\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="StartGameMessage.h">
-      <Filter>Fichiers d%27en-tête\Protocol\Messages\Matchmaking</Filter>
+    <ClInclude Include="include\Protocol\Message\Approach\ServerInformationsMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Approach\DisconnectClientMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Approach\CreateClientMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Codec\Serializer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Codec\Deserializer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkObject\Lobby.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkObject\Entity.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkObject\Client.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Manager\LobbyManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Manager\MatchmakingManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Manager\EventManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Manager\ClientManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Core\Server.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Entity\CreateEntityMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Entity\LastEntityPositionMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Entity\MoveEntityMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Entity\RotateEntityMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Entity\SynchronizeEntitiesMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

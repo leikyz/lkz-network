@@ -1,0 +1,35 @@
+﻿#ifndef SERVER_H
+#define SERVER_H
+
+#include <vector>
+#include <winsock2.h> 
+#include "Manager/ClientManager.h"
+#include "Protocol/Message/Message.h"
+#include "Manager/LobbyManager.h" 
+
+#pragma comment(lib, "Ws2_32.lib")
+
+#define PORT 5555
+#define BUFFER_SIZE 1024
+
+class Server
+{
+private:
+    static SOCKET serverSocket;
+
+public:
+    static void Start();
+    static void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
+
+    static void SendToMultiple(const std::vector<Client*>& clients, const std::vector<uint8_t>& buffer, const sockaddr_in* excludedClientAddr = nullptr);
+
+    static void SendToAllInLobby(Lobby*, const std::vector<uint8_t>& buffer);
+
+    static void SendToAllInLobbyExcept(Lobby*, const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
+
+    static void SendToAllClients(const std::vector<uint8_t>& buffer);
+
+    static void SendToAllClientsExcept(const sockaddr_in& excludedClientAddr, const std::vector<uint8_t>& buffer);
+};
+
+#endif // SERVER_H

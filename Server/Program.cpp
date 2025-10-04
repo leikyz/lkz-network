@@ -1,6 +1,6 @@
 ﻿#include <iostream>
-#include "Server.h"
-#include "MatchmakingManager.h"
+#include "Core/Server.h"
+#include "Manager/MatchmakingManager.h"
 #include <thread>
 
 void MatchmakingLoop()

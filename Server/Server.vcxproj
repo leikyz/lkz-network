@@ -129,9 +129,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\LKZ\Core\Server\INetworkInterface.h" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="src\Core\Logger.cpp" />
+    <ClCompile Include="src\Core\Engine.cpp" />
+    <ClCompile Include="src\Core\Log\Logger.cpp" />
     <ClCompile Include="src\Core\Server.cpp" />
+    <ClCompile Include="src\Core\Server\LinuxServer.cpp" />
+    <ClCompile Include="src\Core\Server\WindowsServer.cpp" />
     <ClCompile Include="src\Core\Threading\ThreadManager.cpp" />
     <ClCompile Include="src\Core\Threading\ThreadTaskPool.cpp" />
     <ClCompile Include="src\Manager\ClientManager.cpp" />
@@ -154,8 +158,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Server.h" />
-    <ClInclude Include="include\LKZ\Core\Logger.h" />
+    <ClInclude Include="include\LKZ\Core\Engine.h" />
+    <ClInclude Include="include\LKZ\Core\Log\Logger.h" />
+    <ClInclude Include="include\LKZ\Core\Server\LinuxServer.h" />
     <ClInclude Include="include\LKZ\Core\Server.h" />
+    <ClInclude Include="include\LKZ\Core\Server\WindowsServer.h" />
     <ClInclude Include="include\LKZ\Core\Threading\ThreadManager.h" />
     <ClInclude Include="include\LKZ\Core\Threading\ThreadTaskPool.h" />
     <ClInclude Include="include\LKZ\Manager\ClientManager.h" />

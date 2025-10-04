@@ -1,7 +1,7 @@
 ﻿#include "LKZ/Core/Server.h"
 #include "LKZ/Manager/EventManager.h"
 #include <LKZ/Manager/MatchmakingManager.h>
-#include <LKZ/Core/Logger.h>
+#include <LKZ/Core/Log/Logger.h>
 SOCKET Server::serverSocket = INVALID_SOCKET;
 
 void Server::Initialize()

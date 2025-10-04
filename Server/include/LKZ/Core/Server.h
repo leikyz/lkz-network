@@ -7,7 +7,7 @@
 #include "LKZ/Protocol/Message/Message.h"
 #include "LKZ/Manager/LobbyManager.h" 
 #include "LkZ/Core/Threading/ThreadManager.h"
-#include <LKZ/Core/Logger.h>
+#include <LKZ/Core/Log/Logger.h>
 #pragma comment(lib, "Ws2_32.lib")
 
 #define PORT 5555

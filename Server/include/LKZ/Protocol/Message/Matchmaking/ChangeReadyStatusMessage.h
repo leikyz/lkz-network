@@ -5,14 +5,14 @@
 
 struct ChangeReadyStatusMessage : public Message
 {
-    static constexpr int ID = 6;
+    static constexpr uint8_t ID = 6;
 
     ChangeReadyStatusMessage();
 
     bool isReady;
-	byte positionInLobby;
+    uint8_t positionInLobby;
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

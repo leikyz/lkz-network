@@ -5,11 +5,11 @@
 
 struct CreateClientMessage : public Message
 {
-    static constexpr int ID = 1;
+    static constexpr uint8_t ID = 1;
 
     CreateClientMessage();
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

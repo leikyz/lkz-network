@@ -5,14 +5,14 @@
 
 struct ServerInformationsMessage : public Message
 {
-    static constexpr int ID = 2;
+    static constexpr uint8_t ID = 2;
 
     ServerInformationsMessage();
 
     bool status;
     int playersCount;
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

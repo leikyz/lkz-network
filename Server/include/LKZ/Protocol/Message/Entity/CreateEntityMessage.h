@@ -5,7 +5,7 @@
 
 struct CreateEntityMessage : public Message
 {
-    static constexpr int ID = 9;
+    static constexpr uint8_t ID = 9;
 
     CreateEntityMessage();
 
@@ -20,7 +20,7 @@ struct CreateEntityMessage : public Message
 
     bool controlled;
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

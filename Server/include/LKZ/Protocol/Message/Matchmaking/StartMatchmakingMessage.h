@@ -5,13 +5,13 @@
 
 struct StartMatchmakingMessage : public Message
 {
-    static constexpr int ID = 4;
+    static constexpr uint8_t ID = 4;
 
-    byte mapId;
+    uint8_t mapId;
 
     StartMatchmakingMessage();
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

@@ -5,7 +5,7 @@
 
 DisconnectClientMessage::DisconnectClientMessage() {}
 
-byte DisconnectClientMessage::getId() const
+uint8_t DisconnectClientMessage::getId() const
 {
     return ID;
 }
@@ -39,7 +39,7 @@ void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
         if (lobby)
         {
             // Retirer le client du lobby
-            byte removedPosition = currentClient->positionInLobby;
+            uint8_t removedPosition = currentClient->positionInLobby;
             lobby->removeClient(currentClient);
             currentClient->lobbyId = -1;
 
@@ -49,7 +49,7 @@ void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
             }
             else
             {
-                byte pos = 1;
+                uint8_t pos = 1;
                 for (Client* c : lobby->clients)
                 {
                     if (!c) continue;

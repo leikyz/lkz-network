@@ -5,13 +5,13 @@
 
 struct LeaveLobbyMessage : public Message
 {
-    static constexpr int ID = 7;
+    static constexpr uint8_t ID = 7;
 
     LeaveLobbyMessage();
 
-	byte positionInLobby;
+    uint8_t positionInLobby;
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

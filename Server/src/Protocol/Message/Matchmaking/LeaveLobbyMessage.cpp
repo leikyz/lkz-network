@@ -4,7 +4,7 @@
 
 LeaveLobbyMessage::LeaveLobbyMessage() {}
 
-byte LeaveLobbyMessage::getId() const
+uint8_t LeaveLobbyMessage::getId() const
 {
     return ID;
 }
@@ -25,7 +25,7 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
 {
     Client* currentClient = ClientManager::getClientByAddress(senderAddr);
     Lobby* lobby = LobbyManager::getLobby(currentClient->lobbyId);
-    byte removedPosition = currentClient->positionInLobby;
+    uint8_t removedPosition = currentClient->positionInLobby;
     if (lobby)
     {
         for (Client* c : lobby->clients)
@@ -53,7 +53,7 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
         }
         else
         {
-            std::vector<byte> allPositions;
+            std::vector<uint8_t> allPositions;
 
             for (Client* c : lobby->clients)
             {

@@ -11,7 +11,7 @@
 class LobbyManager
 {
 public:
-    static void createLobby(byte mapId);
+    static void createLobby(uint8_t mapId);
     static void addClientToLobby(int lobbyId, Client* client);
     static Lobby* getLobby(int lobbyId);
     static void removeLobby(int lobbyId);
@@ -23,7 +23,7 @@ public:
 
     static int getLobbyCount();
 
-    static Lobby* getAvailableLobby(byte mapId);
+    static Lobby* getAvailableLobby(uint8_t mapId);
 
     static std::vector<Lobby*> getAllLobbies();
 

@@ -2,7 +2,7 @@
 #include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
 ChangeReadyStatusMessage::ChangeReadyStatusMessage() {}
 
-byte ChangeReadyStatusMessage::getId() const
+uint8_t ChangeReadyStatusMessage::getId() const
 {
     return ID;
 }

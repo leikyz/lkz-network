@@ -2,7 +2,7 @@
 
 ServerInformationsMessage::ServerInformationsMessage() : status(false), playersCount(0) {}
 
-byte ServerInformationsMessage::getId() const
+uint8_t ServerInformationsMessage::getId() const
 {
     return ID;
 }

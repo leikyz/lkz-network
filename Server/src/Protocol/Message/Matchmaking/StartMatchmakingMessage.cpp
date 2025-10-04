@@ -3,7 +3,7 @@
 
 StartMatchmakingMessage::StartMatchmakingMessage() {}
 
-byte StartMatchmakingMessage::getId() const
+uint8_t StartMatchmakingMessage::getId() const
 {
     return ID;
 }

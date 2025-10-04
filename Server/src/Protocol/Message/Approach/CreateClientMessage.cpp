@@ -2,7 +2,7 @@
 
 CreateClientMessage::CreateClientMessage() {}
 
-byte CreateClientMessage::getId() const
+uint8_t CreateClientMessage::getId() const
 {
     return ID;
 }

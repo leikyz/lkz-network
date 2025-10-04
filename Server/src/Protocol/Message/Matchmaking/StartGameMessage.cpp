@@ -2,7 +2,7 @@
 
 StartGameMessage::StartGameMessage() {}
 
-byte StartGameMessage::getId() const
+uint8_t StartGameMessage::getId() const
 {
     return ID;
 }

@@ -10,7 +10,7 @@ std::vector<uint8_t>& UpdateLobbyMessage::serialize(Serializer& serializer) cons
     serializer.writeByte(updatedLobbyPos);
     serializer.writeByte(playersCount);
 
-    for (byte index : playersInLobby)
+    for (uint8_t index : playersInLobby)
     {
         serializer.writeByte(index);
     }

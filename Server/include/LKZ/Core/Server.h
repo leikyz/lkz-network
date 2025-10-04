@@ -7,7 +7,7 @@
 #include "LKZ/Protocol/Message/Message.h"
 #include "LKZ/Manager/LobbyManager.h" 
 #include "LkZ/Core/Threading/ThreadManager.h"
-
+#include <LKZ/Core/Logger.h>
 #pragma comment(lib, "Ws2_32.lib")
 
 #define PORT 5555
@@ -23,7 +23,7 @@ public:
 
     static void Initialize();
 
-    static void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
+    static void Send(const sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
 
     static void SendToMultiple(const std::vector<Client*>& clients, const std::vector<uint8_t>& buffer, const sockaddr_in* excludedClientAddr = nullptr);
 

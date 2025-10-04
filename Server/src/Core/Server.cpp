@@ -1,16 +1,34 @@
 ﻿#include "LKZ/Core/Server.h"
 #include "LKZ/Manager/EventManager.h"
 #include <LKZ/Manager/MatchmakingManager.h>
+#include <LKZ/Core/Logger.h>
 SOCKET Server::serverSocket = INVALID_SOCKET;
 
 void Server::Initialize()
 {
-  //  threadManager.AddThread([]() {
-  //      while (true) {
-  //          MatchmakingManager::Update();
-  //          std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Adjust the sleep duration as needed
-  //      }
-		//});
+    std::cout << "\033[34m";
+    std::cout << R"(
+                                                       _    _  __ ____           
+                                                      | |  | |/ /|_  /           
+                                                      | |__| ' <  / /            
+                                           _  _ ___ __|____|_|\_\/___|  ___ _  __
+                                          | \| | __|_   _\ \    / / _ \| _ \ |/ /
+                                          | .` | _|  | |  \ \/\/ / (_) |   / ' < 
+                                          |_|\_|___| |_|   \_/\_/ \___/|_|_\_|\_\
+                                         
+                                         
+                                         
+    )" << std::endl;
+    std::cout << "\033[0m";
+
+    ThreadManager::CreatePool("logger", 1);
+    Logger::Log("Server initialized.", LogType::Info);
+    ThreadManager::CreatePool("matchmaking", 1);
+    Logger::Log("Waiting for clients...", LogType::Info);
+
+    /*ThreadManager::EnqueueTask("matchmaking", []() {
+        MatchmakingManager::ProcessMatchmaking();
+        });*/
 }
 
 void Server::Start()
@@ -46,7 +64,6 @@ void Server::Start()
         return;
     }
 
-    printf("\033[31m[INITIALIZATION] UDP Server listening on port %d\033[0m\n", PORT);
 
 
     sockaddr_in clientAddr;
@@ -85,7 +102,7 @@ void Server::SendToMultiple(const std::vector<Client*>& clients, const std::vect
         Send(client->address, buffer);
     }
 }
-void Server::Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
+void Server::Send(const sockaddr_in clientAddr, const std::vector<uint8_t>& buffer)
 {
     auto client = ClientManager::getClientByAddress(clientAddr);
     if (!client)

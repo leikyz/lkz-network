@@ -5,7 +5,7 @@
 
 struct LastEntityPositionMessage : public Message
 {
-    static constexpr int ID = 9;
+    static constexpr uint8_t ID = 9;
 
     LastEntityPositionMessage();
 
@@ -17,7 +17,7 @@ struct LastEntityPositionMessage : public Message
     float posY;
     float posZ;
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

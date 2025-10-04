@@ -9,7 +9,7 @@ LastEntityPositionMessage::LastEntityPositionMessage(int entityId, float posX, f
 {
 }
 
-byte LastEntityPositionMessage::getId() const
+uint8_t LastEntityPositionMessage::getId() const
 {
     return ID;
 }

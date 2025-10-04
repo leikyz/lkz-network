@@ -23,7 +23,7 @@ struct Lobby
     * @param lobbyId Unique identifier for the lobby.
     */
 
-    Lobby(int lobbyId,uint8_t mapId) : id(lobbyId) {
+    Lobby(int lobbyId,uint8_t mapId) : id(lobbyId), mapId(mapId) {
         clients.reserve(MAX_PLAYER);  // Prevents reallocations
     }
 

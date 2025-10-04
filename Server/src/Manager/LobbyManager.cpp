@@ -9,7 +9,7 @@ std::mutex LobbyManager::lobbiesMutex;
  * @param mapId The ID of the map for the new lobby.
  */
 
-void LobbyManager::createLobby(byte mapId)
+void LobbyManager::createLobby(uint8_t mapId)
 {
     int lobbyId = nextLobbyId.fetch_add(1);
     auto lobby = new Lobby(lobbyId, mapId);
@@ -73,7 +73,7 @@ bool LobbyManager::IsEveryoneReadyInLobby(int lobbyId)
 
 Lobby* LobbyManager::getLobby(int lobbyId)
 {
-    std::lock_guard<std::mutex> lock(lobbiesMutex);
+    //std::lock_guard<std::mutex> lock(lobbiesMutex);
     auto it = lobbies.find(lobbyId);
     return (it != lobbies.end()) ? it->second : nullptr;
 }
@@ -84,7 +84,7 @@ int LobbyManager::getLobbyCount()
     return static_cast<int>(lobbies.size());
 }
 
-Lobby* LobbyManager::getAvailableLobby(byte mapId)
+Lobby* LobbyManager::getAvailableLobby(uint8_t mapId)
 {
     std::lock_guard<std::mutex> lock(lobbiesMutex);
     for (auto& pair : lobbies)

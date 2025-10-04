@@ -6,15 +6,15 @@
 class UpdateLobbyMessage : public Message
 {
 public:
-    static constexpr byte ID = 8; 
+    static constexpr uint8_t ID = 8;
 
-    byte updatedLobbyPos;
-	byte playersCount;
-    std::vector<byte> playersInLobby; 
+    uint8_t updatedLobbyPos;
+    uint8_t playersCount;
+    std::vector<uint8_t> playersInLobby;
 
     UpdateLobbyMessage();
 
-    byte getId() const override { return ID; }
+    uint8_t getId() const override { return ID; }
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

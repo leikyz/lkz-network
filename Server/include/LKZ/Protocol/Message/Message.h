@@ -1,11 +1,11 @@
 #pragma once
 
 #include <winsock2.h>
-#include "Protocol/Codec/Serializer.h"
-#include "Protocol/Codec/Deserializer.h"
-#include "Core/Server.h"
-#include "Manager/ClientManager.h"
-#include "Manager/LobbyManager.h"
+#include "LKZ/Protocol/Codec/Serializer.h"
+#include "LKZ/Protocol/Codec/Deserializer.h"
+#include "LKZ/Core/Server.h"
+#include "LKZ/Manager/ClientManager.h"
+#include "LKZ/Manager/LobbyManager.h"
 
 struct Message
 {

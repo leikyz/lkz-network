@@ -1,4 +1,4 @@
-#include "Protocol/Message/Approach/ServerInformationsMessage.h"
+#include "LKZ/Protocol/Message/Approach/ServerInformationsMessage.h"
 
 ServerInformationsMessage::ServerInformationsMessage() : status(false), playersCount(0) {}
 

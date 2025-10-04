@@ -1,6 +1,17 @@
-﻿#include "Core/Server.h"
-#include "Manager/EventManager.h"
+﻿#include "LKZ/Core/Server.h"
+#include "LKZ/Manager/EventManager.h"
+#include <LKZ/Manager/MatchmakingManager.h>
 SOCKET Server::serverSocket = INVALID_SOCKET;
+
+void Server::Initialize()
+{
+  //  threadManager.AddThread([]() {
+  //      while (true) {
+  //          MatchmakingManager::Update();
+  //          std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Adjust the sleep duration as needed
+  //      }
+		//});
+}
 
 void Server::Start()
 {

@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +130,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="src\Core\Logger.cpp" />
     <ClCompile Include="src\Core\Server.cpp" />
+    <ClCompile Include="src\Core\Threading\ThreadManager.cpp" />
+    <ClCompile Include="src\Core\Threading\ThreadTaskPool.cpp" />
     <ClCompile Include="src\Manager\ClientManager.cpp" />
     <ClCompile Include="src\Manager\EventManager.cpp" />
     <ClCompile Include="src\Manager\LobbyManager.cpp" />
@@ -150,6 +154,33 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Server.h" />
+    <ClInclude Include="include\LKZ\Core\Logger.h" />
+    <ClInclude Include="include\LKZ\Core\Server.h" />
+    <ClInclude Include="include\LKZ\Core\Threading\ThreadManager.h" />
+    <ClInclude Include="include\LKZ\Core\Threading\ThreadTaskPool.h" />
+    <ClInclude Include="include\LKZ\Manager\ClientManager.h" />
+    <ClInclude Include="include\LKZ\Manager\EventManager.h" />
+    <ClInclude Include="include\LKZ\Manager\LobbyManager.h" />
+    <ClInclude Include="include\LKZ\Manager\MatchmakingManager.h" />
+    <ClInclude Include="include\LKZ\NetworkObject\Client.h" />
+    <ClInclude Include="include\LKZ\NetworkObject\Entity.h" />
+    <ClInclude Include="include\LKZ\NetworkObject\Lobby.h" />
+    <ClInclude Include="include\LKZ\Protocol\Codec\Deserializer.h" />
+    <ClInclude Include="include\LKZ\Protocol\Codec\Serializer.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Approach\CreateClientMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Approach\DisconnectClientMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Approach\ServerInformationsMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\CreateEntityMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\LastEntityPositionMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\MoveEntityMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\RotateEntityMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\SynchronizeEntitiesMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\LeaveLobbyMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\StartGameMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\StartMatchmakingMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\UpdateLobbyMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Message.h" />
     <ClInclude Include="include\Manager\ClientManager.h" />
     <ClInclude Include="include\Manager\EventManager.h" />
     <ClInclude Include="include\Manager\LobbyManager.h" />

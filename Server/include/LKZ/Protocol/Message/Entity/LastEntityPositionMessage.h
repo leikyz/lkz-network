@@ -1,7 +1,7 @@
 #ifndef LAST_ENTITY_POSITION_MESSAGE_H
 #define LAST_ENTITY_POSITION_MESSAGE_H
 
-#include "Protocol/Message/Message.h"
+#include "LKZ/Protocol/Message/Message.h"
 
 struct LastEntityPositionMessage : public Message
 {

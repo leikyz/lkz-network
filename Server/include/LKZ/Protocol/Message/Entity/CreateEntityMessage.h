@@ -1,7 +1,7 @@
 #ifndef CREATE_ENTITY_MESSAGE_H
 #define CREATE_ENTITY_MESSAGE_H
 
-#include "Protocol/Message/Message.h"
+#include "LKZ/Protocol/Message/Message.h"
 
 struct CreateEntityMessage : public Message
 {

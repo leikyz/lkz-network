@@ -1,4 +1,4 @@
-#include "Protocol/Message/Entity/LastEntityPositionMessage.h"
+#include "LKZ/Protocol/Message/Entity/LastEntityPositionMessage.h"
 #include <cstdlib> 
 #include <ctime>   
 

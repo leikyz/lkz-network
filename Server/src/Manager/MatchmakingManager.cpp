@@ -1,9 +1,9 @@
-#include "Manager/MatchmakingManager.h"
-#include "Core/Server.h"
-#include "Protocol/Codec/Serializer.h"
-#include "Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
-#include "Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
-#include "NetworkObject/Client.h"
+#include "LKZ/Manager/MatchmakingManager.h"
+#include "LKZ/Core/Server.h"
+#include "LKZ/Protocol/Codec/Serializer.h"
+#include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
+#include "LKZ/NetworkObject/Client.h"
 std::vector<Client> MatchmakingManager::waitingPlayers;
 
 void MatchmakingManager::AddPlayerToQueue(Client& playerAddr)

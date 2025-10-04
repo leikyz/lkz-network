@@ -1,7 +1,7 @@
 #ifndef SERVER_INFORMATIONS_MESSAGES_H
 #define SERVER_INFORMATIONS_MESSAGES_H
 
-#include "Protocol/Message/Message.h"
+#include "LKZ/Protocol/Message/Message.h"
 
 struct ServerInformationsMessage : public Message
 {

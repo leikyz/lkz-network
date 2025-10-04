@@ -1,6 +1,6 @@
-#include "Protocol/Message/Approach/DisconnectClientMessage.h"
-#include "Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
-#include "Manager/MatchmakingManager.h"
+#include "LKZ/Protocol/Message/Approach/DisconnectClientMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
+#include "LKZ/Manager/MatchmakingManager.h"
 
 
 DisconnectClientMessage::DisconnectClientMessage() {}

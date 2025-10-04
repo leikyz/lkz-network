@@ -1,7 +1,7 @@
 #ifndef CHANGE_READY_STATUS_MESSAGE_H
 #define CHANGE_READY_STATUS_MESSAGE_H
 
-#include "Protocol/Message/Message.h"
+#include "LKZ/Protocol/Message/Message.h"
 
 struct ChangeReadyStatusMessage : public Message
 {

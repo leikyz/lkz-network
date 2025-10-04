@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <winsock2.h> 
-#include "Manager/ClientManager.h"
-#include "Protocol/Message/Message.h"
-#include "Manager/LobbyManager.h" 
+#include "LKZ/Manager/ClientManager.h"
+#include "LKZ/Protocol/Message/Message.h"
+#include "LKZ/Manager/LobbyManager.h" 
+#include "LkZ/Core/Threading/ThreadManager.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -16,9 +17,12 @@ class Server
 {
 private:
     static SOCKET serverSocket;
-
+	static ThreadManager threadManager;
 public:
     static void Start();
+
+    static void Initialize();
+
     static void Send(sockaddr_in clientAddr, const std::vector<uint8_t>& buffer);
 
     static void SendToMultiple(const std::vector<Client*>& clients, const std::vector<uint8_t>& buffer, const sockaddr_in* excludedClientAddr = nullptr);

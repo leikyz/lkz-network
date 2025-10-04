@@ -1,19 +1,19 @@
 ﻿
 #include <iostream>
-#include "Manager/EventManager.h"
-#include "Protocol/Message/Approach/CreateClientMessage.h"
-#include "Protocol/Message/Approach/ServerInformationsMessage.h"
-#include "Protocol/Message/Approach/DisconnectClientMessage.h"
-#include "Protocol/Message/Entity/CreateEntityMessage.h"
-#include "Protocol/Message/Entity/SynchronizeEntitiesMessage.h"
-#include "Protocol/Message/Entity/MoveEntityMessage.h"
-#include "Protocol/Message/Entity/RotateEntityMessage.h"
-#include "Protocol/Message/Entity/CreateEntityMessage.h"
-#include "Protocol/Message/Matchmaking/StartMatchmakingMessage.h"
-#include "Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
-#include "Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
-#include "Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
-#include "Protocol/Message/Matchmaking/StartGameMessage.h"
+#include "LKZ/Manager/EventManager.h"
+#include "LKZ/Protocol/Message/Approach/CreateClientMessage.h"
+#include "LKZ/Protocol/Message/Approach/ServerInformationsMessage.h"
+#include "LKZ/Protocol/Message/Approach/DisconnectClientMessage.h"
+#include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/SynchronizeEntitiesMessage.h"
+#include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/RotateEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/StartMatchmakingMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 

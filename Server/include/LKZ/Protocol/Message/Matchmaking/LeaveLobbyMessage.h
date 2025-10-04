@@ -1,7 +1,7 @@
 #ifndef LEAVE_LOBBY_MESSAGE_H
 #define LEAVE_LOBBY_MESSAGE_H
 
-#include "Protocol/Message/Message.h"
+#include "LKZ/Protocol/Message/Message.h"
 
 struct LeaveLobbyMessage : public Message
 {

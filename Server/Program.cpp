@@ -1,7 +1,8 @@
 ﻿#include <iostream>
-#include "Core/Server.h"
-#include "Manager/MatchmakingManager.h"
+#include "LKZ/Core/Server.h"
+#include "LKZ/Manager/MatchmakingManager.h"
 #include <thread>
+#include <LKZ/Core/Logger.h>
 
 void MatchmakingLoop()
 {
@@ -15,6 +16,8 @@ void MatchmakingLoop()
 
 int main()
 {
+    
+
     std::cout << "\033[34m";
     std::cout << R"(
                                                        _    _  __ ____           
@@ -28,6 +31,12 @@ int main()
                                          
                                          
     )" << std::endl;
+
+    int score = 42;
+    ThreadManager::CreatePool("logger", 1);
+    Logger::Log("Server initialized.", LogType::Info);
+    ThreadManager::CreatePool("logger", 1);
+    Logger::Log("Waiting for clients...", LogType::Debug);
 
     std::cout << "\033[0m";
 

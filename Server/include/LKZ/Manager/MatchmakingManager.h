@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <WinSock2.h>
-#include "NetworkObject/Client.h"
+#include "LKZ/NetworkObject/Client.h"
 
 class MatchmakingManager
 {

@@ -1,4 +1,4 @@
-#include "Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
 
 UpdateLobbyMessage::UpdateLobbyMessage()  
 {

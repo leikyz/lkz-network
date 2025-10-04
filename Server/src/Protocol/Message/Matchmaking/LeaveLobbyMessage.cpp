@@ -1,6 +1,6 @@
-#include "Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
-#include "Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
-#include "Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
 
 LeaveLobbyMessage::LeaveLobbyMessage() {}
 

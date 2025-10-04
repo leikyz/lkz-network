@@ -1,5 +1,5 @@
-#include "Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
-#include "Protocol/Message/Matchmaking/StartGameMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
+#include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
 ChangeReadyStatusMessage::ChangeReadyStatusMessage() {}
 
 byte ChangeReadyStatusMessage::getId() const

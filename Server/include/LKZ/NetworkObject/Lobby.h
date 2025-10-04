@@ -4,7 +4,7 @@
 #include <iostream>
 #include <list>
 #include "Entity.h" 
-#include "Manager/ClientManager.h"  
+#include "LKZ/Manager/ClientManager.h"  
 
 /**
 * @brief Represents a game lobby where clients and entities are managed.

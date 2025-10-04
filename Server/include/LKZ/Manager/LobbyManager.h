@@ -6,7 +6,7 @@
 #include <atomic>
 #include <mutex>
 #include <string>
-#include "NetworkObject/Lobby.h"
+#include "LKZ/NetworkObject/Lobby.h"
 
 class LobbyManager
 {

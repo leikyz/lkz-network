@@ -28,5 +28,5 @@ void StartMatchmakingMessage::process(const sockaddr_in& senderAddr)
 	client->matchmakingMapIdRequest = mapId;
 	MatchmakingManager::AddPlayerToQueue(*client);
 
-    Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer());
+    Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
 }

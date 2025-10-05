@@ -22,10 +22,12 @@ void CreateClientMessage::process(const sockaddr_in& senderAddr)
 {
     ClientManager::addClient(senderAddr);
 
+	Client* client = ClientManager::getClientByAddress(senderAddr);
+
     Serializer serializer;
     serialize(serializer);
 
-   /* Server::Send(senderAddr, serializer.getBuffer());*/
 
-	Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer());
+        Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
+
 }

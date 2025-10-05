@@ -56,7 +56,6 @@ void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_i
         return;
     }
 
-  /*  std::cout << "Processing message with ID: " << static_cast<int>(id) << std::endl;*/
 
     buffer.erase(buffer.begin()); 
 
@@ -66,16 +65,18 @@ void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_i
 template<typename T>
 void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
 {
+   
+
     T msg;
     Deserializer deserializer(buffer);
-    msg.deserialize(deserializer);
-    msg.process(senderAddr);
+  
 
     std::string name = typeid(msg).name();
     name = name.substr(7); 
 
-    // added +1 because we removed 1 byte before handle event (ID)
-
+    // added +1 because we removed 1 byte before handled event (ID)
     Logger::Log(std::format("{0} ({1} bytes)", name, buffer.size() + 1), LogType::Received);
 
+    msg.deserialize(deserializer);
+    msg.process(senderAddr);
 }

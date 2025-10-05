@@ -1,7 +1,8 @@
-#pragma once
+#ifndef WINDOWS_SERVER_H
+#define WINDOWS_SERVER_H
+
 #include "INetworkInterface.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
-
 #include <vector>
 #include <cstdint>
 #include <memory>
@@ -11,7 +12,11 @@
 #include <mswsock.h>
 #pragma comment(lib, "ws2_32.lib")
 
-struct IoData {
+ /**
+ * @brief Structure to hold data for each I/O operation.
+ */
+struct IoData 
+{
     OVERLAPPED overlapped{};
     WSABUF wsabuf{};
     sockaddr_in clientAddr{};
@@ -24,18 +29,35 @@ struct IoData {
     }
 };
 
-class WindowsServer : public INetworkInterface {
+ /**
+ * @brief Windows-specific server implementation using IOCP for high-performance networking.
+ */
+class WindowsServer : public INetworkInterface 
+{
 public:
     explicit WindowsServer(int port, size_t bufferSize = 1024);
     ~WindowsServer() override;
 
     void Start() override;
-    void Send(const sockaddr_in& clientAddr, const std::vector<uint8_t>& buffer) override;
+    void Send(const sockaddr_in& clientAddr, const std::vector<uint8_t>& buffer, const char* messageName) override;
+    void SendToMultiple(const std::vector<Client*>& clients,const std::vector<uint8_t>& buffer, const char* messageName, const Client* excludedClient = nullptr) override;
     void Poll() override;
 
 private:
+
+     /**
+	 * @brief Initializes the IO Completion Port and starts worker threads.
+     */
     void InitIOCP();
+
+    /**
+	 * @brief Accepts a new client connection and associates it with the IOCP.
+     */
     void PostReceive(IoData* ioData);
+
+    /**
+	 * @brief Notifies the thread pool of a completed I/O operation.
+     */
     void NotifyThreadPool(IoData* ioData, DWORD bytesTransferred);
 
 private:
@@ -48,3 +70,5 @@ private:
 
     bool running = false;
 };
+
+#endif // WINDOWS_SERVER_H

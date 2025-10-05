@@ -133,7 +133,6 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Core\Log\Logger.cpp" />
-    <ClCompile Include="src\Core\Server.cpp" />
     <ClCompile Include="src\Core\Server\LinuxServer.cpp" />
     <ClCompile Include="src\Core\Server\WindowsServer.cpp" />
     <ClCompile Include="src\Core\Threading\ThreadManager.cpp" />
@@ -161,7 +160,6 @@
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Core\Log\Logger.h" />
     <ClInclude Include="include\LKZ\Core\Server\LinuxServer.h" />
-    <ClInclude Include="include\LKZ\Core\Server.h" />
     <ClInclude Include="include\LKZ\Core\Server\WindowsServer.h" />
     <ClInclude Include="include\LKZ\Core\Threading\ThreadManager.h" />
     <ClInclude Include="include\LKZ\Core\Threading\ThreadTaskPool.h" />

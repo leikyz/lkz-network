@@ -6,13 +6,35 @@
 class Engine
 {
 public:
-    static Engine& Instance(INetworkInterface* netInterface = nullptr) {
+    /**
+	 * @brief Singleton instance accessor. Initializes with the provided network interface if not already initialized.
+     * 
+     * \param netInterface
+     * \return 
+     */
+    static Engine& Instance(INetworkInterface* netInterface = nullptr) 
+    {
         static Engine instance(netInterface);
         return instance;
     }
 
+    /**
+	 * @brief Main server loop that handles incoming messages and client connections.
+     * 
+     */
     void Run();
+
+    /**
+	 * @brief Initializes the engine and network interface.
+     * 
+     */
     void Initialize();
+
+    /**
+	 * @brief Accessor for the network interface.
+     * 
+     * \return 
+     */
     static INetworkInterface* Server();
 
 private:

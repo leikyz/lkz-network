@@ -69,9 +69,6 @@
     <ClCompile Include="Program.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Server.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\Protocol\Message\Approach\CreateClientMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -216,9 +213,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\Protocol\Message\Entity\SynchronizeEntitiesMessage.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LKZ\Core\Server.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Manager\ClientManager.h">

@@ -90,7 +90,7 @@ void MatchmakingManager::ProcessMatchmaking()
 
                 Serializer s;
                 std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
-				Engine::Instance().Server()->Send(c->address, buf);
+				Engine::Instance().Server()->Send(c->address, buf, changeReadyMsg.getClassName());
 
                 c->isReady = false;
             }
@@ -106,7 +106,7 @@ void MatchmakingManager::ProcessMatchmaking()
 
             Serializer s;
             std::vector<uint8_t> buf = updateLobbyMsg.serialize(s);
-			Engine::Instance().Server()->Send(c->address, buf);
+			Engine::Instance().Server()->Send(c->address, buf, updateLobbyMsg.getClassName());
         }
 
         playersToRemove.push_back(p);

@@ -40,7 +40,7 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
                 changeReadyMsg.positionInLobby = c->positionInLobby;
                 Serializer s;
                 std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
-              /*  Server::SendToAllInLobby(lobby, buf);*/
+                Engine::Instance().Server()->SendToMultiple(lobby->clients, buf, getClassName());
               
             }
         }
@@ -80,7 +80,7 @@ void LeaveLobbyMessage::process(const sockaddr_in& senderAddr)
 
                 Serializer s;
                 std::vector<uint8_t> buf = updateLobbyMsg.serialize(s);
-				Engine::Instance().Server()->Send(c->address, buf); 
+				Engine::Instance().Server()->Send(c->address, buf, getClassName());
             }
         }
 

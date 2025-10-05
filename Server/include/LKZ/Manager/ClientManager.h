@@ -11,7 +11,8 @@
 #include <stdio.h>
 #include "LKZ/NetworkObject/Client.h"
 
-class ClientManager {
+class ClientManager 
+{
 public:
     static void addClient(const sockaddr_in& clientAddr);
     static Client* getClientByAddress(const sockaddr_in& clientAddr);

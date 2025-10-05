@@ -51,21 +51,40 @@ void WindowsServer::Start()
 void WindowsServer::InitIOCP() 
 {
     completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
-    if (!completionPort) {
+    if (!completionPort)
+    {
         std::cerr << "[WindowsServer] CreateIoCompletionPort failed\n";
         return;
     }
 
-    if (!CreateIoCompletionPort((HANDLE)listenSocket, completionPort, 0, 0)) {
+    if (!CreateIoCompletionPort((HANDLE)listenSocket, completionPort, 0, 0)) 
+    {
         std::cerr << "[WindowsServer] Associate socket with IOCP failed\n";
         return;
     }
 
     // Preallocate IoData
-    for (size_t i = 0; i < std::thread::hardware_concurrency() * 2; i++) {
+    for (size_t i = 0; i < std::thread::hardware_concurrency() * 2; i++) 
+    {
         auto ioData = std::make_unique<IoData>(bufferSize);
         PostReceive(ioData.get());
         ioDataPool.push_back(std::move(ioData));
+    }
+}
+void WindowsServer::SendToMultiple(const std::vector<Client*>& clients, const std::vector<uint8_t>& buffer, const char* messageName, const Client* excludedClient)
+{
+    for (const auto& clientPtr : clients)
+    {
+        if (!clientPtr) continue;
+
+        if (excludedClient &&
+            clientPtr->address.sin_addr.s_addr == excludedClient->address.sin_addr.s_addr &&
+            clientPtr->address.sin_port == excludedClient->address.sin_port)
+        {
+            continue; // Skip excluded client
+        }
+
+        Send(clientPtr->address, buffer, messageName);
     }
 }
 
@@ -130,7 +149,7 @@ void WindowsServer::Poll()
     NotifyThreadPool(ioData, bytesTransferred);
 }
 
-void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_t>& buffer)
+void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_t>& buffer, const char* messageName)
 {
     WSABUF sendBuf{};
     sendBuf.buf = (CHAR*)buffer.data();
@@ -140,5 +159,5 @@ void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_
     WSASendTo(listenSocket, &sendBuf, 1, &bytesSent, 0,
               (sockaddr*)&clientAddr, sizeof(clientAddr), nullptr, nullptr);
 
-    Logger::Log(std::format("{0} bytes", buffer.size() + 1), LogType::Sent);
+    Logger::Log(std::format("{0} ({1} bytes)", messageName, buffer.size() + 1), LogType::Sent);
 }

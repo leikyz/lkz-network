@@ -71,12 +71,14 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         Serializer serializer;
         serialize(serializer);
 
-		Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer());
+		Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
 
         controlled = false;
 
         /*Serializer serializer;*/
 		serialize(serializer);
+
+		Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName(), ClientManager::getClientByAddress(senderAddr));
 
       /*  Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
     }

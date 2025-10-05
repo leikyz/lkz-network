@@ -66,7 +66,7 @@ void DisconnectClientMessage::process(const sockaddr_in& senderAddr)
                 for (Client* c : clientsCopy)
                 {
                     if (!c) continue;
-                    Engine::Instance().Server()->Send(senderAddr, buffer);
+                    Engine::Instance().Server()->Send(c->address, buffer, getClassName());
                 }
             }
         }

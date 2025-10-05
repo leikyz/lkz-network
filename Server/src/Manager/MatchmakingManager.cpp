@@ -20,10 +20,17 @@ void MatchmakingManager::AddPlayerToQueue(Client& playerAddr)
 
     waitingPlayers.push_back(playerAddr);
 
-    ThreadManager::EnqueueTask("matchmaking", []() {
-        MatchmakingManager::ProcessMatchmaking();
-        });
+    auto matchmakingPool = ThreadManager::GetPool("matchmaking");
+    if (matchmakingPool) {
+        matchmakingPool->EnqueueTask([]() {
+            MatchmakingManager::ProcessMatchmaking();
+            });
+    }
+    else {
+        std::cerr << "[MatchmakingManager] Matchmaking pool not found!\n";
+    }
 }
+
 
 void MatchmakingManager::RemovePlayerFromQueue(const sockaddr_in& addr)
 {
@@ -83,7 +90,7 @@ void MatchmakingManager::ProcessMatchmaking()
 
                 Serializer s;
                 std::vector<uint8_t> buf = changeReadyMsg.serialize(s);
-                Server::Send(c->address, buf);
+				Engine::Instance().Server()->Send(c->address, buf);
 
                 c->isReady = false;
             }
@@ -99,7 +106,7 @@ void MatchmakingManager::ProcessMatchmaking()
 
             Serializer s;
             std::vector<uint8_t> buf = updateLobbyMsg.serialize(s);
-            Server::Send(c->address, buf);
+			Engine::Instance().Server()->Send(c->address, buf);
         }
 
         playersToRemove.push_back(p);

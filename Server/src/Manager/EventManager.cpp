@@ -19,6 +19,8 @@ EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
+    std::cout << "[EventManager] Initialize events." << "\n";
+
     EventManager::registerHandler<CreateClientMessage>(1);
     EventManager::registerHandler<ServerInformationsMessage>(2);
     EventManager::registerHandler<DisconnectClientMessage>(3);
@@ -69,9 +71,11 @@ void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const socka
     msg.deserialize(deserializer);
     msg.process(senderAddr);
 
-    const char* blueColor = "\033[38;5;32m";
-    const char* resetColor = "\033[0m";
+    std::string name = typeid(msg).name();
+    name = name.substr(7); 
 
-    std::cout << blueColor << "[RECEIVED] {"
-        << typeid(msg).name() << "}" << resetColor << std::endl;
+    // added +1 because we removed 1 byte before handle event (ID)
+
+    Logger::Log(std::format("{0} ({1} bytes)", name, buffer.size() + 1), LogType::Received);
+
 }

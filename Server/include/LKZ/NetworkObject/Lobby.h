@@ -5,6 +5,7 @@
 #include <list>
 #include "Entity.h" 
 #include "LKZ/Manager/ClientManager.h"  
+#include "LKZ/Core/Log/Logger.h"
 
 /**
 * @brief Represents a game lobby where clients and entities are managed.
@@ -35,7 +36,7 @@ struct Lobby
     void addClient(Client* client)
     {
         clients.push_back(client);
-        std::cout << "Client " << client->ipAddress << " added to lobby: " << id << std::endl;
+		Logger::Log("Client " + client->ipAddress + " added to lobby: " + std::to_string(id), LogType::Info);
     }
 
     /**
@@ -46,7 +47,7 @@ struct Lobby
     void addEntity(Entity* entity) {
         entity->id = nextEntityId++;
         entities.push_back(entity);
-        std::cout << "Entity with ID " << entity->id << " added to lobby: " << id << std::endl;
+		Logger::Log("Entity with ID " + std::to_string(entity->id) + " added to lobby: " + std::to_string(id), LogType::Info);
     }
 
     /**
@@ -60,7 +61,7 @@ struct Lobby
             if ((*it)->id == entityId) {
                 delete* it;
                 it = entities.erase(it);
-                std::cout << "Entity with ID " << entityId << " removed from lobby: " << id << std::endl;
+				Logger::Log("Entity with ID " + std::to_string(entityId) + " removed from lobby: " + std::to_string(id), LogType::Info);
             }
             else {
                 ++it;

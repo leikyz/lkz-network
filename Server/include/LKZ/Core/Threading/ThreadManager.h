@@ -7,14 +7,17 @@
 #include <string>
 #include <functional>
 
-class ThreadManager {
-private:
-    static std::unordered_map<std::string, std::unique_ptr<ThreadTaskPool>> threadPools;
 
+class ThreadManager {
 public:
-    static void CreatePool(const std::string& name, size_t threadCount);
-    static void EnqueueTask(const std::string& name, std::function<void()> task);
+    using PoolPtr = std::shared_ptr<ThreadTaskPool>;
+
+    static void CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook = nullptr);
+    static PoolPtr GetPool(const std::string& name);
     static void StopAll();
+
+private:
+    static std::unordered_map<std::string, PoolPtr> pools;
 };
 
 #endif

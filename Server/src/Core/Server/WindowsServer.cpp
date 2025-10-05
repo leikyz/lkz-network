@@ -1,18 +1,24 @@
 #include "LKZ/Core/Server/WindowsServer.h"
 #include <iostream>
 #include <LKZ/Manager/EventManager.h>
+#include <LKZ/Core/Log/Logger.h>
 
 WindowsServer::WindowsServer(int port, size_t bufferSize)
     : port(port), bufferSize(bufferSize) {}
 
-WindowsServer::~WindowsServer() {
+WindowsServer::~WindowsServer() 
+{
     running = false;
     if (completionPort) CloseHandle(completionPort);
     if (listenSocket != INVALID_SOCKET) closesocket(listenSocket);
     WSACleanup();
 }
 
-void WindowsServer::Start() {
+void WindowsServer::Start() 
+{
+
+    EventManager::BindEvents();
+
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         std::cerr << "[WindowsServer] WSAStartup failed\n";
@@ -42,7 +48,8 @@ void WindowsServer::Start() {
     std::cout << "[WindowsServer] Server started on port " << port << "\n";
 }
 
-void WindowsServer::InitIOCP() {
+void WindowsServer::InitIOCP() 
+{
     completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
     if (!completionPort) {
         std::cerr << "[WindowsServer] CreateIoCompletionPort failed\n";
@@ -75,47 +82,56 @@ void WindowsServer::PostReceive(IoData* ioData) {
         std::cerr << "[WindowsServer] WSARecvFrom failed\n";
     }
 }
-
-void WindowsServer::NotifyThreadPool(IoData* ioData, DWORD bytesTransferred) {
-    auto task = [this, ioData, bytesTransferred]() {
-        if (bytesTransferred > 0) {
-            // Process received packet
-            std::cout << "[WindowsServer] Received " << bytesTransferred << " bytes\n";
-
+void WindowsServer::NotifyThreadPool(IoData* ioData, DWORD bytesTransferred) 
+{
+    auto task = [this, ioData, bytesTransferred]() 
+    {
+        if (bytesTransferred > 0)
+        {
             std::vector<uint8_t> receivedData(ioData->buffer.begin(),
                 ioData->buffer.begin() + bytesTransferred);
 
             int id = static_cast<int>(receivedData[0]);
-
             EventManager::processMessage(receivedData, ioData->clientAddr);
         }
 
-        // Repost receive
         PostReceive(ioData);
         };
 
-    ThreadManager::EnqueueTask("network", task);
+    auto ioPool = ThreadManager::GetPool("io");
+    if (ioPool) {
+        ioPool->EnqueueTask(task);
+    }
+    else {
+        std::cerr << "[WindowsServer] IO thread pool not found!\n";
+    }
 }
 
 
-void WindowsServer::Poll() {
+
+void WindowsServer::Poll() 
+{
     DWORD bytesTransferred;
     ULONG_PTR completionKey;
     OVERLAPPED* overlapped;
 
-    while (running) {
-;
-        BOOL success = GetQueuedCompletionStatus(completionPort, &bytesTransferred, &completionKey, &overlapped, INFINITE);
-      
-        if (!overlapped) continue;
+    BOOL success = GetQueuedCompletionStatus(
+        completionPort,
+        &bytesTransferred,
+        &completionKey,
+        &overlapped,
+        0 
+    );
 
-        IoData* ioData = CONTAINING_RECORD(overlapped, IoData, overlapped);
+    if (!overlapped) return;
 
-        NotifyThreadPool(ioData, bytesTransferred);
-    }
+    IoData* ioData = CONTAINING_RECORD(overlapped, IoData, overlapped);
+
+    NotifyThreadPool(ioData, bytesTransferred);
 }
 
-void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_t>& buffer) {
+void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_t>& buffer)
+{
     WSABUF sendBuf{};
     sendBuf.buf = (CHAR*)buffer.data();
     sendBuf.len = static_cast<ULONG>(buffer.size());
@@ -123,4 +139,6 @@ void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_
     DWORD bytesSent;
     WSASendTo(listenSocket, &sendBuf, 1, &bytesSent, 0,
               (sockaddr*)&clientAddr, sizeof(clientAddr), nullptr, nullptr);
+
+    Logger::Log(std::format("{0} bytes", buffer.size() + 1), LogType::Sent);
 }

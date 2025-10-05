@@ -7,31 +7,23 @@
 
 int main()
 {
-    std::cout << "[MAIN] Starting engine...\n";
+    #ifdef _WIN32
+        auto server = new WindowsServer(5555);
+    #else
+        auto server = new LinuxServer();
+    #endif
 
-    // Create thread pools
+    Engine::Instance(server).Initialize();
+ 
     ThreadManager::CreatePool("logger", 1);   // Logger thread
-    ThreadManager::CreatePool("network", 10); // Network thread pool
+    ThreadManager::CreatePool("io", 1, [server]() { server->Poll();});
+	ThreadManager::CreatePool("message", 10); // Message logic processing threads
     ThreadManager::CreatePool("matchmaking", 1); // Matchmaking thread
 
-    // Create Windows server
-    auto windowsServer = new WindowsServer(5555);
-
-    // Start the poll loop in its own thread
-    std::thread pollingThread([windowsServer]() {
-        windowsServer->Poll();
-        });
-
-    // Create engine with the server interface
-    Engine engine(windowsServer);
-
-    // Run engine
-    engine.Run();
-
+    Engine::Instance().Run();
     // Cleanup
-    pollingThread.join(); // wait for polling thread to finish (or detach if desired)
-    // ThreadManager::StopAll();
-    delete windowsServer;
+    ThreadManager::StopAll();
+    delete server;
 
     return 0;
 }

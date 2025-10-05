@@ -1,29 +1,36 @@
 #include "LKZ/Core/Threading/ThreadManager.h"
 #include <iostream>
+#include <thread>
 
-std::unordered_map<std::string, std::unique_ptr<ThreadTaskPool>> ThreadManager::threadPools;
+std::unordered_map<std::string, ThreadManager::PoolPtr> ThreadManager::pools;
 
-void ThreadManager::CreatePool(const std::string& name, size_t threadCount) {
-    if (threadPools.find(name) != threadPools.end()) {
-        std::cerr << "[ThreadManager] Pool '" << name << "' already exists!\n";
-        return;
+void ThreadManager::CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook) 
+{
+    auto pool = std::make_shared<ThreadTaskPool>(hook);
+
+	std::cout << "[ThreadManager] Initialize pool '" << name << "' with " << threads << " threads.\n";
+
+    for (int i = 0; i < threads; i++) {
+        std::thread([pool]() {
+            pool->WorkerLoop();
+            }).detach();
     }
 
-    threadPools[name] = std::make_unique<ThreadTaskPool>(threadCount);
-
-    std::cout << "\033[37m[INITIALIZE] ThreadTaskPool : " << name << " (" << threadCount << " threads)\033[0m\n";
+    pools[name] = pool;
 }
 
-void ThreadManager::EnqueueTask(const std::string& name, std::function<void()> task) {
-    auto it = threadPools.find(name);
-    if (it != threadPools.end())
-        it->second->EnqueueTask(task);
-    else
-        std::cerr << "[ThreadManager] Pool '" << name << "' not found!\n";
+ThreadManager::PoolPtr ThreadManager::GetPool(const std::string& name) 
+{
+    auto it = pools.find(name);
+    if (it != pools.end()) return it->second;
+
+    std::cerr << "[ThreadManager] Pool '" << name << "' not found!\n";
+    return nullptr;
 }
 
-void ThreadManager::StopAll() {
-    for (auto& pair : threadPools) {
+void ThreadManager::StopAll()
+{
+    for (auto& pair : pools) {
         pair.second->Stop();
     }
 }

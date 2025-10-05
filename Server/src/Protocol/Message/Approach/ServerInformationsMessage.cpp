@@ -34,5 +34,5 @@ void ServerInformationsMessage::process(const sockaddr_in& senderAddr)
     Serializer serializer;
     serialize(serializer);
 
-    Server::Send(senderAddr, serializer.getBuffer());
+    Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer());
 }

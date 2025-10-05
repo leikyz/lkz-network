@@ -6,7 +6,7 @@
 #include "LKZ/Core/Server.h"
 #include "LKZ/Manager/ClientManager.h"
 #include "LKZ/Manager/LobbyManager.h"
-
+#include "LKZ/Core/Engine.h"
 struct Message
 {
     Message() = default;

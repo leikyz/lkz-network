@@ -1,23 +1,24 @@
 #include "LKZ/Core/Threading/ThreadTaskPool.h"
-#include <iostream>
 
-ThreadTaskPool::ThreadTaskPool(size_t threadCount)
-    : stop(false)
+ThreadTaskPool::ThreadTaskPool(LoopHook hook) : loopHook(hook), stop(false)
 {
-    for (size_t i = 0; i < threadCount; ++i) {
-        workers.emplace_back([this]() { WorkerLoop(); });
-    }
 }
 
-ThreadTaskPool::~ThreadTaskPool() {
-    Stop();
+ThreadTaskPool::~ThreadTaskPool()
+{
+    std::unique_lock<std::mutex> lock(queueMutex);
+    stop = true;
+
+    condition.notify_all();
 }
 
-void ThreadTaskPool::WorkerLoop()
+void ThreadTaskPool::WorkerLoop() 
 {
-    while (!stop) {
+    while (!stop) 
+    {
+        if (loopHook) loopHook();
+
         std::function<void()> task;
-
         {
             std::unique_lock<std::mutex> lock(queueMutex);
             condition.wait(lock, [this]() { return stop || !tasks.empty(); });
@@ -31,24 +32,23 @@ void ThreadTaskPool::WorkerLoop()
         }
 
         if (task)
-            task(); 
+            task();
     }
 }
 
-void ThreadTaskPool::EnqueueTask(std::function<void()> task) {
+void ThreadTaskPool::EnqueueTask(std::function<void()> task) 
+{
     {
         std::unique_lock<std::mutex> lock(queueMutex);
         tasks.push(std::move(task));
     }
     condition.notify_one();
 }
-
-void ThreadTaskPool::Stop() {
-    stop = true;
-    condition.notify_all();
-
-    for (auto& worker : workers) {
-        if (worker.joinable())
-            worker.join();
+void ThreadTaskPool::Stop()
+{
+    {
+        std::unique_lock<std::mutex> lock(queueMutex);
+        stop = true;
     }
+    condition.notify_all();
 }

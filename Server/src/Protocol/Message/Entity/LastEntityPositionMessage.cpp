@@ -48,7 +48,7 @@ void LastEntityPositionMessage::process(const sockaddr_in& senderAddr)
         Serializer serializer;
         serialize(serializer);
 
-        Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());
+       /* Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
     }
   
 }

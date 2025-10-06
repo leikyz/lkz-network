@@ -34,7 +34,8 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
 
         Serializer serializer;
         serialize(serializer);
-      /*  Server::SendToAllInLobby(lobby, serializer.getBuffer());*/
+
+        Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName());
 
         if (LobbyManager::IsEveryoneReadyInLobby(lobby->id))
         {
@@ -43,9 +44,7 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
             Serializer s;
             std::vector<uint8_t> buf = startGameMsg.serialize(s);
 
-			/*Server::SendToAllInLobby(lobby, buf);*/
-
-            Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName());
+            Engine::Instance().Server()->SendToMultiple(lobby->clients, buf, getClassName());
         }
 	}
 

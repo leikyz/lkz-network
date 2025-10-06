@@ -159,5 +159,13 @@ void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_
     WSASendTo(listenSocket, &sendBuf, 1, &bytesSent, 0,
               (sockaddr*)&clientAddr, sizeof(clientAddr), nullptr, nullptr);
 
-    Logger::Log(std::format("{0} ({1} bytes)", messageName, buffer.size() + 1), LogType::Sent);
+    char ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(clientAddr.sin_addr), ip, INET_ADDRSTRLEN);
+
+    Logger::Log(std::format("{} ({} bytes) [{}:{}]",
+        messageName,
+        buffer.size() + 1,
+        ip,
+        ntohs(clientAddr.sin_port)
+    ), LogType::Sent);
 }

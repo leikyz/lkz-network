@@ -159,6 +159,7 @@
     <ClInclude Include="include\Core\Server.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Core\Log\Logger.h" />
+    <ClInclude Include="include\LKZ\Core\Log\Logger.h" />
     <ClInclude Include="include\LKZ\Core\Server\LinuxServer.h" />
     <ClInclude Include="include\LKZ\Core\Server\WindowsServer.h" />
     <ClInclude Include="include\LKZ\Core\Threading\ThreadManager.h" />
@@ -168,7 +169,7 @@
     <ClInclude Include="include\LKZ\Manager\LobbyManager.h" />
     <ClInclude Include="include\LKZ\Manager\MatchmakingManager.h" />
     <ClInclude Include="include\LKZ\NetworkObject\Client.h" />
-    <ClInclude Include="include\LKZ\NetworkObject\Entity.h" />
+    <ClInclude Include="include\LKZ\NetworkObject\Entities\Entity.h" />
     <ClInclude Include="include\LKZ\NetworkObject\Lobby.h" />
     <ClInclude Include="include\LKZ\Protocol\Codec\Deserializer.h" />
     <ClInclude Include="include\LKZ\Protocol\Codec\Serializer.h" />

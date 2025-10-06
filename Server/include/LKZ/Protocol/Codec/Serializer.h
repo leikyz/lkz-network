@@ -33,6 +33,10 @@ public:
     std::vector<uint8_t>& getBuffer() {
         return m_buffer;
 	}
+
+    void reset() {
+        m_buffer.clear();
+	}
 };
 
 #endif // SERIALIZER_H

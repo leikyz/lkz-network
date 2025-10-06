@@ -16,6 +16,8 @@ byte CreateEntityMessage::getId() const
 
 std::vector<uint8_t>& CreateEntityMessage::serialize(Serializer& serializer) const
 {
+	serializer.reset();
+
     serializer.writeByte(ID);
     serializer.writeInt(entityId);
     serializer.writeInt(entityTypeId);

@@ -64,18 +64,17 @@ void EventManager::processMessage(std::vector<uint8_t>& buffer, const sockaddr_i
 
 template<typename T>
 void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const sockaddr_in& senderAddr)
-{
-   
-
+{ 
     T msg;
     Deserializer deserializer(buffer);
-  
 
     std::string name = typeid(msg).name();
     name = name.substr(7); 
 
+    char ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(senderAddr.sin_addr), ip, INET_ADDRSTRLEN);
     // added +1 because we removed 1 byte before handled event (ID)
-    Logger::Log(std::format("{0} ({1} bytes)", name, buffer.size() + 1), LogType::Received);
+    Logger::Log(std::format("{} ({} bytes) [{}:{}]", name, buffer.size() + 1, ip, ntohs(senderAddr.sin_port)), LogType::Sent);
 
     msg.deserialize(deserializer);
     msg.process(senderAddr);

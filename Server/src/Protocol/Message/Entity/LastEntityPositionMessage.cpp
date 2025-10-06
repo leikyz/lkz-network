@@ -39,17 +39,17 @@ void LastEntityPositionMessage::process(const sockaddr_in& senderAddr)
     Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
     Entity* entity = lobby->getEntityById(entityId);
 
-    if (lobby != nullptr && entity != nullptr)
-    {
-        entity->posX = posX;
-        entity->posY = posY;
-        entity->posZ = posZ;
+    //if (lobby != nullptr && entity != nullptr)
+    //{
+    //    entity->posX = posX;
+    //    entity->posY = posY;
+    //    entity->posZ = posZ;
 
-        Serializer serializer;
-        serialize(serializer);
+    //    Serializer serializer;
+    //    serialize(serializer);
 
-       /* Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
-    }
+    //   /* Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
+    //}
   
 }
 

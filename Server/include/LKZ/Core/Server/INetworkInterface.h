@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <cstdint>
-#include <LKZ/NetworkObject/Client.h>
+#include <LKZ/Session/Client.h>
 
 // Platform-specific includes for socket 
 #ifdef _WIN32

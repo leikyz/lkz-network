@@ -1,5 +1,6 @@
 #include "LKZ/Core/Engine.H"
 #include <iostream>
+#include <thread>
 
 // Definition of static member
 INetworkInterface* Engine::network = nullptr;
@@ -9,12 +10,31 @@ Engine::Engine(INetworkInterface* netInterface)
     network = netInterface; 
 }
 
+
 void Engine::Run()
 {
     network->Start();
 
-    while (true) {
+    const float targetFrameTime = 1.0f / 60.0f; 
+    float deltaTime = 0.0f; 
+    float elapsedTime = 0.0f; 
+
+    clock_t lastClock = std::clock();
+
+    while (true)
+    {
+        clock_t currentClock = std::clock();
+        float frameTime = float(currentClock - lastClock) / CLOCKS_PER_SEC;
+        lastClock = currentClock;
+
+        elapsedTime += frameTime;
+        deltaTime = elapsedTime; 
+
+        std::cout << "[MAIN] Delta Time: " << deltaTime << " seconds\n";
+
         network->Poll();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿
 #include <iostream>
-#include "LKZ/Manager/EventManager.h"
+#include "LKZ/Core/Manager/EventManager.h"
 #include "LKZ/Protocol/Message/Approach/CreateClientMessage.h"
 #include "LKZ/Protocol/Message/Approach/ServerInformationsMessage.h"
 #include "LKZ/Protocol/Message/Approach/DisconnectClientMessage.h"

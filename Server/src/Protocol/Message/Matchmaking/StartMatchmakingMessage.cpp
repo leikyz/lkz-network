@@ -1,5 +1,5 @@
 #include "LKZ/Protocol/Message/Matchmaking/StartMatchmakingMessage.h"
-#include "LKZ/Manager/MatchmakingManager.h"
+#include "LKZ/Core/Manager/MatchmakingManager.h"
 
 StartMatchmakingMessage::StartMatchmakingMessage() {}
 

@@ -1,4 +1,4 @@
-#include "LKZ/Manager/LobbyManager.h"
+#include "LKZ/Core/Manager/LobbyManager.h"
 
 std::unordered_map<int, Lobby*> LobbyManager::lobbies;
 std::atomic<int> LobbyManager::nextLobbyId{ 1 };

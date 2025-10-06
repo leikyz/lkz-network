@@ -19,7 +19,7 @@ public:
 	*/
     using LoopHook = std::function<void()>;
 
-    ThreadTaskPool(LoopHook hook = nullptr);
+    ThreadTaskPool(LoopHook hook = nullptr, bool loopMode = false);
     ~ThreadTaskPool();
 
     /**
@@ -44,5 +44,6 @@ private:
     std::mutex queueMutex;
     std::condition_variable condition;
     bool stop;
+    bool loopMode;
     LoopHook loopHook;
 };

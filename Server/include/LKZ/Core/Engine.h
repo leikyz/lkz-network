@@ -2,6 +2,7 @@
 #include "LKZ/Core/Server/INetworkInterface.h"
 #include <iostream>
 #include <memory>
+#include <chrono>
 
 class Engine
 {
@@ -44,6 +45,9 @@ private:
     Engine& operator=(const Engine&) = delete;
 
     static INetworkInterface* network;
+
+    std::chrono::steady_clock::time_point lastTime;
+    float deltaTime = 0.0f;
 };
 
 

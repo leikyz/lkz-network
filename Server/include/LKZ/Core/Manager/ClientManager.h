@@ -9,7 +9,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <stdio.h>
-#include "LKZ/NetworkObject/Client.h"
+#include "LKZ/Session/Client.h"
 
 class ClientManager 
 {

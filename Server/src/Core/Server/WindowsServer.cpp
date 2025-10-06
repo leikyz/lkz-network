@@ -1,6 +1,6 @@
 #include "LKZ/Core/Server/WindowsServer.h"
 #include <iostream>
-#include <LKZ/Manager/EventManager.h>
+#include <LKZ/Core/Manager/EventManager.h>
 #include <LKZ/Core/Log/Logger.h>
 
 WindowsServer::WindowsServer(int port, size_t bufferSize)

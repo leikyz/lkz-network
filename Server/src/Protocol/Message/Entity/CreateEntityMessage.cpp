@@ -36,53 +36,53 @@ void CreateEntityMessage::deserialize(Deserializer& deserializer)
 
 void CreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-    
-    if (lobby != nullptr)
-    {
-        srand(time(0));
-        Entity* entity;
+  //  Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
+  //  
+  //  if (lobby != nullptr)
+  //  {
+  //      srand(time(0));
+  //      Entity* entity;
 
-        if (lobby->clients.size() == 1)
-        {
-            entity = new Entity(EntityEnum::Olise);
-        }
-        else
-        {
-            entity = new Entity(EntityEnum::Olise);
-        }
+  //      if (lobby->clients.size() == 1)
+  //      {
+  //          entity = new Entity(EntityEnum::Olise);
+  //      }
+  //      else
+  //      {
+  //          entity = new Entity(EntityEnum::Olise);
+  //      }
 
-        entity->posX = 100.0f + rand() % 10;
-        entity->posY = 10;
-        entity->posZ = 100.0f + rand() % 10;
+  //      entity->posX = 100.0f + rand() % 10;
+  //      entity->posY = 10;
+  //      entity->posZ = 100.0f + rand() % 10;
 
-        lobby->addEntity(entity);
+  //      lobby->addEntity(entity);
 
-        entityId = entity->id;
-        entityTypeId = entity->type;
-        posX = entity->posX;
-        posY = entity->posY;
-        posZ = entity->posZ;
+  //      entityId = entity->id;
+  //      entityTypeId = entity->type;
+  //      posX = entity->posX;
+  //      posY = entity->posY;
+  //      posZ = entity->posZ;
 
-        ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
+  //      ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
 
-        controlled = (ClientManager::getClientByAddress(senderAddr)->playerEntityId == entityId);
+  //      controlled = (ClientManager::getClientByAddress(senderAddr)->playerEntityId == entityId);
 
-     
+  //   
 
-        Serializer serializer;
-        serialize(serializer);
+  //      Serializer serializer;
+  //      serialize(serializer);
 
-		Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
+		//Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
 
-        controlled = false;
+  //      controlled = false;
 
-        /*Serializer serializer;*/
-		serialize(serializer);
+  //      /*Serializer serializer;*/
+		//serialize(serializer);
 
-		Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName(), ClientManager::getClientByAddress(senderAddr));
+		//Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName(), ClientManager::getClientByAddress(senderAddr));
 
-      /*  Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
-    }
+  //    /*  Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
+  //  }
 }
 

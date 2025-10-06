@@ -3,8 +3,8 @@
 #include <string>
 #include <iostream>
 #include <list>
-#include "Entity.h" 
-#include "LKZ/Manager/ClientManager.h"  
+#include "LKZ/Core/ECS/Entity.h" 
+#include "LKZ/Core/Manager/ClientManager.h"  
 #include "LKZ/Core/Log/Logger.h"
 
 /**
@@ -45,9 +45,9 @@ struct Lobby
     **/
 
     void addEntity(Entity* entity) {
-        entity->id = nextEntityId++;
+      /*  entity->id = nextEntityId++;
         entities.push_back(entity);
-		Logger::Log("Entity with ID " + std::to_string(entity->id) + " added to lobby: " + std::to_string(id), LogType::Info);
+		Logger::Log("Entity with ID " + std::to_string(entity->id) + " added to lobby: " + std::to_string(id), LogType::Info);*/
     }
 
     /**
@@ -57,7 +57,7 @@ struct Lobby
 
     void removeEntity(uint32_t entityId)
     {
-        for (auto it = entities.begin(); it != entities.end(); ) {
+       /* for (auto it = entities.begin(); it != entities.end(); ) {
             if ((*it)->id == entityId) {
                 delete* it;
                 it = entities.erase(it);
@@ -66,7 +66,7 @@ struct Lobby
             else {
                 ++it;
             }
-        }
+        }*/
     }
 
     /// <summary>
@@ -87,13 +87,13 @@ struct Lobby
 
     Entity* getEntityById(uint32_t entityId) const
     {
-        for (const auto& entity : entities)
+       /* for (const auto& entity : entities)
         {
             if (entity->id == entityId)
             {
                 return entity;
             }
-        }
+        }*/
         return nullptr;
     }
 

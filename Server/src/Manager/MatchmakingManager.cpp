@@ -1,8 +1,8 @@
-#include "LKZ/Manager/MatchmakingManager.h"
+#include "LKZ/Core/Manager/MatchmakingManager.h"
 #include "LKZ/Protocol/Codec/Serializer.h"
 #include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
-#include "LKZ/NetworkObject/Client.h"
+#include "LKZ/Session/Client.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
 #include <algorithm>
 #include <iostream>

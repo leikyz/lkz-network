@@ -25,7 +25,7 @@ public:
      * \param threads
      * \param hook
      */
-    static void CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook = nullptr);
+    static void CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook = nullptr, bool isLoop = false);
 
     /**
 	 * @brief Retrieves a thread pool by its name.

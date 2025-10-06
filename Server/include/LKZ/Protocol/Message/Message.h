@@ -3,8 +3,8 @@
 #include <winsock2.h>
 #include "LKZ/Protocol/Codec/Serializer.h"
 #include "LKZ/Protocol/Codec/Deserializer.h"
-#include "LKZ/Manager/ClientManager.h"
-#include "LKZ/Manager/LobbyManager.h"
+#include "LKZ/Core/Manager/ClientManager.h"
+#include "LKZ/Core/Manager/LobbyManager.h"
 #include "LKZ/Core/Engine.h"
 struct Message
 {

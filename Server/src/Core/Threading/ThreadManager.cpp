@@ -4,9 +4,9 @@
 
 std::unordered_map<std::string, ThreadManager::PoolPtr> ThreadManager::pools;
 
-void ThreadManager::CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook) 
+void ThreadManager::CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook, bool isLoop) 
 {
-    auto pool = std::make_shared<ThreadTaskPool>(hook);
+    auto pool = std::make_shared<ThreadTaskPool>(hook, isLoop);
 
 	std::cout << "[ThreadManager] Initialize pool '" << name << "' with " << threads << " threads.\n";
 

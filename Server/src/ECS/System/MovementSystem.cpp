@@ -1,8 +1,10 @@
 #include "LKZ/Core/ECS/System/Player/MovementSystem.h"
+#include <iostream>
 
 void MovementSystem::Update(ComponentManager& components, float deltaTime) 
 {
-	//printf("MovementSystem Update called with deltaTime: %f\n", deltaTime);
+	
+   std::cout << "[MAIN] Delta Time: " << deltaTime << " seconds\n";
     for (auto& [entity, position] : components.positions) 
     {
         if (components.players.find(entity) != components.players.end()) 

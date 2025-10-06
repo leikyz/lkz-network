@@ -17,7 +17,8 @@ public:
     /**
     * @brief Type definition for a loop hook function that can be executed in the worker loop.
 	*/
-    using LoopHook = std::function<void()>;
+    using LoopHook = std::function<void(float deltaTime)>;
+
 
     ThreadTaskPool(LoopHook hook = nullptr, bool loopMode = false);
     ~ThreadTaskPool();
@@ -44,6 +45,7 @@ private:
     std::mutex queueMutex;
     std::condition_variable condition;
     bool stop;
+    float deltaTime = 0.0f;
     bool loopMode;
     LoopHook loopHook;
 };

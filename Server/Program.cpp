@@ -17,24 +17,21 @@ int main()
 
     Engine::Instance(server).Initialize();
  
- 
-
-
     ThreadManager::CreatePool("logger", 1);   // Logger thread
-    ThreadManager::CreatePool("io", 1, [server]() { server->Poll();});
-	ThreadManager::CreatePool("message", 8); // Message logic processing threads
-    ThreadManager::CreatePool("matchmaking", 1); // Matchmaking thread
-    //ThreadManager::CreatePool("ai_simulation", 1); // AI entity world simulation thread
+    ThreadManager::CreatePool("io", 1, [server](float) { server->Poll(); }); 
+    ThreadManager::CreatePool("message", 8);
+    ThreadManager::CreatePool("matchmaking", 1);
 
     auto systemManager = std::make_shared<SystemManager>();
-	auto componentsManager = std::make_shared<ComponentManager>();
+    auto componentsManager = std::make_shared<ComponentManager>();
     systemManager->RegisterSystem(std::make_shared<MovementSystem>());
 
-    ThreadManager::CreatePool("player_simulation", 1);
-
-    ThreadManager::CreatePool("player_simulation", 1, [systemManager, &componentsManager]() {
-        systemManager->Update(*componentsManager, 1.0f);
-        }, true); // loopMode = true
+    ThreadManager::CreatePool("player_simulation", 1,
+        [systemManager, &componentsManager](float deltaTime) {
+            systemManager->Update(*componentsManager, deltaTime);
+        },
+        true // continuous loop
+    );
 
 
     Engine::Instance().Run();

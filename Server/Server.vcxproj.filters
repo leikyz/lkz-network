@@ -284,9 +284,7 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Message.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\Log\Logger.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
+
     <ClInclude Include="include\LKZ\Core\Threading\ThreadTaskPool.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>

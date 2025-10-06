@@ -1,9 +1,7 @@
 #include "LKZ/Core/Threading/ThreadTaskPool.h"
-#include <chrono>
 
 ThreadTaskPool::ThreadTaskPool(LoopHook hook, bool loopMode)
-    : loopHook(hook), stop(false), loopMode(loopMode)
-{
+    : loopHook(hook), stop(false), loopMode(loopMode) {
 }
 
 ThreadTaskPool::~ThreadTaskPool()
@@ -13,20 +11,18 @@ ThreadTaskPool::~ThreadTaskPool()
 
 void ThreadTaskPool::WorkerLoop()
 {
-    auto lastTime = std::chrono::high_resolution_clock::now();
+    if (loopMode && loopHook)
+    {
+        while (!stop)
+        {
+            loopHook(1.0f);
+            std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
+        }
+        return;
+    }
 
     while (!stop)
     {
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float> elapsed = currentTime - lastTime;
-        lastTime = currentTime;
-        float deltaTime = elapsed.count();
-
-        if (loopMode && loopHook)
-        {
-            //loopHook(deltaTime); // Passe deltaTime automatiquement
-        }
-
         std::function<void()> task;
         {
             std::unique_lock<std::mutex> lock(queueMutex);
@@ -34,8 +30,7 @@ void ThreadTaskPool::WorkerLoop()
 
             if (stop && tasks.empty()) return;
 
-            if (!tasks.empty())
-            {
+            if (!tasks.empty()) {
                 task = std::move(tasks.front());
                 tasks.pop();
             }
@@ -45,6 +40,7 @@ void ThreadTaskPool::WorkerLoop()
             task();
     }
 }
+
 
 void ThreadTaskPool::EnqueueTask(std::function<void()> task)
 {

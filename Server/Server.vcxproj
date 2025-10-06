@@ -166,7 +166,6 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\MovementSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Core\Log\Logger.h" />
-    <ClInclude Include="include\LKZ\Core\Log\Logger.h" />
     <ClInclude Include="include\LKZ\Core\Manager\ComponentManager.h" />
     <ClInclude Include="include\LKZ\Core\Manager\EntityManager.h" />
     <ClInclude Include="include\LKZ\Core\Manager\SystemManager.h" />

@@ -30,7 +30,6 @@ void Engine::Run()
         elapsedTime += frameTime;
         deltaTime = elapsedTime; 
 
-        std::cout << "[MAIN] Delta Time: " << deltaTime << " seconds\n";
 
         network->Poll();
 
@@ -58,4 +57,9 @@ void Engine::Initialize()
 INetworkInterface* Engine::Server()
 {
     return network;
+}
+
+float Engine::GetDeltaTime()
+{
+	return deltaTime;
 }

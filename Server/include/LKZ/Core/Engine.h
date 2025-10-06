@@ -38,6 +38,8 @@ public:
      */
     static INetworkInterface* Server();
 
+    float GetDeltaTime();
+
 private:
     Engine(INetworkInterface* netInterface);
 

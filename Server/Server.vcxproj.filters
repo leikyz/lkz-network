@@ -138,19 +138,19 @@
     <ClCompile Include="src\Core\Server\LinuxServer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ECS\System\MovementSystem.cpp">
+    <ClCompile Include="src\Core\ECS\System\MovementSystem.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Manager\ComponentManager.cpp">
+    <ClCompile Include="src\Core\ECS\Manager\ComponentManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Manager\EntityManager.cpp">
+    <ClCompile Include="src\Core\ECS\Manager\EntityManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Manager\SystemManager.cpp">
+    <ClCompile Include="src\Core\ECS\Manager\SystemManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Log\Logger.cpp">
+    <ClCompile Include="src\Utility\Logger.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -299,13 +299,13 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\MovementSystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\Manager\ComponentManager.h">
+    <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\Manager\EntityManager.h">
+    <ClInclude Include="include\LKZ\Core\ECS\Manager\EntityManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\Manager\SystemManager.h">
+    <ClInclude Include="include\LKZ\Core\ECS\Manager\SystemManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Core\Manager\ClientManager.h">
@@ -329,7 +329,7 @@
     <ClInclude Include="include\LKZ\Session\Lobby.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\Log\Logger.h">
+    <ClInclude Include="include\LKZ\Utility\Logger.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

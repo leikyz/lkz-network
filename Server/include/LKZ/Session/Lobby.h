@@ -5,7 +5,7 @@
 #include <list>
 #include "LKZ/Core/ECS/Entity.h" 
 #include "LKZ/Core/Manager/ClientManager.h"  
-#include "LKZ/Core/Log/Logger.h"
+#include "LKZ/Utility/Logger.h"
 
 /**
 * @brief Represents a game lobby where clients and entities are managed.

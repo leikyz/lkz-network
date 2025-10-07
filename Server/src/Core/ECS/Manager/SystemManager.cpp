@@ -1,4 +1,4 @@
-#include "LKZ/Core/Manager/SystemManager.h"
+#include "LKZ/Core/ECS/Manager/SystemManager.h"
 
 void SystemManager::RegisterSystem(std::shared_ptr<ISystem> system)
 {

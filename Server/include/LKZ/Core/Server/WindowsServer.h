@@ -3,6 +3,11 @@
 
 #include "INetworkInterface.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
+#include "LKZ/Utility/Logger.h"
+#include "LKZ/Core/ECS/Manager/EntityManager.h"
+#include "LKZ/Core/ECS/Manager/SystemManager.h"
+#include "LKZ/Core/ECS/Manager/ComponentManager.h"
+#include <LKZ/Core/ECS/System/Player/MovementSystem.h>
 #include <vector>
 #include <cstdint>
 #include <memory>

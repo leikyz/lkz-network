@@ -1,5 +1,5 @@
 #pragma once
-#include "LKZ/Core/Manager/ComponentManager.h"
+#include "LKZ/Core/ECS/Manager/ComponentManager.h"
 
 class ISystem {
 public:

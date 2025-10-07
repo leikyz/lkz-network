@@ -48,4 +48,5 @@ private:
     float deltaTime = 0.0f;
     bool loopMode;
     LoopHook loopHook;
+
 };

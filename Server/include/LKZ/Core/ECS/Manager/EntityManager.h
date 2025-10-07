@@ -1,14 +1,14 @@
-#pragma once
-#include "LKZ/Core/ECS/Entity.h"
+﻿#pragma once
+#include "LKZ/Session/Lobby.h"
 #include "ComponentManager.h"
 #include <queue>
+#include <unordered_map>
 
-/**
- * @brief Manages creation and destruction of entities.
- */
 class EntityManager {
     Entity nextID = 1; // start at 1, 0 is invalid
     std::queue<Entity> freeIDs;
+
+    std::unordered_map<Entity, Lobby*> entityLobbyMap;
 
 public:
     static EntityManager& Instance() {
@@ -16,13 +16,11 @@ public:
         return instance;
     }
 
-    /**
-     * @brief Creates an entity of a given type (Player, AI, etc.)
-     * and automatically registers all its components.
-     */
-    Entity CreateEntity(EntityType type, ComponentManager& components);
+    Entity CreateEntity(EntityType type, ComponentManager& components, Lobby* lobby);
 
     void DestroyEntity(Entity entity);
+
+    Lobby* GetLobbyByEntity(Entity entity);
 
 private:
     EntityManager() = default;

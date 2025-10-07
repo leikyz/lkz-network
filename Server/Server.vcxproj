@@ -132,6 +132,7 @@
     <ClCompile Include="include\LKZ\Core\Server\INetworkInterface.h" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp" />
     <ClCompile Include="src\Utility\Logger.cpp" />
     <ClCompile Include="src\Core\Server\LinuxServer.cpp" />
     <ClCompile Include="src\Core\Server\WindowsServer.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\ISystem.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\MovementSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h" />
     <ClInclude Include="include\LKZ\Utility\Logger.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\EntityManager.h" />

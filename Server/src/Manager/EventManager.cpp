@@ -8,12 +8,15 @@
 #include "LKZ/Protocol/Message/Entity/SynchronizeEntitiesMessage.h"
 #include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/RotateEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/StartMatchmakingMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
+
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
@@ -30,6 +33,8 @@ void EventManager::BindEvents()
     EventManager::registerHandler<LeaveLobbyMessage>(7);
     EventManager::registerHandler<UpdateLobbyMessage>(8);
     EventManager::registerHandler<CreateEntityMessage>(9);
+    EventManager::registerHandler<InputEntityMessage>(10);
+    EventManager::registerHandler<MoveEntityMessage>(11);
   /*  EventManager::registerHandler<CreateEntityMessage>(4);
     EventManager::registerHandler<LobbyListMessage>(5);
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);
@@ -74,7 +79,7 @@ void EventManager::handleMessage(const std::vector<uint8_t>& buffer, const socka
     char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(senderAddr.sin_addr), ip, INET_ADDRSTRLEN);
     // added +1 because we removed 1 byte before handled event (ID)
-    Logger::Log(std::format("{} ({} bytes) [{}:{}]", name, buffer.size() + 1, ip, ntohs(senderAddr.sin_port)), LogType::Sent);
+    Logger::Log(std::format("{} ({} bytes) [{}:{}]", name, buffer.size() + 1, ip, ntohs(senderAddr.sin_port)), LogType::Received);
 
     msg.deserialize(deserializer);
     msg.process(senderAddr);

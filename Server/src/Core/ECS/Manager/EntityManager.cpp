@@ -2,52 +2,33 @@
 #include "LKZ/Core/ECS/Component/Component.h."
 #include <iostream>
 
-Entity EntityManager::CreateEntity(EntityType type, ComponentManager& components)
+Entity EntityManager::CreateEntity(EntityType type, ComponentManager& components, Lobby* lobby)
 {
-    Entity entity;
-
-    // Reuse free IDs if available
+    Entity id;
     if (!freeIDs.empty()) {
-        entity = freeIDs.front();
+        id = freeIDs.front();
         freeIDs.pop();
     }
     else {
-        entity = nextID++;
+        id = nextID++;
     }
 
-    // Assign common components
-    components.types[entity] = TypeComponent{ type };
-    components.positions[entity] = PositionComponent{ 0.0f, 0.0f, 0.0f };
+    entityLobbyMap[id] = lobby;
 
-    // Assign type-specific components
-    switch (type)
-    {
-    case EntityType::Player:
-        /*components.players[entity] = PlayerComponent{
-            .health = 100.0f,
-            .speed = 5.0f
-        };*/
-        std::cout << "[EntityManager] Player created (ID " << entity << ")\n";
-        break;
-
-    case EntityType::AI:
-     /*   components.ais[entity] = AIComponent{
-            .health = 50.0f,
-            .speed = 2.0f,
-            .behaviorState = 0
-        };*/
-        std::cout << "[EntityManager] AI created (ID " << entity << ")\n";
-        break;
-
-    default:
-        std::cerr << "[EntityManager] Unknown entity type!\n";
-        break;
-    }
-
-    return entity;
+    return id;
 }
 
 void EntityManager::DestroyEntity(Entity entity)
 {
     freeIDs.push(entity);
+    entityLobbyMap.erase(entity);
+}
+
+Lobby* EntityManager::GetLobbyByEntity(Entity entity)
+{
+    auto it = entityLobbyMap.find(entity);
+    if (it != entityLobbyMap.end()) {
+        return it->second;
+    }
+    return nullptr;
 }

@@ -31,12 +31,7 @@ int main()
     );
 	systemManager.RegisterSystem(std::make_shared<MovementSystem>());   
 
-    // Create your entities before starting the simsysulation thread
-    entityManager.CreateEntity(EntityType::Player, componentManager);
-
     Engine::Instance().Run();
-
-
     // Cleanup
     ThreadManager::StopAll();
     delete server;

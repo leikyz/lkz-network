@@ -1,4 +1,4 @@
-#include "LKZ/Core/Log/Logger.h"
+#include "LKZ/Utility/Logger.h"
 #include <iostream>
 #include <sstream>
 #include <chrono>
@@ -29,6 +29,9 @@ void Logger::Log(const std::string& message, LogType level)
         strftime(buffer, sizeof(buffer), "%H:%M:%S", &timeinfo);
 
         std::cout << "[" << buffer << "] " << Logger::GetPrefix(level) << msg << std::endl;
+
+        // Add a short pause to slow log printing
+        //std::this_thread::sleep_for(std::chrono::milliseconds(50)); // 50ms pause
         };
 
     auto loggerPool = ThreadManager::GetPool("logger");
@@ -39,4 +42,5 @@ void Logger::Log(const std::string& message, LogType level)
         std::cerr << "[Logger] Logger pool not found!\n";
     }
 }
+
 

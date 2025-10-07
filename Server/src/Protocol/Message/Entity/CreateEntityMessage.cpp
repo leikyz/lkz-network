@@ -1,6 +1,7 @@
 #include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
 #include <cstdlib> 
 #include <ctime>   
+#include <LKZ/Core/ECS/Manager/EntityManager.h>
 
 CreateEntityMessage::CreateEntityMessage() {};
 
@@ -36,53 +37,53 @@ void CreateEntityMessage::deserialize(Deserializer& deserializer)
 
 void CreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-  //  Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-  //  
-  //  if (lobby != nullptr)
-  //  {
-  //      srand(time(0));
-  //      Entity* entity;
+    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
 
-  //      if (lobby->clients.size() == 1)
-  //      {
-  //          entity = new Entity(EntityEnum::Olise);
-  //      }
-  //      else
-  //      {
-  //          entity = new Entity(EntityEnum::Olise);
-  //      }
+    if (lobby != nullptr)
+    {
+        srand(static_cast<unsigned>(time(0)));
 
-  //      entity->posX = 100.0f + rand() % 10;
-  //      entity->posY = 10;
-  //      entity->posZ = 100.0f + rand() % 10;
+        // Create entity
+        Entity entity = EntityManager::Instance().CreateEntity(EntityType::Player, ComponentManager::Instance(), lobby);
 
-  //      lobby->addEntity(entity);
+        // Get the component manager
+        auto& components = ComponentManager::Instance();
 
-  //      entityId = entity->id;
-  //      entityTypeId = entity->type;
-  //      posX = entity->posX;
-  //      posY = entity->posY;
-  //      posZ = entity->posZ;
+        // Change position
+        components.positions[entity] = PositionComponent{ 50.0f, 5.0f, 75.0f };
 
-  //      ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
+        components.positions[entity].x = 100.0f + rand() % 10;
+        components.positions[entity].y = 10;
+        components.positions[entity].z = 100.0f + rand() % 10;
 
-  //      controlled = (ClientManager::getClientByAddress(senderAddr)->playerEntityId == entityId);
+        entityId = entity;
+        entityTypeId = (int)components.types[entity].type;
+        posX = components.positions[entity].x;
+        posY = components.positions[entity].y;
+        posZ = components.positions[entity].z;
 
-  //   
+        lobby->addEntity(&entity);
+        ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
 
-  //      Serializer serializer;
-  //      serialize(serializer);
+        controlled = (ClientManager::getClientByAddress(senderAddr)->playerEntityId == entityId);
 
-		//Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
+        Serializer serializer;
+        serialize(serializer);
 
-  //      controlled = false;
+        // Send to the creator client
+        Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
 
-  //      /*Serializer serializer;*/
-		//serialize(serializer);
+        controlled = false;
 
-		//Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName(), ClientManager::getClientByAddress(senderAddr));
-
-  //    /*  Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.getBuffer());*/
-  //  }
+        // Send to all other clients in lobby
+        serialize(serializer);
+        Engine::Instance().Server()->SendToMultiple(
+            lobby->clients,
+            serializer.getBuffer(),
+            getClassName(),
+            ClientManager::getClientByAddress(senderAddr)
+        );
+    }
 }
+
 

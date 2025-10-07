@@ -20,7 +20,7 @@ public:
     // Component storages
     std::unordered_map<Entity, PositionComponent> positions;
     std::unordered_map<Entity, TypeComponent> types;
-
+    std::unordered_map<Entity, InputComponent> inputs;
     // Removes an entity and all its components
     void RemoveEntity(Entity entity);
 

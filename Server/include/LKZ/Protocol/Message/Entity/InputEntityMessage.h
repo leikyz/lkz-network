@@ -1,21 +1,20 @@
-#ifndef MOVE_ENTITY_MESSAGE_H
-#define MOVE_ENTITY_MESSAGE_H
+#ifndef INPUT_ENTITY_MESSAGE_H
+#define INPUT_ENTITY_MESSAGE_H
 
 #include "LKZ/Protocol/Message/Message.h"
 
-struct MoveEntityMessage : public Message
+struct InputEntityMessage : public Message
 {
-    static constexpr uint8_t ID = 11;
+    static constexpr uint8_t ID = 10;
 
-    MoveEntityMessage();
+    InputEntityMessage();
 
-    MoveEntityMessage(int entityId, float posX, float posY, float posZ);
+    InputEntityMessage(int entityId, float inputX, float inputY);
 
     int entityId;
 
-    float posX;
-    float posY;
-	float posZ;
+    float inputX;
+    float inputY;
 
     uint8_t getId() const override;
 

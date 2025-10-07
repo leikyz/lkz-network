@@ -16,7 +16,6 @@ void Engine::Run()
     network->Start();
 
     const float targetFrameTime = 1.0f / 60.0f; 
-    float deltaTime = 0.0f; 
     float elapsedTime = 0.0f; 
 
     clock_t lastClock = std::clock();

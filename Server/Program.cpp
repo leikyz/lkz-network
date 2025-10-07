@@ -28,13 +28,15 @@ int main()
 
     ThreadManager::CreatePool("player_simulation", 1,
         [systemManager, &componentsManager](float deltaTime) {
-            systemManager->Update(*componentsManager, deltaTime);
+            systemManager->Update(*componentsManager, Engine::Instance().GetDeltaTime());
         },
         true // continuous loop
     );
 
 
     Engine::Instance().Run();
+
+
     // Cleanup
     ThreadManager::StopAll();
     delete server;

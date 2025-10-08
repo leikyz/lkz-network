@@ -3,5 +3,8 @@
 void ComponentManager::RemoveEntity(Entity entity)
 {
     positions.erase(entity);
+	rotations.erase(entity);
     types.erase(entity);
+	inputs.erase(entity);
+	mouseInputs.erase(entity);
 }

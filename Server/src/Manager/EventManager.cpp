@@ -11,11 +11,14 @@
 #include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/RotateEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/MouseInputEntityMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/StartMatchmakingMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
+
 
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
@@ -35,6 +38,8 @@ void EventManager::BindEvents()
     EventManager::registerHandler<CreateEntityMessage>(9);
     EventManager::registerHandler<InputEntityMessage>(10);
     EventManager::registerHandler<MoveEntityMessage>(11);
+    EventManager::registerHandler<RotateEntityMessage>(12);
+    EventManager::registerHandler<MouseInputEntityMessage>(13);
   /*  EventManager::registerHandler<CreateEntityMessage>(4);
     EventManager::registerHandler<LobbyListMessage>(5);
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);

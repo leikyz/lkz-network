@@ -4,7 +4,7 @@
 InputEntityMessage::InputEntityMessage() {};
 
 
-byte InputEntityMessage::getId() const
+uint8_t InputEntityMessage::getId() const
 {
     return ID;
 }

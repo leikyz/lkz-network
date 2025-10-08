@@ -50,7 +50,10 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         auto& components = ComponentManager::Instance();
 
         // Change position
-        components.positions[entity] = PositionComponent{ 50.0f, 5.0f, 75.0f };
+        components.positions[entity] = PositionComponent{ 0.0f, 0.0f, 0.0f };
+        components.rotations[entity] = RotationComponent{ 0.0f, 0.0f, 0.0f };
+        components.inputs[entity] = InputComponent{ 0.0f, 0.0f };
+        components.mouseInputs[entity] = MouseInputComponent{ 0.0f, 0.0f };
 
         components.positions[entity].x = 100.0f + rand() % 10;
         components.positions[entity].y = 10;

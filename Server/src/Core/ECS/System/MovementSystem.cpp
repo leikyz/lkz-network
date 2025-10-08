@@ -1,4 +1,4 @@
-#include "LKZ/Core/ECS/System/Player/MovementSystem.h"
+﻿#include "LKZ/Core/ECS/System/Player/MovementSystem.h"
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Utility/Logger.h>
 #include <iostream>
@@ -15,70 +15,56 @@ constexpr float mouseSensitivity = 0.25f;
 constexpr float minPitch = -40.0f;
 constexpr float maxPitch = 80.0f;
 
+constexpr float moveSpeed = 0.1f; // ajustable
+
+
 void MovementSystem::Update(ComponentManager& components, float deltaTime)
 {
     for (auto& [entity, input] : components.inputs)
     {
-        // Ensure this entity also has mouse input and position
-        if (components.mouseInputs.find(entity) == components.mouseInputs.end()) continue;
         if (components.positions.find(entity) == components.positions.end()) continue;
+        if (components.rotations.find(entity) == components.rotations.end()) continue;
 
         auto& position = components.positions[entity];
-        auto& mouseInput = components.mouseInputs[entity];
 
-        // ----------- MOVEMENT -----------
-        if (std::abs(input.inputX) > 0.001f || std::abs(input.inputY) > 0.001f)
+        float cameraYaw = components.rotations[entity].y; 
+        float yawRad = cameraYaw * (3.14159265f / 180.0f);
+
+        float forwardX = std::sin(yawRad);
+        float forwardZ = std::cos(yawRad);
+        float rightX = std::cos(yawRad);
+        float rightZ = -std::sin(yawRad);
+
+        float dirX = rightX * input.inputX + forwardX * input.inputY;
+        float dirZ = rightZ * input.inputX + forwardZ * input.inputY;
+
+        float len = std::sqrt(dirX * dirX + dirZ * dirZ);
+        if (len > 0.001f)
         {
-            float speed = 0.1f;
-            float moveX = input.inputX * speed * deltaTime;
-            float moveZ = input.inputY * speed * deltaTime;
+            dirX /= len;
+            dirZ /= len;
+        }
 
-            position.x += moveX;
-            position.z += moveZ;
+        position.x += dirX * moveSpeed * deltaTime;
+        position.z += dirZ * moveSpeed * deltaTime;
 
-            Logger::Log("Entity " + std::to_string(entity) + " moved to X: " +
-                std::to_string(position.x) + " Z: " + std::to_string(position.z), LogType::Debug);
 
-            Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
+        position.x += dirX * moveSpeed * deltaTime;
+        position.z += dirZ * moveSpeed * deltaTime;
 
-            // Uncomment when ready to sync to clients:
-            /*
+        Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
+        if (lobby)
+        {
             MoveEntityMessage moveEntityMessage(entity, position.x, position.y, position.z);
             Serializer s;
             moveEntityMessage.serialize(s);
-            Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), moveEntityMessage.getClassName());
-            */
+            Engine::Instance().Server()->SendToMultiple(
+                lobby->clients,
+                s.getBuffer(),
+                moveEntityMessage.getClassName()
+            );
         }
-
-        if (std::abs(mouseInput.inputX) > 0.001f || std::abs(mouseInput.inputY) > 0.001f)
-        {
-            if (components.rotations.find(entity) == components.rotations.end())
-                continue; 
-
-            auto& rotation = components.rotations[entity];
-
-            rotation.x += mouseInput.inputX * mouseSensitivity;
-
-            if (rotation.x >= 360.f) rotation.x -= 360.f;
-            if (rotation.x < 0.f) rotation.x += 360.f;
-
-            // Update pitch (vertical rotation) and clamp
-            rotation.y -= mouseInput.inputY * mouseSensitivity;
-            rotation.y = std::clamp(rotation.y, minPitch, maxPitch);
-
-            Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
-
-
-            RotateEntityMessage moveEntityMessage;
-            moveEntityMessage.entityId = entity;
-            moveEntityMessage.rotaY = rotation.x;
-            Serializer s;
-            moveEntityMessage.serialize(s);
-            Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), moveEntityMessage.getClassName());
-            Logger::Log("Entity " + std::to_string(entity) +
-                " rotated to rotX: " + std::to_string(rotation.x) +
-                " rotY: " + std::to_string(moveEntityMessage.rotaY), LogType::Debug);
-        }
-
     }
 }
+
+

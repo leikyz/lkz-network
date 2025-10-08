@@ -15,7 +15,7 @@ struct RotateEntityMessage : public Message
 
     float rotaY;
 
-    byte getId() const override;
+    uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;
     void deserialize(Deserializer& deserializer) override;

@@ -7,12 +7,12 @@
 
 class Deserializer {
 private:
-    const std::vector<uint8_t>& m_buffer;
+   
     size_t m_position = 0;
 
 public:
     explicit Deserializer(const std::vector<uint8_t>& buf) : m_buffer(buf) {}
-
+    const std::vector<uint8_t>& m_buffer;
     int readInt() 
     {
         if (m_position + 4 > m_buffer.size()) {

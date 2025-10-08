@@ -4,7 +4,7 @@
 RotateEntityMessage::RotateEntityMessage() {};
 
 
-byte RotateEntityMessage::getId() const
+uint8_t RotateEntityMessage::getId() const
 {
     return ID;
 }
@@ -27,23 +27,26 @@ void RotateEntityMessage::deserialize(Deserializer& deserializer)
 
 void RotateEntityMessage::process(const sockaddr_in& senderAddr)
 {
+   Logger::Log("Updated rotation for entity  to yaw: " + std::to_string(rotaY), LogType::Debug);
     auto* client = ClientManager::getClientByAddress(senderAddr);
     if (!client) return;
 
     Lobby* lobby = LobbyManager::getLobby(client->lobbyId);
     if (!lobby) return;
 
-    Entity entity = entityId; // You already have entityId
+    Entity entity = entityId;
     auto& components = ComponentManager::Instance();
 
-    //// Ensure the entity exists
-   /* if (components.positions.find(entity) != components.positions.end()) {
-        components.inputs[entity] = InputComponent{ inputX, inputY };*/
+    if (components.rotations.find(entity) == components.rotations.end())
+    {
+        components.rotations[entity] = RotationComponent{ 0.0f, rotaY, 0.0f };
+    }
+    else
+    {
+        components.rotations[entity].y = rotaY;
+    }
 
-        //    Serializer serializer;
-        //    serialize(serializer);
-
-        //    Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.buffer);
-        //}
+    Logger::Log("Updated rotation for entity " + std::to_string(entity) +
+        " to yaw: " + std::to_string(rotaY), LogType::Debug);
 }
 

@@ -23,6 +23,8 @@ std::vector<uint8_t>& MoveEntityMessage::serialize(Serializer& serializer) const
     serializer.writeFloat(posY);
     serializer.writeFloat(posZ);
 
+ 
+
     return serializer.getBuffer();
 }
 

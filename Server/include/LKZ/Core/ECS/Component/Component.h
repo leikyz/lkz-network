@@ -1,31 +1,40 @@
 #pragma once
 #include "LKZ/Core/ECS/Entity.h"
-#include "LKZ/Simulation/Math/Vector.h"
-#include "LKZ/Simulation/Math/Quaternion.h"
 #include <cstdint>
 
-enum class EntityType : uint8_t 
+enum class EntityType : uint8_t
 {
     Player = 1,
     AI
 };
 
-struct InputComponent 
+struct InputComponent
 {
-    Vector2 input;
+    float inputX = 0.0f;
+    float inputY = 0.0f;
 };
 
-struct PositionComponent 
+struct MouseInputComponent
 {
-    Vector3 position;
+    float inputX = 0.0f;
+    float inputY = 0.0f;
 };
 
-struct RotationComponent 
+struct PositionComponent
 {
-    Quaternion rotation;
+    float x;
+    float y;
+    float z;
 };
 
-struct TypeComponent 
+struct RotationComponent {
+    float x;
+    float y;
+    float z;
+};
+
+
+struct TypeComponent
 {
     EntityType type;
 };

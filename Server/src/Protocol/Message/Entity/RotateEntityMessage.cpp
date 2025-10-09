@@ -27,6 +27,7 @@ void RotateEntityMessage::deserialize(Deserializer& deserializer)
 
 void RotateEntityMessage::process(const sockaddr_in& senderAddr)
 {
+    Logger::Log("Updated rotation for entity  to yaw: " + std::to_string(rotaY), LogType::Debug);
     auto* client = ClientManager::getClientByAddress(senderAddr);
     if (!client) return;
 
@@ -35,20 +36,16 @@ void RotateEntityMessage::process(const sockaddr_in& senderAddr)
 
     Entity entity = entityId;
     auto& components = ComponentManager::Instance();
-    float halfYaw = rotaY * 0.5f;
-    float sinHalfYaw = sin(halfYaw);
-    float cosHalfYaw = cos(halfYaw);
-    components.rotations[entityId].rotation = Quaternion(cosHalfYaw, 0.0f, sinHalfYaw, 0.0f);
+
     if (components.rotations.find(entity) == components.rotations.end())
     {
-        components.rotations[entity] = RotationComponent{ Quaternion::FromEuler(0.0f, rotaY, 0.0f) };
+        components.rotations[entity] = RotationComponent{ 0.0f, rotaY, 0.0f };
     }
     else
     {
-        components.rotations[entity].rotation = Quaternion::FromEuler(0.0f, rotaY, 0.0f);
-
+        components.rotations[entity].y = rotaY;
     }
-    //Logger::Log("Received RotateEntityMessage for entity " + std::to_string(entityId) +
-    //    " with rotaY = " + std::to_string(rotaY), LogType::Info);
-}
 
+    Logger::Log("Updated rotation for entity " + std::to_string(entity) +
+        " to yaw: " + std::to_string(rotaY), LogType::Debug);
+}

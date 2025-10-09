@@ -25,12 +25,31 @@ struct Quaternion
 
     static Quaternion FromEuler(float pitch, float yaw, float roll)
     {
-        Quaternion qPitch(cos(pitch * 0.5f), sin(pitch * 0.5f), 0.0f, 0.0f);
-        Quaternion qYaw(cos(yaw * 0.5f), 0.0f, sin(yaw * 0.5f), 0.0f);
-        Quaternion qRoll(cos(roll * 0.5f), 0.0f, 0.0f, sin(roll * 0.5f));
+        float halfYaw = yaw * 0.5f;
+        float halfPitch = pitch * 0.5f;
+        float halfRoll = roll * 0.5f;
 
-        return qRoll * qPitch * qYaw;
+        float cy = cos(halfYaw);
+        float sy = sin(halfYaw);
+        float cp = cos(halfPitch);
+        float sp = sin(halfPitch);
+        float cr = cos(halfRoll);
+        float sr = sin(halfRoll);
+
+        Quaternion q;
+        q.w = cy * cp * cr + sy * sp * sr;
+        q.x = cy * sp * cr + sy * cp * sr;
+        q.y = sy * cp * cr - cy * sp * sr;
+        q.z = cy * cp * sr - sy * sp * cr;
+
+        // Normalisation
+        float mag = sqrt(q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z);
+        q.w /= mag; q.x /= mag; q.y /= mag; q.z /= mag;
+
+        return q;
     }
+
+
 
     static Vector3 QuaternionToEuler(const Quaternion& q)
     {

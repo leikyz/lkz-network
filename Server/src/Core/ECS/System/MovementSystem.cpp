@@ -20,26 +20,23 @@ constexpr float moveSpeed = 0.1f; // ajustable
 
 void MovementSystem::Update(ComponentManager& components, float deltaTime)
 {
-    for (auto& [entity, inputComponent] : components.inputs)
+    for (auto& [entity, input] : components.inputs)
     {
         if (components.positions.find(entity) == components.positions.end()) continue;
         if (components.rotations.find(entity) == components.rotations.end()) continue;
 
-        auto& positionComponent = components.positions[entity];
-        auto& rotationComponent = components.rotations[entity];
+        auto& position = components.positions[entity];
 
-        float cameraYaw = Quaternion::QuaternionToEuler(rotationComponent.rotation).y;
+        float cameraYaw = components.rotations[entity].y;
         float yawRad = cameraYaw * (3.14159265f / 180.0f);
-
-        Logger::Log("Yaw : " + std::to_string(cameraYaw));
 
         float forwardX = std::sin(yawRad);
         float forwardZ = std::cos(yawRad);
         float rightX = std::cos(yawRad);
         float rightZ = -std::sin(yawRad);
 
-        float dirX = rightX * inputComponent.input.x + forwardX * inputComponent.input.y;
-        float dirZ = rightZ * inputComponent.input.x + forwardZ * inputComponent.input.y;
+        float dirX = rightX * input.inputX + forwardX * input.inputY;
+        float dirZ = rightZ * input.inputX + forwardZ * input.inputY;
 
         float len = std::sqrt(dirX * dirX + dirZ * dirZ);
         if (len > 0.001f)
@@ -48,17 +45,17 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
             dirZ /= len;
         }
 
-        positionComponent.position.x += dirX * moveSpeed * deltaTime;
-        positionComponent.position.z += dirZ * moveSpeed * deltaTime;
+        position.x += dirX * moveSpeed * deltaTime;
+        position.z += dirZ * moveSpeed * deltaTime;
 
 
-        positionComponent.position.x += dirX * moveSpeed * deltaTime;
-        positionComponent.position.z += dirZ * moveSpeed * deltaTime;
+        position.x += dirX * moveSpeed * deltaTime;
+        position.z += dirZ * moveSpeed * deltaTime;
 
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
         if (lobby)
         {
-            MoveEntityMessage moveEntityMessage(entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z);
+            MoveEntityMessage moveEntityMessage(entity, position.x, position.y, position.z);
             Serializer s;
             moveEntityMessage.serialize(s);
             Engine::Instance().Server()->SendToMultiple(

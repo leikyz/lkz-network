@@ -156,6 +156,102 @@
     <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Entity\MouseInputEntityMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\DebugDraw.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\DetourDebugDraw.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\RecastDebugDraw.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\RecastDump.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourAlloc.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourAssert.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourCommon.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNavMesh.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNode.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourCrowd.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourLocalBoundary.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourObstacleAvoidance.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourPathCorridor.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourPathQueue.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourProximityGrid.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourTileCache\Source\DetourTileCache.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\DetourTileCache\Source\DetourTileCacheBuilder.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\Recast.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastAlloc.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastArea.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastAssert.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastContour.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastFilter.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastLayers.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastMesh.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastMeshDetail.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastRasterization.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastRegion.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Simulation\Math\MathUtils.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Protocol\Message\Message.h">
@@ -336,6 +432,90 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\MouseInputEntityMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\DebugDraw.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\DetourDebugDraw.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\RecastDebugDraw.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\RecastDump.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourAlloc.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourAssert.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourCommon.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourMath.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNavMesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNavMeshBuilder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNavMeshQuery.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNode.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourStatus.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourCrowd.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourLocalBoundary.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourObstacleAvoidance.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourPathCorridor.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourPathQueue.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourProximityGrid.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourTileCache\Include\DetourTileCache.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\DetourTileCache\Include\DetourTileCacheBuilder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Recast\Include\Recast.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Recast\Include\RecastAlloc.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\RecastNavigation\Recast\Include\RecastAssert.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Simulation\Math\Vector.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Simulation\Math\Quaternion.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

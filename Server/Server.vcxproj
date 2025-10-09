@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib/RecastNavigation/Recast/include;$(ProjectDir)lib/RecastNavigation/DetourTileCache/include;$(ProjectDir)lib/RecastNavigation/DetourCrowd/include;$(ProjectDir)lib/RecastNavigation/DebugUtils/include;$(ProjectDir)lib/RecastNavigation/Detour/include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,10 +130,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\LKZ\Core\Server\INetworkInterface.h" />
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\DebugDraw.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\DetourDebugDraw.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\RecastDebugDraw.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\RecastDump.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourCrowd.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourLocalBoundary.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourObstacleAvoidance.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourPathCorridor.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourPathQueue.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourCrowd\Source\DetourProximityGrid.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourTileCache\Source\DetourTileCache.cpp" />
+    <ClCompile Include="lib\RecastNavigation\DetourTileCache\Source\DetourTileCacheBuilder.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourAssert.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourCommon.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNavMesh.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Detour\Source\DetourNode.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\Recast.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastAlloc.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastArea.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastAssert.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastContour.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastFilter.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastLayers.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastMesh.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastMeshDetail.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastRasterization.cpp" />
+    <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastRegion.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\MouseInputEntityMessage.cpp" />
+    <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Utility\Logger.cpp" />
     <ClCompile Include="src\Core\Server\LinuxServer.cpp" />
     <ClCompile Include="src\Core\Server\WindowsServer.cpp" />
@@ -169,6 +200,9 @@
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\MouseInputEntityMessage.h" />
+    <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />
+    <ClInclude Include="include\LKZ\Simulation\Math\Quaternion.h" />
+    <ClInclude Include="include\LKZ\Simulation\Math\Vector.h" />
     <ClInclude Include="include\LKZ\Utility\Logger.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\EntityManager.h" />
@@ -223,6 +257,30 @@
     <ClInclude Include="include\Protocol\Message\Matchmaking\StartMatchmakingMessage.h" />
     <ClInclude Include="include\Protocol\Message\Matchmaking\UpdateLobbyMessage.h" />
     <ClInclude Include="include\Protocol\Message\Message.h" />
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\DebugDraw.h" />
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\DetourDebugDraw.h" />
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\RecastDebugDraw.h" />
+    <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\RecastDump.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourCrowd.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourLocalBoundary.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourObstacleAvoidance.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourPathCorridor.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourPathQueue.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourCrowd\Include\DetourProximityGrid.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourTileCache\Include\DetourTileCache.h" />
+    <ClInclude Include="lib\RecastNavigation\DetourTileCache\Include\DetourTileCacheBuilder.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourAlloc.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourAssert.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourCommon.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourMath.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNavMesh.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNavMeshBuilder.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNavMeshQuery.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourNode.h" />
+    <ClInclude Include="lib\RecastNavigation\Detour\Include\DetourStatus.h" />
+    <ClInclude Include="lib\RecastNavigation\Recast\Include\Recast.h" />
+    <ClInclude Include="lib\RecastNavigation\Recast\Include\RecastAlloc.h" />
+    <ClInclude Include="lib\RecastNavigation\Recast\Include\RecastAssert.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

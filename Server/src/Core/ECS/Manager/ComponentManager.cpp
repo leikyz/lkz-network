@@ -6,5 +6,4 @@ void ComponentManager::RemoveEntity(Entity entity)
 	rotations.erase(entity);
     types.erase(entity);
 	inputs.erase(entity);
-	mouseInputs.erase(entity);
 }

@@ -22,7 +22,6 @@ public:
     std::unordered_map<Entity, RotationComponent> rotations;
     std::unordered_map<Entity, TypeComponent> types;
     std::unordered_map<Entity, InputComponent> inputs;
-    std::unordered_map<Entity, MouseInputComponent> mouseInputs;
     // Removes an entity and all its components
     void RemoveEntity(Entity entity);
 

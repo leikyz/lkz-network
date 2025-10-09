@@ -34,8 +34,8 @@ void MouseInputEntityMessage::process(const sockaddr_in& senderAddr)
     auto& components = ComponentManager::Instance();
 
     //// Ensure the entity exists
-    if (components.positions.find(entity) != components.positions.end())
-        components.mouseInputs[entity] = MouseInputComponent{ inputX, inputY };
+  /*  if (components.positions.find(entity) != components.positions.end())
+        components.mouseInputs[entity] = MouseInputComponent{ inputX, inputY };*/
 
         //    Serializer serializer;
         //    serialize(serializer);

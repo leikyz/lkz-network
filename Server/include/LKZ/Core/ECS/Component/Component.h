@@ -1,5 +1,7 @@
 #pragma once
 #include "LKZ/Core/ECS/Entity.h"
+#include "LKZ/Simulation/Math/Vector.h"
+#include "LKZ/Simulation/Math/Quaternion.h"
 #include <cstdint>
 
 enum class EntityType : uint8_t 
@@ -10,29 +12,18 @@ enum class EntityType : uint8_t
 
 struct InputComponent 
 {
-    float inputX = 0.0f;
-    float inputY = 0.0f;
-};
-
-struct MouseInputComponent
-{
-    float inputX = 0.0f;
-    float inputY = 0.0f;
+    Vector2 input;
 };
 
 struct PositionComponent 
 {
-    float x;
-    float y;
-    float z;
+    Vector3 position;
 };
 
-struct RotationComponent {
-    float x;
-    float y;
-    float z;
+struct RotationComponent 
+{
+    Quaternion rotation;
 };
-
 
 struct TypeComponent 
 {

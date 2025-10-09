@@ -50,20 +50,19 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         auto& components = ComponentManager::Instance();
 
         // Change position
-        components.positions[entity] = PositionComponent{ 0.0f, 0.0f, 0.0f };
-        components.rotations[entity] = RotationComponent{ 0.0f, 0.0f, 0.0f };
-        components.inputs[entity] = InputComponent{ 0.0f, 0.0f };
-        components.mouseInputs[entity] = MouseInputComponent{ 0.0f, 0.0f };
+        components.positions[entity] = PositionComponent{ Vector3() };
+        components.rotations[entity] = RotationComponent{ Quaternion() };
+        components.inputs[entity] = InputComponent{ Vector2() };
 
-        components.positions[entity].x = 100.0f + rand() % 10;
-        components.positions[entity].y = 10;
-        components.positions[entity].z = 100.0f + rand() % 10;
+        components.positions[entity].position.x = 100.0f + rand() % 10;
+        components.positions[entity].position.y = 10;
+        components.positions[entity].position.z = 100.0f + rand() % 10;
 
         entityId = entity;
         entityTypeId = (int)components.types[entity].type;
-        posX = components.positions[entity].x;
-        posY = components.positions[entity].y;
-        posZ = components.positions[entity].z;
+        posX = components.positions[entity].position.x;
+        posY = components.positions[entity].position.y;
+        posZ = components.positions[entity].position.z;
 
         lobby->addEntity(&entity);
         ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;

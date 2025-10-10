@@ -27,7 +27,6 @@ void RotateEntityMessage::deserialize(Deserializer& deserializer)
 
 void RotateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    Logger::Log("Updated rotation for entity  to yaw: " + std::to_string(rotaY), LogType::Debug);
     auto* client = ClientManager::getClientByAddress(senderAddr);
     if (!client) return;
 
@@ -46,6 +45,14 @@ void RotateEntityMessage::process(const sockaddr_in& senderAddr)
         components.rotations[entity].y = rotaY;
     }
 
-    Logger::Log("Updated rotation for entity " + std::to_string(entity) +
-        " to yaw: " + std::to_string(rotaY), LogType::Debug);
+    Serializer serializer;
+    serialize(serializer);
+
+    Engine::Instance().Server()->SendToMultiple(
+        lobby->clients,
+        serializer.getBuffer(),
+        getClassName(),
+        ClientManager::getClientByAddress(senderAddr)
+    );
+
 }

@@ -16,7 +16,7 @@ constexpr float mouseSensitivity = 0.25f;
 constexpr float minPitch = -40.0f;
 constexpr float maxPitch = 80.0f;
 
-constexpr float moveSpeed = 0.02f; // ajustable
+constexpr float moveSpeed = 0.04f; // ajustable
 
 #include <unordered_map>
 #include <LKZ/Simulation/Math/Vector.h>
@@ -57,7 +57,7 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
         auto it = lastSentPositions.find(entity);
 
         bool shouldSend = false;
-        if (it == lastSentPositions.end())
+     /*   if (it == lastSentPositions.end())
         {
             shouldSend = true;
             lastSentPositions[entity] = currentPos;
@@ -71,10 +71,10 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
                 shouldSend = true;
                 lastSentPositions[entity] = currentPos;
             }
-        }
+        }*/
 
-        if (shouldSend)
-        {
+       /* if (shouldSend)
+        {*/
             Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
             if (lobby)
             {
@@ -87,7 +87,7 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
                     moveEntityMessage.getClassName()
                 );
             }
-        }
+       /* }*/
     }
 }
 

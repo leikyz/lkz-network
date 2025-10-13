@@ -1,8 +1,13 @@
 #include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
+#include <LKZ/Core/ECS/Manager/EntityManager.h>
 
-InputEntityMessage::InputEntityMessage() {};
+InputEntityMessage::InputEntityMessage() {}
 
+InputEntityMessage::InputEntityMessage(int entityId, float inputX, float inputY, float yaw, int sequenceId)
+    : entityId(entityId), inputX(inputX), inputY(inputY), yaw(yaw), sequenceId(sequenceId)
+{
+}
 
 uint8_t InputEntityMessage::getId() const
 {
@@ -15,6 +20,8 @@ std::vector<uint8_t>& InputEntityMessage::serialize(Serializer& serializer) cons
     serializer.writeInt(entityId);
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);
+    serializer.writeFloat(yaw);
+    serializer.writeInt(sequenceId);
 
     return serializer.getBuffer();
 }
@@ -24,8 +31,9 @@ void InputEntityMessage::deserialize(Deserializer& deserializer)
     entityId = deserializer.readInt();
     inputX = deserializer.readFloat();
     inputY = deserializer.readFloat();
+    yaw = deserializer.readFloat();
+    sequenceId = deserializer.readInt();
 }
-
 
 void InputEntityMessage::process(const sockaddr_in& senderAddr)
 {
@@ -35,19 +43,15 @@ void InputEntityMessage::process(const sockaddr_in& senderAddr)
     Lobby* lobby = LobbyManager::getLobby(client->lobbyId);
     if (!lobby) return;
 
-    Entity entity = entityId; // You already have entityId
+    Entity entity = entityId;
     auto& components = ComponentManager::Instance();
 
-    //// Ensure the entity exists
-    if (components.positions.find(entity) != components.positions.end()) {
-        components.inputs[entity] = InputComponent{ inputX, inputY };
+    if (components.positions.find(entity) != components.positions.end())
+    {
+        // Store input without deltaTime
+        components.inputs[entity] = PlayerInput{ inputX, inputY, yaw, sequenceId };
 
-        //    Serializer serializer;
-        //    serialize(serializer);
-
-        //    Server::SendToAllInLobbyExcept(lobby, senderAddr, serializer.buffer);
-        //}
+        components.lastReceivedSequence[entity] = sequenceId;
     }
 }
-
 

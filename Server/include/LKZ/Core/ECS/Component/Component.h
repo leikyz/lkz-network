@@ -8,16 +8,12 @@ enum class EntityType : uint8_t
     AI
 };
 
-struct InputComponent
+struct PlayerInput 
 {
-    float inputX = 0.0f;
-    float inputY = 0.0f;
-};
-
-struct MouseInputComponent
-{
-    float inputX = 0.0f;
-    float inputY = 0.0f;
+    float inputX;
+    float inputY;
+    float yaw;
+    int sequenceId;
 };
 
 struct PositionComponent

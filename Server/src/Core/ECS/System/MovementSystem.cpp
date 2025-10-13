@@ -8,6 +8,10 @@
 #include <math.h>
 #include <LKZ/Protocol/Message/Entity/RotateEntityMessage.h>
 #include <LKZ/Simulation/Math/MathUtils.h>
+
+#include <unordered_map>
+#include <LKZ/Simulation/Math/Vector.h>
+
 float lerp(float a, float b, float t)
 {
     return a + (b - a) * t;
@@ -17,9 +21,6 @@ constexpr float minPitch = -40.0f;
 constexpr float maxPitch = 80.0f;
 
 constexpr float moveSpeed = 0.04f; // ajustable
-
-#include <unordered_map>
-#include <LKZ/Simulation/Math/Vector.h>
 
 void MovementSystem::Update(ComponentManager& components, float deltaTime)
 {
@@ -75,7 +76,7 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
 
        /* if (shouldSend)
         {*/
-            Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
+          /*  Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
             if (lobby)
             {
                 MoveEntityMessage moveEntityMessage(entity, position.x, position.y, position.z);
@@ -86,7 +87,7 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
                     s.getBuffer(),
                     moveEntityMessage.getClassName()
                 );
-            }
+            }*/
        /* }*/
     }
 }

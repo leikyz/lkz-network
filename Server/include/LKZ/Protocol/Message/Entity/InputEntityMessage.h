@@ -8,13 +8,13 @@ struct InputEntityMessage : public Message
     static constexpr uint8_t ID = 10;
 
     InputEntityMessage();
+    InputEntityMessage(int entityId, float inputX, float inputY, float yaw, int sequenceId);
 
-    InputEntityMessage(int entityId, float inputX, float inputY);
-
-    int entityId;
-
-    float inputX;
-    float inputY;
+    int entityId = 0;
+    float inputX = 0.0f;
+    float inputY = 0.0f;
+    float yaw = 0.0f;
+    int sequenceId = 0;
 
     uint8_t getId() const override;
 
@@ -23,4 +23,4 @@ struct InputEntityMessage : public Message
     void process(const sockaddr_in& senderAddr) override;
 };
 
-#endif // MOVE_ENTITY_MESSAGE_H
+#endif // INPUT_ENTITY_MESSAGE_H

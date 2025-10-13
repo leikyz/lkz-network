@@ -38,7 +38,6 @@ void CreateEntityMessage::deserialize(Deserializer& deserializer)
 void CreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
     Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-
     if (lobby != nullptr)
     {
         srand(static_cast<unsigned>(time(0)));
@@ -52,10 +51,10 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         // Change position
         components.positions[entity] = PositionComponent{ 0.0f, 0.0f, 0.0f };
         components.rotations[entity] = RotationComponent{ 0.0f, 0.0f, 0.0f };
-        components.inputs[entity] = InputComponent{ 0.0f, 0.0f };
+        components.inputs[entity] = PlayerInput{ 0.0f, 0.0f, 0.0f, 0 };
 
         components.positions[entity].x = 10.0f + rand() % 10;
-        components.positions[entity].y = 0;
+        components.positions[entity].y = 3;
         components.positions[entity].z = 10.0f + rand() % 10;
 
         entityId = entity;

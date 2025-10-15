@@ -40,8 +40,6 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
     Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
     if (lobby != nullptr)
     {
-        srand(static_cast<unsigned>(time(0)));
-
         // Create entity
         Entity entity = EntityManager::Instance().CreateEntity(EntityType::Player, ComponentManager::Instance(), lobby);
 
@@ -53,9 +51,9 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         components.rotations[entity] = RotationComponent{ 0.0f, 0.0f, 0.0f };
         components.inputs[entity] = PlayerInput{ 0.0f, 0.0f, 0.0f, 0 };
 
-        components.positions[entity].x = 10.0f + rand() % 50;
+        components.positions[entity].x = 10.0f + rand() % 5;
         components.positions[entity].y = 0;
-        components.positions[entity].z = 10.0f + rand() % 50;
+        components.positions[entity].z = 10.0f + rand() % 5;
 
         entityId = entity;
         entityTypeId = (int)components.types[entity].type;

@@ -1,4 +1,4 @@
-#include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
+﻿#include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 
@@ -48,10 +48,14 @@ void InputEntityMessage::process(const sockaddr_in& senderAddr)
 
     if (components.positions.find(entity) != components.positions.end())
     {
-        // Store input without deltaTime
         components.inputs[entity] = PlayerInput{ inputX, inputY, yaw, sequenceId };
-
         components.lastReceivedSequence[entity] = sequenceId;
+
+        if (components.rotations.find(entity) != components.rotations.end())
+        {
+            components.rotations[entity].y = yaw;
+        }
     }
 }
+
 

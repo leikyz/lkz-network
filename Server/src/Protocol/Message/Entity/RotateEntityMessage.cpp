@@ -3,6 +3,12 @@
 
 RotateEntityMessage::RotateEntityMessage() {};
 
+RotateEntityMessage::RotateEntityMessage(int entityId, float yawY)
+{
+
+    this->entityId = entityId;
+    this->rotaY = yawY;
+}
 
 uint8_t RotateEntityMessage::getId() const
 {

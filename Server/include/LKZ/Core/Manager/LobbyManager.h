@@ -23,6 +23,8 @@ public:
 
     static int getLobbyCount();
 
+	static Client* getClientByEntityId(int entityId);
+
     static Lobby* getAvailableLobby(uint8_t mapId);
 
     static std::vector<Lobby*> getAllLobbies();

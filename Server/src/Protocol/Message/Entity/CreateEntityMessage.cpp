@@ -53,9 +53,9 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         components.rotations[entity] = RotationComponent{ 0.0f, 0.0f, 0.0f };
         components.inputs[entity] = PlayerInput{ 0.0f, 0.0f, 0.0f, 0 };
 
-        components.positions[entity].x = 10.0f + rand() % 10;
-        components.positions[entity].y = 3;
-        components.positions[entity].z = 10.0f + rand() % 10;
+        components.positions[entity].x = 10.0f + rand() % 50;
+        components.positions[entity].y = 0;
+        components.positions[entity].z = 10.0f + rand() % 50;
 
         entityId = entity;
         entityTypeId = (int)components.types[entity].type;

@@ -11,7 +11,7 @@ int main()
     #else
         auto server = new LinuxServer();
     #endif
-
+        srand(static_cast<unsigned>(time(0)));
     Engine::Instance(server).Initialize();
 
     auto& componentManager = ComponentManager::Instance();

@@ -108,3 +108,21 @@ std::vector<Lobby*> LobbyManager::getAllLobbies()
     return result;
 }
 
+Client* LobbyManager::getClientByEntityId(int entityId)
+{
+    std::lock_guard<std::mutex> lock(lobbiesMutex);
+    for (auto& pair : lobbies)
+    {
+        Lobby* lobby = pair.second;
+        if (!lobby) continue;
+        for (Client* client : lobby->clients)
+        {
+            if (client && client->playerEntityId == entityId)
+            {
+                return client;
+            }
+        }
+    }
+    return nullptr;
+}
+

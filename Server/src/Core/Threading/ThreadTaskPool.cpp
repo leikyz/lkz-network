@@ -1,4 +1,4 @@
-#include "LKZ/Core/Threading/ThreadTaskPool.h"
+﻿#include "LKZ/Core/Threading/ThreadTaskPool.h"
 
 ThreadTaskPool::ThreadTaskPool(LoopHook hook, bool loopMode)
     : loopHook(hook), stop(false), loopMode(loopMode) {

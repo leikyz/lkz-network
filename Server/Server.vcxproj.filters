@@ -90,9 +90,6 @@
     <ClCompile Include="src\Protocol\Message\Entity\RotateEntityMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Protocol\Message\Entity\SynchronizeEntitiesMessage.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -154,9 +151,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Protocol\Message\Entity\MouseInputEntityMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\DebugDraw.cpp">
@@ -353,9 +347,6 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\RotateEntityMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\SynchronizeEntitiesMessage.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -432,9 +423,6 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\MouseInputEntityMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\DebugDraw.h">

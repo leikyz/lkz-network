@@ -16,6 +16,9 @@ public:
         return instance;
     }
 
+    void SetLastSequenceId(Entity entity, uint32_t sequenceId);
+    uint32_t GetLastSequenceId(Entity entity) const;
+
     Entity CreateEntity(EntityType type, ComponentManager& components, Lobby* lobby);
 
     void DestroyEntity(Entity entity);
@@ -26,4 +29,5 @@ private:
     EntityManager() = default;
     EntityManager(const EntityManager&) = delete;
     EntityManager& operator=(const EntityManager&) = delete;
+    std::unordered_map<Entity, uint32_t> lastSequenceIds;
 };

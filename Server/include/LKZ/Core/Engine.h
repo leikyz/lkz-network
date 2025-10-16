@@ -40,6 +40,8 @@ public:
 
     float GetDeltaTime();
 
+	float GetFixedDeltaTime() const { return fixedDeltaTime; }
+
 private:
     Engine(INetworkInterface* netInterface);
 
@@ -50,6 +52,8 @@ private:
 
     std::chrono::steady_clock::time_point lastTime;
     float deltaTime = 0.0f;
+	float fixedDeltaTime = 0.02f; // 50 HZ
+    float elapsedTime = 0.0f;
 };
 
 

@@ -5,17 +5,19 @@
 
 struct LastEntityPositionMessage : public Message
 {
-    static constexpr uint8_t ID = 9;
+    static constexpr uint8_t ID = 13;
 
     LastEntityPositionMessage();
 
-    LastEntityPositionMessage(int entityId, float posX, float posY, float posZ);
+    LastEntityPositionMessage(int entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput);
 
     int entityId;
 
     float posX;
     float posY;
     float posZ;
+
+    uint32_t lastProcessedInput;
 
     uint8_t getId() const override;
 

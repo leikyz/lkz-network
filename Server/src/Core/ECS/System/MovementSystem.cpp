@@ -3,6 +3,7 @@
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Protocol/Message/Entity/MoveEntityMessage.h>
 #include <LKZ/Protocol/Message/Entity/RotateEntityMessage.h>
+#include <LKZ/Protocol/Message/Entity/LastEntityPositionMessage.h>
 #include <LKZ/Simulation/Math/MathUtils.h>
 #include <LKZ/Simulation/Math/Vector.h>
 #include <LKZ/Utility/Logger.h>
@@ -16,10 +17,11 @@ constexpr float sendInterval = 0.1f;           // 10 Hz = every 0.1 s
 
 void MovementSystem::Update(ComponentManager& components, float deltaTime)
 {
+
     static std::unordered_map<Entity, Vector3> lastSentPositions;
     static float sendTimer = 0.0f;
     sendTimer += deltaTime;
-
+    Logger::Log("MovementSystem Update called." + std::to_string(sendTimer), LogType::Debug);
     bool shouldSend = (sendTimer >= sendInterval);
     if (shouldSend)
         sendTimer = 0.0f;
@@ -34,9 +36,7 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
         float yawDeg = rotation.y;
         float yawRad = yawDeg * (3.14159265f / 180.0f);
 
-        Logger::Log("Entity " + std::to_string(entity) +
-                    " Input: (" + std::to_string(input.inputX) + ", " + std::to_string(input.inputY) + 
-			") Yaw: " + std::to_string(yawDeg));
+      
 
         float forwardX = std::sin(yawRad);
         float forwardZ = std::cos(yawRad);
@@ -56,6 +56,11 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
         // --- Apply movement ---
         position.x += dirX * moveSpeed * deltaTime;
         position.z += dirZ * moveSpeed * deltaTime;
+
+        Logger::Log("Entity " + std::to_string(entity) + " moved to (" +
+            std::to_string(position.x) + ", " +
+            std::to_string(position.y) + ", " +
+            std::to_string(position.z) + ")", LogType::Debug);
 
         // --- Handle network updates (10 Hz) ---
         if (!shouldSend)
@@ -104,29 +109,24 @@ void MovementSystem::Update(ComponentManager& components, float deltaTime)
             );
         }
 
-        /*
-        Vector3 predictedPos = EntityManager::Instance().GetClientReportedPosition(entity);
-        float error = MathUtils::Distance(predictedPos, currentPos);
+		// --- Send correction if too far from last known position ---
+        uint32_t lastSeq = EntityManager::Instance().GetLastSequenceId(entity);
 
-        if (error > correctionThreshold)
-        {
-            CorrectionEntityMessage correctionMsg(
-                entity,
-                currentPos.x,
-                currentPos.y,
-                currentPos.z,
-                EntityManager::Instance().GetLastSequenceId(entity)
-            );
+        LastEntityPositionMessage correctionMsg(
+            entity,
+            position.x,
+            position.y,
+            position.z,
+            lastSeq
+        );
 
-            Serializer cs;
-            correctionMsg.serialize(cs);
+        Serializer cs;
+        correctionMsg.serialize(cs);
 
-            Engine::Instance().Server()->SendToClient(
-                ownerClient,
-                cs.getBuffer(),
-                correctionMsg.getClassName()
-            );
-        }
-        */
+        Engine::Instance().Server()->Send(
+            ownerClient->address,
+            cs.getBuffer(),
+            correctionMsg.getClassName()
+        );
     }
 }

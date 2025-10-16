@@ -163,7 +163,6 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp" />
-    <ClCompile Include="src\Protocol\Message\Entity\MouseInputEntityMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Utility\Logger.cpp" />
     <ClCompile Include="src\Core\Server\LinuxServer.cpp" />
@@ -185,7 +184,6 @@
     <ClCompile Include="src\Protocol\Message\Entity\LastEntityPositionMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\MoveEntityMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\RotateEntityMessage.cpp" />
-    <ClCompile Include="src\Protocol\Message\Entity\SynchronizeEntitiesMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Matchmaking\LeaveLobbyMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Matchmaking\StartGameMessage.cpp" />
@@ -199,7 +197,6 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\MovementSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h" />
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\MouseInputEntityMessage.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Quaternion.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Vector.h" />
@@ -227,7 +224,6 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\LastEntityPositionMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\MoveEntityMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\RotateEntityMessage.h" />
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\SynchronizeEntitiesMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\ChangeReadyStatusMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\LeaveLobbyMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Matchmaking\StartGameMessage.h" />

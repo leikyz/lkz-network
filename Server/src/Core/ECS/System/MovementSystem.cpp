@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <cmath>
 
-constexpr float moveSpeed = 1.8f; 
+constexpr float moveSpeed = 0.2f; 
 constexpr int sendEveryTicks = 5;     
 constexpr float moveThreshold = 0.02f; 
 
@@ -51,11 +51,11 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
         position.x += dirX * moveSpeed * fixedDeltaTime;
         position.z += dirZ * moveSpeed * fixedDeltaTime;
 
-        Logger::Log(
+    /*    Logger::Log(
             std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
                 entity, position.x, position.y, position.z, fixedDeltaTime),
             LogType::Debug
-        );
+        );*/
 
         if (!shouldSend)
             continue; 

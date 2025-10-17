@@ -16,25 +16,32 @@ void Engine::Run()
     network->Start();
 
     const float targetFrameTime = 1.0f / 60.0f; 
-    float elapsedTime = 0.0f; 
+    float accumulator = 0.0f;
 
-    clock_t lastClock = std::clock();
+    lastFrame = std::chrono::steady_clock::now();
 
     while (true)
     {
-        clock_t currentClock = std::clock();
-        float frameTime = float(currentClock - lastClock) / CLOCKS_PER_SEC;
-        lastClock = currentClock;
+        auto now = std::chrono::steady_clock::now();
+        deltaTime = std::chrono::duration<float>(now - lastFrame).count();
+        lastFrame = now;
 
-        elapsedTime += frameTime;
-        deltaTime = elapsedTime; 
+        accumulator += deltaTime;
 
+        ThreadManager::SetGlobalDeltaTime(deltaTime);
+
+        while (accumulator >= fixedDeltaTime)
+        {
+            ThreadManager::SetGlobalDeltaTime(fixedDeltaTime);
+            accumulator -= fixedDeltaTime;
+        }
 
         network->Poll();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
+
 
 void Engine::Initialize()
 {
@@ -51,6 +58,8 @@ void Engine::Initialize()
     )" << std::endl;
     std::cout << "\033[0m";
     std::cout << "[MAIN] Starting engine...\n";
+    lastFrame = std::chrono::steady_clock::now();
+
 }
 
 INetworkInterface* Engine::Server()
@@ -58,7 +67,3 @@ INetworkInterface* Engine::Server()
     return network;
 }
 
-float Engine::GetDeltaTime()
-{
-	return deltaTime;
-}

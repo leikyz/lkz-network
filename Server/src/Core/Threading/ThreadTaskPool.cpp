@@ -1,7 +1,9 @@
 ﻿#include "LKZ/Core/Threading/ThreadTaskPool.h"
+#include <chrono>
 
 ThreadTaskPool::ThreadTaskPool(LoopHook hook, bool loopMode)
-    : loopHook(hook), stop(false), loopMode(loopMode) {
+    : loopHook(hook), loopMode(loopMode)
+{
 }
 
 ThreadTaskPool::~ThreadTaskPool()
@@ -9,53 +11,65 @@ ThreadTaskPool::~ThreadTaskPool()
     Stop();
 }
 
-void ThreadTaskPool::WorkerLoop()
+void ThreadTaskPool::Start()
 {
-    if (loopMode && loopHook)
-    {
-        while (!stop)
-        {
-            loopHook(1.0f);
-            std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
-        }
-        return;
-    }
-
-    while (!stop)
-    {
-        std::function<void()> task;
-        {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            condition.wait(lock, [this]() { return stop || !tasks.empty(); });
-
-            if (stop && tasks.empty()) return;
-
-            if (!tasks.empty()) {
-                task = std::move(tasks.front());
-                tasks.pop();
-            }
-        }
-
-        if (task)
-            task();
-    }
-}
-
-
-void ThreadTaskPool::EnqueueTask(std::function<void()> task)
-{
-    {
-        std::unique_lock<std::mutex> lock(queueMutex);
-        tasks.push(std::move(task));
-    }
-    condition.notify_one();
+    if (running) return;
+    running = true;
+    stopRequested = false;
+    worker = std::thread(&ThreadTaskPool::WorkerLoop, this);
 }
 
 void ThreadTaskPool::Stop()
 {
     {
-        std::unique_lock<std::mutex> lock(queueMutex);
-        stop = true;
+        std::lock_guard<std::mutex> lock(queueMutex);
+        stopRequested = true;
     }
     condition.notify_all();
+    if (worker.joinable())
+        worker.join();
+    running = false;
+}
+
+void ThreadTaskPool::EnqueueTask(std::function<void()> task)
+{
+    {
+        std::lock_guard<std::mutex> lock(queueMutex);
+        tasks.push(std::move(task));
+    }
+    condition.notify_one();
+}
+
+void ThreadTaskPool::SetDeltaTime(float dt)
+{
+    deltaTime = dt;
+}
+
+void ThreadTaskPool::WorkerLoop()
+{
+    if (loopMode && loopHook)
+    {
+        while (!stopRequested)
+        {
+            loopHook(deltaTime);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // avoid busy spin
+        }
+        return;
+    }
+
+    while (!stopRequested)
+    {
+        std::function<void()> task;
+        {
+            std::unique_lock<std::mutex> lock(queueMutex);
+            condition.wait(lock, [this]() { return stopRequested || !tasks.empty(); });
+            if (stopRequested && tasks.empty())
+                return;
+
+            task = std::move(tasks.front());
+            tasks.pop();
+        }
+
+        if (task) task();
+    }
 }

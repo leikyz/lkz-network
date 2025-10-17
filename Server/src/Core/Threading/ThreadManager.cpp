@@ -1,28 +1,31 @@
 #include "LKZ/Core/Threading/ThreadManager.h"
 #include <iostream>
-#include <thread>
 
-std::unordered_map<std::string, ThreadManager::PoolPtr> ThreadManager::pools;
-
-void ThreadManager::CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook, bool isLoop) 
+void ThreadManager::CreatePool(const std::string& name, int threads, ThreadTaskPool::LoopHook hook, bool isLoop)
 {
-    auto pool = std::make_shared<ThreadTaskPool>(hook, isLoop);
+    std::lock_guard<std::mutex> lock(managerMutex);
 
-	std::cout << "[ThreadManager] Initialize pool '" << name << "' with " << threads << " threads.\n";
-
-    for (int i = 0; i < threads; i++) {
-        std::thread([pool]() {
-            pool->WorkerLoop();
-            }).detach();
+    if (pools.contains(name))
+    {
+        std::cerr << "[ThreadManager] Pool '" << name << "' already exists.\n";
+        return;
     }
+
+    auto pool = std::make_shared<ThreadTaskPool>(hook, isLoop);
+    std::cout << "[ThreadManager] Created pool '" << name << "' with " << threads << " thread(s).\n";
+
+    // Start only one thread since each pool = single worker
+    pool->Start();
 
     pools[name] = pool;
 }
 
-ThreadManager::PoolPtr ThreadManager::GetPool(const std::string& name) 
+ThreadManager::PoolPtr ThreadManager::GetPool(const std::string& name)
 {
+    std::lock_guard<std::mutex> lock(managerMutex);
     auto it = pools.find(name);
-    if (it != pools.end()) return it->second;
+    if (it != pools.end())
+        return it->second;
 
     std::cerr << "[ThreadManager] Pool '" << name << "' not found!\n";
     return nullptr;
@@ -30,7 +33,27 @@ ThreadManager::PoolPtr ThreadManager::GetPool(const std::string& name)
 
 void ThreadManager::StopAll()
 {
-    for (auto& pair : pools) {
-        pair.second->Stop();
+    std::lock_guard<std::mutex> lock(managerMutex);
+    for (auto& [name, pool] : pools)
+    {
+        pool->Stop();
     }
+    pools.clear();
+}
+
+void ThreadManager::SetGlobalDeltaTime(float dt)
+{
+    std::lock_guard<std::mutex> lock(managerMutex);
+    globalDeltaTime = dt;
+
+    for (auto& [name, pool] : pools)
+    {
+        pool->SetDeltaTime(dt);
+    }
+}
+
+float ThreadManager::GetGlobalDeltaTime()
+{
+    std::lock_guard<std::mutex> lock(managerMutex);
+    return globalDeltaTime;
 }

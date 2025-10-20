@@ -2,9 +2,10 @@
 #include "LKZ/Core/Manager/MatchmakingManager.h"
 #include "LKZ/Core/Engine.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
-
+#include "LKZ/Simulation/Navmesh/NavMeshLoader.h" 
 #include <iostream>
 #include <thread>
+#include <DetourCrowd.h>
 
 int main()
 {
@@ -14,34 +15,44 @@ int main()
     auto server = new LinuxServer();
 #endif
 
-    srand(static_cast<unsigned>(time(nullptr)));
-
-    auto& engine = Engine::Instance(server);
+    Engine& engine = Engine::Instance(server);
     engine.Initialize();
 
-    auto& componentManager = ComponentManager::Instance();
-    auto& entityManager = EntityManager::Instance();
-    auto& systemManager = SystemManager::Instance();
+    ComponentManager& componentManager = ComponentManager::Instance();
+    EntityManager& entityManager = EntityManager::Instance();
+    SystemManager& systemManager = SystemManager::Instance();
 
     systemManager.RegisterSystem(std::make_shared<MovementSystem>());
 
+    NavMeshLoader navMeshLoader;
+    if (!navMeshLoader.LoadFromFile("NavMeshExport.txt"))
+    {
+        std::cerr << "Error : Can't load navmesh file" << std::endl;
+        return -1;
+    }
+
+    dtNavMesh* navMesh = navMeshLoader.BuildNavMesh();
+    if (!navMesh)
+    {
+        std::cerr << "Error : Can't build the navmesh" << std::endl;
+        return -1;
+    }
+
+
+    dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
+    if (navQuery)
+    {
+        navQuery->init(navMesh, 2048);
+        std::cout << "dtNavMeshQuery initialized." << std::endl;
+        dtFreeNavMeshQuery(navQuery);
+    }
+
     ThreadManager::CreatePool("logger", 1);
-
     ThreadManager::CreatePool("io", 1,[server](float) { server->Poll(); }, false);
-
     ThreadManager::CreatePool("message", 8);
-
     ThreadManager::CreatePool("matchmaking", 1);
-
-    ThreadManager::CreatePool("player_simulation", 1,
-        [&](float) { // we ignore the thread manager deltaTime
-            auto& engine = Engine::Instance();
-            float fixedDt = engine.GetFixedDeltaTime();
-
-            systemManager.Update(componentManager, fixedDt);
-        },
-        true
-    );
+    ThreadManager::CreatePool("player_simulation", 1,[&](float) 
+        { auto& engine = Engine::Instance();float fixedDt = engine.GetFixedDeltaTime(); systemManager.Update(componentManager, fixedDt); }, true);
 
     engine.Run();
 

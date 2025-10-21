@@ -61,6 +61,7 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         posY = components.positions[entity].position.y;
         posZ = components.positions[entity].position.z;
 
+
         lobby->addEntity(&entity);
         ClientManager::getClientByAddress(senderAddr)->playerEntityId = entityId;
 
@@ -80,7 +81,22 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
             lobby->clients,
             serializer.getBuffer(),
             getClassName(),
-            ClientManager::getClientByAddress(senderAddr)
+            ClientManager::getClientByAddress(senderAddr) 
         );
+
+        // test AI
+
+        Entity entityAI = EntityManager::Instance().CreateEntity(EntityType::AI, ComponentManager::Instance(), lobby);
+
+        // Change position
+        components.positions[entityAI] = PositionComponent{ Vector3(0, 0, 0) };
+        components.rotations[entityAI] = RotationComponent{ Vector3(0, 0, 0) };
+        components.ai[entityAI] = AIComponent{ Vector3(0,0,0), std::vector<Vector3>(), 0 };
+
+        components.positions[entityAI].position.x = 500;
+        components.positions[entityAI].position.y = 35;
+        components.positions[entityAI].position.z = 200;
+
+        lobby->addEntity(&entityAI);
     }
 }

@@ -44,6 +44,8 @@ int main()
 	engine.SetWorld(world);
     world->initialize();
 
+        
+
     engine.Run();
 
     ThreadManager::StopAll();

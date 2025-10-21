@@ -1,308 +1,341 @@
-#include "LKZ/Simulation/Navmesh/NavMeshLoader.h"
+﻿#include "LKZ/Simulation/Navmesh/NavMeshLoader.h"
+#include "LKZ/Utility/Logger.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <limits>
 #include <cmath>
+#include <format>
+#include <vector>
+#include <string> 
 
 #include "Recast.h"
 #include "RecastAlloc.h"
 #include "DetourNavMesh.h"
 #include "DetourNavMeshBuilder.h"
 
-NavMeshLoader::~NavMeshLoader()
+#define SAMPLE_POLYAREA_GROUND 1
+#define SAMPLE_POLYFLAGS_WALK 0x01
+
+static std::string& rtrim(std::string& s)
 {
+    if (!s.empty() && s.back() == '\r')
+    {
+        s.pop_back();
+    }
+    return s;
 }
 
 bool NavMeshLoader::LoadFromFile(const std::string& path)
 {
-    std::ifstream file(path);
+    std::ifstream file(path, std::ios::binary);
     if (!file.is_open())
     {
-        std::cerr << "Error: Can't open the file: " << path << std::endl;
+        Logger::Log(std::format("Error: Can't open the file: {}", path), LogType::Error);
         return false;
+    }
+
+    char bom[3] = { 0 };
+    file.read(bom, 3);
+    if (static_cast<unsigned char>(bom[0]) != 0xEF ||
+        static_cast<unsigned char>(bom[1]) != 0xBB ||
+        static_cast<unsigned char>(bom[2]) != 0xBF)
+    {
+        file.seekg(0, std::ios::beg);
     }
 
     m_vertices.clear();
-    m_triangles.clear();
+    m_indices.clear();
+    m_triAreas.clear();
 
     std::string line;
-    std::stringstream ss;
-
-    // --- Vertices ---
+    std::string token;
     int vertexCount = 0;
-    while (std::getline(file, line))
+
+    if (std::getline(file, line))
     {
-        if (line.empty() || line[0] == '#') continue;
-        vertexCount = std::stoi(line);
-        break;
+        try { vertexCount = std::stoi(rtrim(line)); }
+        catch (const std::exception& e)
+        {
+            Logger::Log(std::format("Error: Failed to read vertex count from first line. Content: '{}', Error: {}", line, e.what()), LogType::Error);
+            file.close(); return false;
+        }
+    }
+    else
+    {
+        Logger::Log("Error: File is empty or first line (vertex count) is missing.", LogType::Error);
+        file.close(); return false;
     }
 
-    if (vertexCount <= 0) {
-        std::cerr << "Error: Invalid or missing vertex count." << std::endl;
-        return false;
+    if (vertexCount <= 0)
+    {
+        Logger::Log(std::format("Error: Invalid vertex count: {}. Must be > 0.", vertexCount), LogType::Error);
+        file.close(); return false;
     }
 
     m_vertices.reserve(vertexCount);
+    Logger::Log(std::format("Reading {} vertices...", vertexCount), LogType::Info);
+
     for (int i = 0; i < vertexCount; ++i)
     {
-        if (!std::getline(file, line)) {
-            std::cerr << "Error: Unexpected end of file while reading vertices." << std::endl;
-            return false;
+        if (!std::getline(file, line))
+        {
+            Logger::Log(std::format("Error: Unexpected end of file. Expected {} vertices, but only found {}.", vertexCount, i), LogType::Error);
+            file.close(); return false;
         }
-        ss.str(line);
-        ss.clear();
+
+        std::stringstream ss(rtrim(line));
         Vertex v;
-        char comma;
-        ss >> v.x >> comma >> v.y >> comma >> v.z;
-        m_vertices.push_back(v);
+        try
+        {
+            std::getline(ss, token, ','); v.x = std::stof(token);
+            std::getline(ss, token, ','); v.y = std::stof(token);
+            std::getline(ss, token, ','); v.z = std::stof(token);
+            m_vertices.push_back(v);
+        }
+        catch (const std::exception& e)
+        {
+            Logger::Log(std::format("Error parsing vertex line [{}]: '{}'. Error: {}", i, line, e.what()), LogType::Error);
+            file.close(); return false;
+        }
     }
 
-    // --- Triangle Reading ---
     int triangleCount = 0;
-    while (std::getline(file, line))
+    if (std::getline(file, line))
     {
-        if (line.empty() || line[0] == '#') continue;
-        triangleCount = std::stoi(line);
-        break; // Found the count, break out
+        try { triangleCount = std::stoi(rtrim(line)); }
+        catch (const std::exception& e)
+        {
+            Logger::Log(std::format("Error: Failed to read triangle count. Content: '{}', Error: {}", line, e.what()), LogType::Error);
+            file.close(); return false;
+        }
+    }
+    else
+    {
+        Logger::Log("Error: Unexpected end of file. Expected triangle count after vertex data.", LogType::Error);
+        file.close(); return false;
     }
 
-    if (triangleCount <= 0) {
-        std::cerr << "Error: Invalid or missing triangle count." << std::endl;
+    if (triangleCount <= 0)
+    {
+        Logger::Log(std::format("Error: Invalid triangle count: {}.", triangleCount), LogType::Error);
+        file.close(); return false;
+    }
+
+    m_indices.reserve(triangleCount * 3);
+    m_triAreas.reserve(triangleCount);
+    Logger::Log(std::format("Reading {} triangles...", triangleCount), LogType::Info);
+
+    for (int i = 0; i < triangleCount; ++i)
+    {
+        if (!std::getline(file, line))
+        {
+            Logger::Log(std::format("Error: Unexpected end of file. Expected {} triangles, but only found {}.", triangleCount, i), LogType::Error);
+            file.close(); return false;
+        }
+        rtrim(line);
+        if (line.empty()) { i--; continue; }
+
+        std::stringstream ss(line);
+        int i0, i1, i2;
+        try
+        {
+            std::getline(ss, token, ','); i0 = std::stoi(token);
+            std::getline(ss, token, ','); i1 = std::stoi(token);
+            std::getline(ss, token, ','); i2 = std::stoi(token);
+            m_indices.push_back(i0);
+            m_indices.push_back(i1);
+            m_indices.push_back(i2);
+            m_triAreas.push_back(SAMPLE_POLYAREA_GROUND); // On assigne l'aire 1
+        }
+        catch (const std::exception& e)
+        {
+            Logger::Log(std::format("Error parsing index line [{}]: '{}'. Error: {}", i, line, e.what()), LogType::Error);
+            file.close(); return false;
+        }
+    }
+
+    file.close();
+
+    if (m_vertices.empty() || m_indices.empty())
+    {
+        Logger::Log("Error: No vertices or triangles loaded from the file.", LogType::Error);
         return false;
     }
 
-    m_triangles.reserve(triangleCount);
-    for (int i = 0; i < triangleCount; ++i)
-    {
-        if (!std::getline(file, line)) {
-            std::cerr << "Error: Unexpected end of file while reading triangles." << std::endl;
-            return false;
-        }
-        ss.str(line);
-        ss.clear();
-        Triangle t;
-        char comma;
-        ss >> t.a >> comma >> t.b >> comma >> t.c;
-        m_triangles.push_back(t);
-    }
-
- /*   std::cout << "NavMesh loaded: " << m_vertices.size() << " vertices, " << m_triangles.size() << " triangles." << std::endl;*/
+    Logger::Log(std::format("Successfully loaded {} vertices and {} triangles ({} indices).", m_vertices.size(), m_indices.size() / 3, m_indices.size()), LogType::Info);
     return true;
 }
 
 
 dtNavMesh* NavMeshLoader::BuildNavMesh()
 {
-    if (m_vertices.empty() || m_triangles.empty())
+    if (m_vertices.empty() || m_indices.empty())
     {
-        std::cerr << "Error: No geometry loaded to build the NavMesh." << std::endl;
+        Logger::Log("BuildNavMesh Error: No vertex or index data loaded.", LogType::Error);
         return nullptr;
     }
 
-    // Convert our structures to simple arrays that Recast can use
     std::vector<float> verts(m_vertices.size() * 3);
-    for (size_t i = 0; i < m_vertices.size(); ++i) {
+    for (size_t i = 0; i < m_vertices.size(); ++i)
+    {
         verts[i * 3 + 0] = m_vertices[i].x;
         verts[i * 3 + 1] = m_vertices[i].y;
         verts[i * 3 + 2] = m_vertices[i].z;
     }
 
-    std::vector<int> tris(m_triangles.size() * 3);
-    for (size_t i = 0; i < m_triangles.size(); ++i) {
-        tris[i * 3 + 0] = m_triangles[i].a;
-        tris[i * 3 + 1] = m_triangles[i].b;
-        tris[i * 3 + 2] = m_triangles[i].c;
-    }
     int nverts = static_cast<int>(m_vertices.size());
-    int ntris = static_cast<int>(m_triangles.size());
+    int ntris = static_cast<int>(m_indices.size() / 3);
 
-    // --- Recast Configuration ---
     rcConfig cfg;
     memset(&cfg, 0, sizeof(cfg));
-    cfg.cs = 0.3f; // Cell size (XZ)
-    cfg.ch = 0.2f; // Cell height (Y)
-    cfg.walkableSlopeAngle = 45.0f; // Maximum walkable slope angle in degrees
-    cfg.walkableHeight = (int)ceilf(2.0f / cfg.ch); // Agent height
-    cfg.walkableClimb = (int)floorf(0.9f / cfg.ch); // Maximum height the agent can climb
-    cfg.walkableRadius = (int)ceilf(0.2f / cfg.cs); // Agent radius
-    cfg.maxEdgeLen = (int)(12.0f / cfg.cs); // Maximum edge length
+    rcCalcBounds(verts.data(), nverts, cfg.bmin, cfg.bmax);
+
+    cfg.cs = 0.3f;
+    cfg.ch = 0.2f;
+    cfg.walkableSlopeAngle = 45.0f;
+    cfg.walkableHeight = (int)ceilf(2.0f / cfg.ch);
+    cfg.walkableClimb = (int)floorf(0.9f / cfg.ch);
+    cfg.walkableRadius = (int)ceilf(0.6f / cfg.cs);
+    cfg.maxEdgeLen = (int)(12.0f / cfg.cs);
     cfg.maxSimplificationError = 1.3f;
-    cfg.minRegionArea = (int)rcSqr(8); // Minimum region area
-    cfg.mergeRegionArea = (int)rcSqr(20); // Region area below which it will be merged
+    cfg.minRegionArea = (int)rcSqr(8);
+    cfg.mergeRegionArea = (int)rcSqr(20);
     cfg.maxVertsPerPoly = 6;
     cfg.detailSampleDist = 6.0f;
     cfg.detailSampleMaxError = 1.0f;
-    cfg.tileSize = 0; // 0 for a non-tiled NavMesh
+    cfg.tileSize = 0;
 
-    // Calculate the Bounding Box of the geometry
-    rcCalcBounds(verts.data(), nverts, cfg.bmin, cfg.bmax);
-
-    // Calculate grid size
     rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
     rcContext ctx;
 
-    // --- Recast Processing Pipeline ---
-
-    // 1. Allocate and rasterize the Heightfield
     rcHeightfield* solid = rcAllocHeightfield();
-    if (!rcCreateHeightfield(&ctx, *solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch)) {
-        std::cerr << "Error: rcCreateHeightfield failed." << std::endl;
-        rcFreeHeightField(solid);
-        return nullptr;
+    if (!solid) { Logger::Log("BuildNavMesh Error: Out of memory 'solid'.", LogType::Error); return nullptr; }
+    if (!rcCreateHeightfield(&ctx, *solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch))
+    {
+        Logger::Log("BuildNavMesh Error: Could not create solid heightfield.", LogType::Error); rcFreeHeightField(solid); return nullptr;
     }
 
-    std::vector<unsigned char> triareas(ntris, RC_WALKABLE_AREA);
-    if (!rcRasterizeTriangles(&ctx, verts.data(), nverts, tris.data(), triareas.data(), ntris, *solid, cfg.walkableClimb)) {
-        std::cerr << "Error: rcRasterizeTriangles failed." << std::endl;
-        rcFreeHeightField(solid);
-        return nullptr;
+    if (!m_triAreas.data()) { Logger::Log("BuildNavMesh Error: m_triAreas.data() is null.", LogType::Error); rcFreeHeightField(solid); return nullptr; }
+
+    rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle,
+        verts.data(), nverts,
+        m_indices.data(), ntris,
+        m_triAreas.data());
+
+    if (!rcRasterizeTriangles(&ctx, verts.data(), nverts,
+        m_indices.data(), m_triAreas.data(), ntris,
+        *solid, cfg.walkableClimb))
+    {
+        Logger::Log("BuildNavMesh Error: Could not rasterize triangles.", LogType::Error); rcFreeHeightField(solid); return nullptr;
     }
 
-    // 2. Filter walkable surfaces
     rcFilterLowHangingWalkableObstacles(&ctx, cfg.walkableClimb, *solid);
     rcFilterLedgeSpans(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid);
     rcFilterWalkableLowHeightSpans(&ctx, cfg.walkableHeight, *solid);
 
-    // 3. Partition the surface into regions
     rcCompactHeightfield* chf = rcAllocCompactHeightfield();
-    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid, *chf)) {
-        std::cerr << "Error: rcBuildCompactHeightfield failed." << std::endl;
-        rcFreeHeightField(solid);
-        rcFreeCompactHeightfield(chf);
-        return nullptr;
-    }
-    rcFreeHeightField(solid); // We no longer need the initial heightfield
-    solid = nullptr;
-
-    if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *chf)) {
-        std::cerr << "Error: rcErodeWalkableArea failed." << std::endl;
-        rcFreeCompactHeightfield(chf);
-        return nullptr;
+    if (!chf) { Logger::Log("BuildNavMesh Error: Out of memory 'chf'.", LogType::Error); rcFreeHeightField(solid); return nullptr; }
+    if (!rcBuildCompactHeightfield(&ctx, cfg.walkableHeight, cfg.walkableClimb, *solid, *chf))
+    {
+        Logger::Log("BuildNavMesh Error: Could not build compact data.", LogType::Error); rcFreeHeightField(solid); rcFreeCompactHeightfield(chf); return nullptr;
     }
 
-    // Use the Watershed partitioning, it's the most robust
-    if (!rcBuildDistanceField(&ctx, *chf)) {
-        std::cerr << "Error: rcBuildDistanceField failed." << std::endl;
-        rcFreeCompactHeightfield(chf);
-        return nullptr;
-    }
-    if (!rcBuildRegions(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea)) {
-        std::cerr << "Error: rcBuildRegions failed." << std::endl;
-        rcFreeCompactHeightfield(chf);
-        return nullptr;
+    rcFreeHeightField(solid); solid = nullptr;
+
+    if (!rcErodeWalkableArea(&ctx, cfg.walkableRadius, *chf))
+    {
+        Logger::Log("BuildNavMesh Error: Could not erode.", LogType::Error); rcFreeCompactHeightfield(chf); return nullptr;
     }
 
-    // 4. Create region contours
+    if (!rcBuildDistanceField(&ctx, *chf))
+    {
+        Logger::Log("BuildNavMesh Error: Could not build distance field.", LogType::Error); rcFreeCompactHeightfield(chf); return nullptr;
+    }
+
+    if (!rcBuildRegions(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
+    {
+        Logger::Log("BuildNavMesh Error: Could not build regions.", LogType::Error); rcFreeCompactHeightfield(chf); return nullptr;
+    }
+
     rcContourSet* cset = rcAllocContourSet();
-    if (!rcBuildContours(&ctx, *chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *cset)) {
-        std::cerr << "Error: rcBuildContours failed." << std::endl;
-        rcFreeCompactHeightfield(chf);
-        rcFreeContourSet(cset);
-        return nullptr;
+    if (!cset) { Logger::Log("BuildNavMesh Error: Out of memory 'cset'.", LogType::Error); rcFreeCompactHeightfield(chf); return nullptr; }
+    if (!rcBuildContours(&ctx, *chf, cfg.maxSimplificationError, cfg.maxEdgeLen, *cset))
+    {
+        Logger::Log("BuildNavMesh Error: Could not create contours.", LogType::Error); rcFreeCompactHeightfield(chf); rcFreeContourSet(cset); return nullptr;
     }
 
-    // 5. Build the polygon mesh
     rcPolyMesh* pmesh = rcAllocPolyMesh();
-    if (!rcBuildPolyMesh(&ctx, *cset, cfg.maxVertsPerPoly, *pmesh)) {
-        std::cerr << "Error: rcBuildPolyMesh failed." << std::endl;
-        rcFreeCompactHeightfield(chf);
-        rcFreeContourSet(cset);
-        rcFreePolyMesh(pmesh);
-        return nullptr;
+    if (!pmesh) { Logger::Log("BuildNavMesh Error: Out of memory 'pmesh'.", LogType::Error); rcFreeCompactHeightfield(chf); rcFreeContourSet(cset); return nullptr; }
+    if (!rcBuildPolyMesh(&ctx, *cset, cfg.maxVertsPerPoly, *pmesh))
+    {
+        Logger::Log("BuildNavMesh Error: Could not build polymesh.", LogType::Error); rcFreeCompactHeightfield(chf); rcFreeContourSet(cset); rcFreePolyMesh(pmesh); return nullptr;
     }
 
-    // 6. Build the detail mesh
     rcPolyMeshDetail* dmesh = rcAllocPolyMeshDetail();
-    if (!rcBuildPolyMeshDetail(&ctx, *pmesh, *chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *dmesh)) {
-        std::cerr << "Error: rcBuildPolyMeshDetail failed." << std::endl;
-        rcFreeCompactHeightfield(chf);
-        rcFreeContourSet(cset);
-        rcFreePolyMesh(pmesh);
-        rcFreePolyMeshDetail(dmesh);
-        return nullptr;
+    if (!dmesh) { Logger::Log("BuildNavMesh Error: Out of memory 'dmesh'.", LogType::Error); rcFreeCompactHeightfield(chf); rcFreeContourSet(cset); rcFreePolyMesh(pmesh); return nullptr; }
+    if (!rcBuildPolyMeshDetail(&ctx, *pmesh, *chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *dmesh))
+    {
+        Logger::Log("BuildNavMesh Error: Could not build polymesh detail.", LogType::Error); rcFreeCompactHeightfield(chf); rcFreeContourSet(cset); rcFreePolyMesh(pmesh); rcFreePolyMeshDetail(dmesh); return nullptr;
     }
 
-    // We can free the intermediate structures
-    rcFreeCompactHeightfield(chf);
-    rcFreeContourSet(cset);
-    chf = nullptr;
-    cset = nullptr;
+    rcFreeCompactHeightfield(chf); chf = nullptr;
+    rcFreeContourSet(cset); cset = nullptr;
 
-    // --- Detour NavMesh Construction ---
-
-    if (cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON) {
-        unsigned char* navData = 0;
-        int navDataSize = 0;
-
-        dtNavMeshCreateParams params;
-        memset(&params, 0, sizeof(params));
-        params.verts = pmesh->verts;
-        params.vertCount = pmesh->nverts;
-        params.polys = pmesh->polys;
-        params.polyAreas = pmesh->areas;
-        params.polyFlags = pmesh->flags;
-        params.polyCount = pmesh->npolys;
-        params.nvp = pmesh->nvp;
-        params.detailMeshes = dmesh->meshes;
-        params.detailVerts = dmesh->verts;
-        params.detailVertsCount = dmesh->nverts;
-        params.detailTris = dmesh->tris;
-        params.detailTriCount = dmesh->ntris;
-        params.offMeshConVerts = 0;
-        params.offMeshConRad = 0;
-        params.offMeshConFlags = 0;
-        params.offMeshConAreas = 0;
-        params.offMeshConDir = 0;
-        params.offMeshConUserID = 0;
-        params.offMeshConCount = 0;
-        params.walkableHeight = (float)cfg.walkableHeight * cfg.ch;
-        params.walkableRadius = (float)cfg.walkableRadius * cfg.cs;
-        params.walkableClimb = (float)cfg.walkableClimb * cfg.ch;
-        rcVcopy(params.bmin, pmesh->bmin);
-        rcVcopy(params.bmax, pmesh->bmax);
-        params.cs = cfg.cs;
-        params.ch = cfg.ch;
-        params.buildBvTree = true;
-
-        if (!dtCreateNavMeshData(&params, &navData, &navDataSize)) {
-            std::cerr << "Error: dtCreateNavMeshData failed." << std::endl;
-            rcFreePolyMesh(pmesh);
-            rcFreePolyMeshDetail(dmesh);
-            return nullptr;
+    for (int i = 0; i < pmesh->npolys; ++i)
+    {
+        if (pmesh->areas[i] == SAMPLE_POLYAREA_GROUND)
+        {
+            pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK;
         }
-
-        dtNavMesh* navMesh = dtAllocNavMesh();
-        if (!navMesh) {
-            std::cerr << "Error: dtAllocNavMesh failed." << std::endl;
-            dtFree(navData);
-            rcFreePolyMesh(pmesh);
-            rcFreePolyMeshDetail(dmesh);
-            return nullptr;
+        else
+        {
+            pmesh->flags[i] = 0;
         }
-
-        dtStatus status = navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
-        if (dtStatusFailed(status)) {
-            std::cerr << "Error: navMesh->init failed." << std::endl;
-            dtFree(navData);
-            dtFreeNavMesh(navMesh);
-            rcFreePolyMesh(pmesh);
-            rcFreePolyMeshDetail(dmesh);
-            return nullptr;
-        }
-
-      /*  std::cout << "NavMesh built successfully!" << std::endl;*/
-
-        // The remaining Recast data is now useless
-        rcFreePolyMesh(pmesh);
-        rcFreePolyMeshDetail(dmesh);
-
-        return navMesh;
     }
 
-    // Cleanup on error
+    unsigned char* navData = 0;
+    int navDataSize = 0;
+    dtNavMeshCreateParams params;
+    memset(&params, 0, sizeof(params));
+    params.verts = pmesh->verts;
+    params.vertCount = pmesh->nverts;
+    params.polys = pmesh->polys;
+    params.polyAreas = pmesh->areas;
+    params.polyFlags = pmesh->flags;
+    params.polyCount = pmesh->npolys;
+    params.nvp = pmesh->nvp;
+    params.detailMeshes = dmesh->meshes;
+    params.detailVerts = dmesh->verts;
+    params.detailVertsCount = dmesh->nverts;
+    params.detailTris = dmesh->tris;
+    params.detailTriCount = dmesh->ntris;
+    params.walkableHeight = (float)cfg.walkableHeight * cfg.ch;
+    params.walkableRadius = (float)cfg.walkableRadius * cfg.cs;
+    params.walkableClimb = (float)cfg.walkableClimb * cfg.ch;
+    rcVcopy(params.bmin, pmesh->bmin);
+    rcVcopy(params.bmax, pmesh->bmax);
+    params.cs = cfg.cs;
+    params.ch = cfg.ch;
+    params.buildBvTree = true;
+
+    if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+    {
+        Logger::Log("BuildNavMesh Error: dtCreateNavMeshData failed.", LogType::Error); rcFreePolyMesh(pmesh); rcFreePolyMeshDetail(dmesh); return nullptr;
+    }
+
+    dtNavMesh* navMesh = dtAllocNavMesh();
+    if (!navMesh) { Logger::Log("BuildNavMesh Error: dtAllocNavMesh failed.", LogType::Error); dtFree(navData); rcFreePolyMesh(pmesh); rcFreePolyMeshDetail(dmesh); return nullptr; }
+
+    dtStatus status = navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
+    if (dtStatusFailed(status))
+    {
+        Logger::Log("BuildNavMesh Error: navMesh->init failed.", LogType::Error); dtFree(navData); dtFreeNavMesh(navMesh); rcFreePolyMesh(pmesh); rcFreePolyMeshDetail(dmesh); return nullptr;
+    }
+
     rcFreePolyMesh(pmesh);
     rcFreePolyMeshDetail(dmesh);
-    return nullptr;
+
+    Logger::Log("NavMesh built successfully.", LogType::Info);
+    return navMesh;
 }

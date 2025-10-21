@@ -12,7 +12,7 @@
 #include "DetourNavMeshQuery.h"
 #include "DetourCommon.h"
 #include <LKZ/Utility/Logger.h>
-constexpr float aiMoveSpeed = 0.15f; 
+constexpr float aiMoveSpeed = 2.0f; 
 
 
 void AISystem::Update(ComponentManager& components, float deltaTime)
@@ -22,6 +22,9 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         if (!ai.targetPosition.has_value())
             continue;
         Vector3& position = components.positions[entity].position;
+
+        World& world = Engine::Instance().GetWorld();
+        Vector3 randomSpawnPoint = world.getRandomNavMeshPoint();
        Logger::Log(
             std::format("[AISystem] Entity {} target: x={:.3f}, y={:.3f}, z={:.3f}",
                 entity, position.x, position.y, position.z),
@@ -30,7 +33,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
         if (ai.path.empty())
         {
-            ai.path = Engine::Instance().GetWorld().CalculatePath(components.positions[entity].position, /*ai.targetPosition.value()*/Vector3(0, 35, 0));
+            ai.path = Engine::Instance().GetWorld().CalculatePath(components.positions[entity].position, /*ai.targetPosition.value()*/Vector3(randomSpawnPoint.x, randomSpawnPoint.y, randomSpawnPoint.z));
             ai.currentPathIndex = 0;
             if (ai.path.empty())
                 continue;

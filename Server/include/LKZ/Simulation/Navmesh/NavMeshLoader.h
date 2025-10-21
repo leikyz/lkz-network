@@ -1,48 +1,25 @@
-#ifndef NAVMESHLOADER_H
-#define NAVMESHLOADER_H
+#pragma once
 
 #include <string>
 #include <vector>
 
-// Forward declaration for Detour's navmesh struct
 struct dtNavMesh;
+struct Vertex { float x, y, z; };
 
-// Simple struct to hold vertex data
-struct Vertex {
-    float x, y, z;
-};
-
-// Simple struct to hold triangle indices
-struct Triangle {
-    int a, b, c;
-};
-
-/**
- * @class NavMeshLoader
- * @brief Handles loading geometry from a file and building a Detour NavMesh.
- */
 class NavMeshLoader
 {
 public:
     NavMeshLoader() = default;
-    ~NavMeshLoader();
+    ~NavMeshLoader() = default;
 
-    /**
-     * @brief Loads vertex and triangle data from a custom text file format.
-     * @param path The path to the geometry file.
-     * @return True if loading is successful, false otherwise.
-     */
+    // Loads the geometry from a file exported by the Unity script.
     bool LoadFromFile(const std::string& path);
 
-    /**
-     * @brief Builds a dtNavMesh object from the loaded geometry using the Recast pipeline.
-     * @return A pointer to the generated dtNavMesh, or nullptr on failure.
-     */
+    // Builds the dtNavMesh object from the loaded geometry.
     dtNavMesh* BuildNavMesh();
 
 private:
     std::vector<Vertex> m_vertices;
-    std::vector<Triangle> m_triangles;
+    std::vector<int> m_indices;
+    std::vector<unsigned char> m_triAreas;
 };
-
-#endif // NAVMESHLOADER_H

@@ -83,8 +83,8 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
             getClassName(),
             ClientManager::getClientByAddress(senderAddr) 
         );
-
-        // test AI
+        World& world = Engine::Instance().GetWorld();
+        Vector3 randomSpawnPoint = world.getRandomNavMeshPoint();
 
         Entity entityAI = EntityManager::Instance().CreateEntity(EntityType::AI, ComponentManager::Instance(), lobby);
 
@@ -93,9 +93,9 @@ void CreateEntityMessage::process(const sockaddr_in& senderAddr)
         components.rotations[entityAI] = RotationComponent{ Vector3(0, 0, 0) };
         components.ai[entityAI] = AIComponent{ Vector3(0,0,0), std::vector<Vector3>(), 0 };
 
-        components.positions[entityAI].position.x = 500;
-        components.positions[entityAI].position.y = 35;
-        components.positions[entityAI].position.z = 200;
+        components.positions[entityAI].position.x = randomSpawnPoint.x;
+        components.positions[entityAI].position.y = randomSpawnPoint.y;
+        components.positions[entityAI].position.z = randomSpawnPoint.z;
 
         lobby->addEntity(&entityAI);
     }

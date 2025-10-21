@@ -48,7 +48,7 @@ void RotateEntityMessage::process(const sockaddr_in& senderAddr)
     }
     else
     {
-        components.rotations[entity].y = rotaY;
+        components.rotations[entity].rotation.y = rotaY;
     }
 
     Serializer serializer;

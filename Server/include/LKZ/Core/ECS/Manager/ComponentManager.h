@@ -22,6 +22,7 @@ public:
     std::unordered_map<Entity, RotationComponent> rotations;
     std::unordered_map<Entity, TypeComponent> types;
     std::unordered_map<Entity, PlayerInput> inputs;
+    std::unordered_map<Entity, AIComponent> ai;
     std::unordered_map<Entity, int> lastReceivedSequence;
 
     // Removes an entity and all its components

@@ -1,4 +1,4 @@
-﻿#include "LKZ/Core/ECS/System/Player/MovementSystem.h"
+﻿#include "LKZ/Core/ECS/System/Player/PlayerSystem.h"
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Core/Engine.h>
@@ -15,7 +15,7 @@ constexpr float moveSpeed = 0.2f;
 constexpr int sendEveryTicks = 5;     
 constexpr float moveThreshold = 0.02f; 
 
-void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
+void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
     static std::unordered_map<Entity, Vector3> lastSentPositions;
     static int tickCounter = 0;
@@ -29,10 +29,10 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
         if (components.rotations.find(entity) == components.rotations.end()) continue;
 
 
-        auto& position = components.positions[entity];
-        auto& rotation = components.rotations[entity];
+        auto& positionComponent = components.positions[entity];
+        auto& rotationComponent = components.rotations[entity];
 
-        float yawRad = rotation.y * (3.14159265f / 180.0f);
+        float yawRad = rotationComponent.rotation.y * (3.14159265f / 180.0f);
         float forwardX = std::sin(yawRad);
         float forwardZ = std::cos(yawRad);
         float rightX = std::cos(yawRad);
@@ -48,8 +48,8 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
             dirZ /= len;
         }
 
-        position.x += dirX * moveSpeed * fixedDeltaTime;
-        position.z += dirZ * moveSpeed * fixedDeltaTime;
+        positionComponent.position.x += dirX * moveSpeed * fixedDeltaTime;
+        positionComponent.position.z += dirZ * moveSpeed * fixedDeltaTime;
 
     /*    Logger::Log(
             std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
@@ -60,7 +60,7 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
         if (!shouldSend)
             continue; 
 
-        Vector3 currentPos = { position.x, position.y, position.z };
+        Vector3 currentPos = { positionComponent.position.x, positionComponent.position.y, positionComponent.position.z };
         Vector3 lastPos = lastSentPositions[entity];
         float distSq = MathUtils::Distance(currentPos, lastPos);
 
@@ -78,7 +78,7 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
             continue;
 
         {
-            MoveEntityMessage moveMsg(entity, position.x, position.y, position.z);
+            MoveEntityMessage moveMsg(entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z);
             Serializer s;
             moveMsg.serialize(s);
             Engine::Instance().Server()->SendToMultiple(
@@ -90,7 +90,7 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
         }
 
         {
-            RotateEntityMessage rotateMsg(entity, rotation.y);
+            RotateEntityMessage rotateMsg(entity, rotationComponent.rotation.y);
             Serializer rs;
             rotateMsg.serialize(rs);
             Engine::Instance().Server()->SendToMultiple(
@@ -105,9 +105,9 @@ void MovementSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         LastEntityPositionMessage correctionMsg(
             entity,
-            position.x,
-            position.y,
-            position.z,
+            positionComponent.position.x,
+            positionComponent.position.y,
+            positionComponent.position.z,
             lastSeq
         );
 

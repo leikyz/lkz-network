@@ -6,4 +6,6 @@ void ComponentManager::RemoveEntity(Entity entity)
 	rotations.erase(entity);
     types.erase(entity);
 	inputs.erase(entity);
+	lastReceivedSequence.erase(entity);
+	ai.erase(entity);
 }

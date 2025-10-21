@@ -24,8 +24,7 @@ EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
-    std::cout << "[EventManager] Initialize events." << "\n";
-
+	Logger::Log("Initialize events.", LogType::Info);    
     EventManager::registerHandler<CreateClientMessage>(1);
     EventManager::registerHandler<ServerInformationsMessage>(2);
     EventManager::registerHandler<DisconnectClientMessage>(3);

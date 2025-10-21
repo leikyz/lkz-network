@@ -87,7 +87,7 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
         m_triangles.push_back(t);
     }
 
-    std::cout << "NavMesh loaded: " << m_vertices.size() << " vertices, " << m_triangles.size() << " triangles." << std::endl;
+ /*   std::cout << "NavMesh loaded: " << m_vertices.size() << " vertices, " << m_triangles.size() << " triangles." << std::endl;*/
     return true;
 }
 
@@ -292,7 +292,7 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
             return nullptr;
         }
 
-        std::cout << "NavMesh built successfully!" << std::endl;
+      /*  std::cout << "NavMesh built successfully!" << std::endl;*/
 
         // The remaining Recast data is now useless
         rcFreePolyMesh(pmesh);

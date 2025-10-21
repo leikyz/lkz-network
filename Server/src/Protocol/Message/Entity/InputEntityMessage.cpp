@@ -53,7 +53,7 @@ void InputEntityMessage::process(const sockaddr_in& senderAddr)
 
         if (components.rotations.find(entity) != components.rotations.end())
         {
-            components.rotations[entity].y = yaw;
+            components.rotations[entity].rotation.y = yaw;
         }
     }
 }

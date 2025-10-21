@@ -135,7 +135,7 @@
     <ClCompile Include="src\Core\Server\LinuxServer.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\ECS\System\MovementSystem.cpp">
+    <ClCompile Include="src\Core\ECS\System\PlayerSystem.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\ECS\Manager\ComponentManager.cpp">
@@ -247,6 +247,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\Simulation\NavMesh\NavMeshLoader.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Simulation\World.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ECS\System\AISystem.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -389,7 +395,7 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\ISystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\ECS\System\Player\MovementSystem.h">
+    <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h">
@@ -513,6 +519,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Simulation\Navmesh\Navmesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Simulation\World.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Core\ECS\System\AISystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

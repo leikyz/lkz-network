@@ -1,7 +1,9 @@
 #pragma once
 #include "LKZ/Core/Server/INetworkInterface.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
+#include "LKZ/Simulation/World.h"
 #include <chrono>
+
 
 class Engine
 {
@@ -23,6 +25,8 @@ public:
 
     float GetFixedDeltaTime() const { return fixedDeltaTime; }
     float GetDeltaTime() const { return deltaTime; }
+	World& GetWorld() const { return *world; }
+	void SetWorld(World* newWorld) { world = newWorld; }
     static INetworkInterface* Server();
 
 private:
@@ -32,6 +36,7 @@ private:
 
     static INetworkInterface* network;
 
+	World* world;
     std::chrono::steady_clock::time_point lastFrame;
     float deltaTime = 0.0f;
     float fixedDeltaTime = 0.02f; // 50 Hz

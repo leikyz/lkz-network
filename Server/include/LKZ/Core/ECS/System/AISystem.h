@@ -1,7 +1,7 @@
 #pragma once
 #include "LKZ/Core/ECS/System/ISystem.h"
 
-class MovementSystem : public ISystem {
+class AISystem : public ISystem {
 public:
     void Update(ComponentManager& components, float deltaTime) override;
 };

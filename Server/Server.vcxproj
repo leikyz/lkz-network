@@ -161,16 +161,20 @@
     <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastRasterization.cpp" />
     <ClCompile Include="lib\RecastNavigation\Recast\Source\RecastRegion.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="src\Core\ECS\System\AISystem.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Simulation\NavMesh\NavMeshLoader.cpp" />
+    <ClCompile Include="src\Simulation\World.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\Utility\Logger.cpp" />
     <ClCompile Include="src\Core\Server\LinuxServer.cpp" />
     <ClCompile Include="src\Core\Server\WindowsServer.cpp" />
     <ClCompile Include="src\Core\Threading\ThreadManager.cpp" />
     <ClCompile Include="src\Core\Threading\ThreadTaskPool.cpp" />
-    <ClCompile Include="src\Core\ECS\System\MovementSystem.cpp" />
+    <ClCompile Include="src\Core\ECS\System\PlayerSystem.cpp" />
     <ClCompile Include="src\Manager\ClientManager.cpp" />
     <ClCompile Include="src\Core\ECS\Manager\ComponentManager.cpp" />
     <ClCompile Include="src\Core\ECS\Manager\EntityManager.cpp" />
@@ -195,7 +199,8 @@
     <ClInclude Include="include\Core\Server.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Component\Component.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\ISystem.h" />
-    <ClInclude Include="include\LKZ\Core\ECS\System\Player\MovementSystem.h" />
+    <ClInclude Include="include\LKZ\Core\ECS\System\AISystem.h" />
+    <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />
@@ -203,6 +208,9 @@
     <ClInclude Include="include\LKZ\Simulation\Math\Vector.h" />
     <ClInclude Include="include\LKZ\Simulation\Navmesh\Navmesh.h" />
     <ClInclude Include="include\LKZ\Simulation\Navmesh\NavMeshLoader.h" />
+    <ClInclude Include="include\LKZ\Simulation\World.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\LKZ\Utility\Logger.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\EntityManager.h" />

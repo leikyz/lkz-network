@@ -3,49 +3,32 @@
 #include "LKZ/Core/Engine.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
 #include "LKZ/Simulation/Navmesh/NavMeshLoader.h" 
+#include "LKZ/Simulation/World.h"
 #include <iostream>
 #include <thread>
 #include <DetourCrowd.h>
+#include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
+#include <LKZ/Core/ECS/System/AISystem.h>
 
 int main()
 {
 #ifdef _WIN32
-    auto server = new WindowsServer(5555);
+    WindowsServer* server = new WindowsServer(5555);
 #else
-    auto server = new LinuxServer();
+    LinuxServer server = new LinuxServer();
 #endif
 
     Engine& engine = Engine::Instance(server);
     engine.Initialize();
 
+	
+
     ComponentManager& componentManager = ComponentManager::Instance();
     EntityManager& entityManager = EntityManager::Instance();
     SystemManager& systemManager = SystemManager::Instance();
 
-    systemManager.RegisterSystem(std::make_shared<MovementSystem>());
-
-    NavMeshLoader navMeshLoader;
-    if (!navMeshLoader.LoadFromFile("NavMeshExport.txt"))
-    {
-        std::cerr << "Error : Can't load navmesh file" << std::endl;
-        return -1;
-    }
-
-    dtNavMesh* navMesh = navMeshLoader.BuildNavMesh();
-    if (!navMesh)
-    {
-        std::cerr << "Error : Can't build the navmesh" << std::endl;
-        return -1;
-    }
-
-
-    dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
-    if (navQuery)
-    {
-        navQuery->init(navMesh, 2048);
-        std::cout << "dtNavMeshQuery initialized." << std::endl;
-        dtFreeNavMeshQuery(navQuery);
-    }
+    systemManager.RegisterSystem(std::make_shared<PlayerSystem>());
+    systemManager.RegisterSystem(std::make_shared<AISystem>());
 
     ThreadManager::CreatePool("logger", 1);
     ThreadManager::CreatePool("io", 1,[server](float) { server->Poll(); }, false);
@@ -53,6 +36,13 @@ int main()
     ThreadManager::CreatePool("matchmaking", 1);
     ThreadManager::CreatePool("player_simulation", 1,[&](float) 
         { auto& engine = Engine::Instance();float fixedDt = engine.GetFixedDeltaTime(); systemManager.Update(componentManager, fixedDt); }, true);
+
+    ThreadManager::CreatePool("ai_simulation", 1, [&](float)
+        { auto& engine = Engine::Instance(); float deltaTime = engine.GetDeltaTime(); systemManager.Update(componentManager, deltaTime); }, true);
+
+    World* world = new World();
+	engine.SetWorld(world);
+    world->initialize();
 
     engine.Run();
 

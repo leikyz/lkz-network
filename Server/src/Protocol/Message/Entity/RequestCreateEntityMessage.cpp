@@ -3,6 +3,7 @@
 #include <ctime>   
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Protocol/Message/Entity/CreateEntityMessage.h>
+#include <LKZ/Core/ECS/Manager/NavMeshQueryManager.h>
 
 RequestCreateEntityMessage::RequestCreateEntityMessage() {};
 
@@ -39,6 +40,8 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
         // Create entity
         Entity entity = EntityManager::Instance().CreateEntity(EntitySuperType(entitySuperTypeId), ComponentManager::Instance(), lobby);
 
+
+		Logger::Log("Creating entity of type " + std::to_string(entitySuperTypeId) + " with ID " + std::to_string(entity) + " for client " + ClientManager::getClientByAddress(senderAddr)->ipAddress, LogType::Info);
         // Get the component manager
         auto& components = ComponentManager::Instance();
 
@@ -61,7 +64,9 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
         }
         else
         {
-            Vector3 randomSpawnPoint = Engine::Instance().GetWorld().getRandomNavMeshPoint();
+            Vector3 randomSpawnPoint = Engine::Instance().GetWorld().getRandomNavMeshPoint(
+                NavMeshQueryManager::GetThreadLocalQuery(Engine::Instance().GetWorld().getNavMesh()));
+
             components.positions[entity].position.x = randomSpawnPoint.x;
             components.positions[entity].position.y = randomSpawnPoint.y;
             components.positions[entity].position.z = randomSpawnPoint.z;
@@ -87,7 +92,7 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
         if (entitySuperTypeId == (int)EntitySuperType::Player)
         {
             // Send to the creator client
-            Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), getClassName());
+            Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), createEntityMsg.getClassName());
 
             // Send to all other clients in lobby and mark as synced entity
             createEntityMsg.entityTypeId = (int)EntityType::PlayerSynced1;
@@ -96,7 +101,7 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             Engine::Instance().Server()->SendToMultiple(
                 lobby->clients,
                 serializer.getBuffer(),
-                getClassName(),
+                createEntityMsg.getClassName(),
                 ClientManager::getClientByAddress(senderAddr)
             );
         }
@@ -106,7 +111,7 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             Engine::Instance().Server()->SendToMultiple(
                 lobby->clients,
                 serializer.getBuffer(),
-                getClassName()
+                createEntityMsg.getClassName()
             );
         }
     }

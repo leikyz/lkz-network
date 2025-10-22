@@ -4,8 +4,8 @@
 
 struct Vector3;
 struct dtNavMesh;
-class dtNavMeshQuery; 
-class dtQueryFilter; 
+class dtNavMeshQuery;
+class dtQueryFilter;
 
 class World
 {
@@ -17,14 +17,15 @@ public:
 	void update(double deltaTime);
 	void shutdown();
 
-	Vector3 FindNearestPoint(const Vector3& point);
+	Vector3 FindNearestPoint(dtNavMeshQuery* navQuery, const Vector3& point);
 
-	std::vector<Vector3> CalculatePath(const Vector3& start, const Vector3& end);
+	std::vector<Vector3> CalculatePath(dtNavMeshQuery* navQuery, const Vector3& start, const Vector3& end);
 
-	Vector3 getRandomNavMeshPoint();
+	Vector3 getRandomNavMeshPoint(dtNavMeshQuery* navQuery);
+
+	dtNavMesh* getNavMesh() const { return navMesh; }
 
 private:
 	dtNavMesh* navMesh = nullptr;
-	dtNavMeshQuery* m_navQuery = nullptr;
 	dtQueryFilter* m_filter = nullptr;
 };

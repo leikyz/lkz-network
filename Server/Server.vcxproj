@@ -199,6 +199,7 @@
   <ItemGroup>
     <ClInclude Include="include\Core\Server.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Component\Component.h" />
+    <ClInclude Include="include\LKZ\Core\ECS\Manager\NavMeshQueryManager.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\ISystem.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\AISystem.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h" />

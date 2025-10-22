@@ -1,5 +1,6 @@
 ﻿#include "LKZ/Core/Threading/ThreadTaskPool.h"
 #include <chrono>
+#include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h"
 
 ThreadTaskPool::ThreadTaskPool(LoopHook hook, bool loopMode)
     : loopHook(hook), loopMode(loopMode)
@@ -52,8 +53,10 @@ void ThreadTaskPool::WorkerLoop()
         while (!stopRequested)
         {
             loopHook(deltaTime);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // avoid busy spin
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); 
         }
+
+        NavMeshQueryManager::CleanupThreadQuery();
         return;
     }
 
@@ -64,7 +67,7 @@ void ThreadTaskPool::WorkerLoop()
             std::unique_lock<std::mutex> lock(queueMutex);
             condition.wait(lock, [this]() { return stopRequested || !tasks.empty(); });
             if (stopRequested && tasks.empty())
-                return;
+                break; 
 
             task = std::move(tasks.front());
             tasks.pop();
@@ -72,4 +75,6 @@ void ThreadTaskPool::WorkerLoop()
 
         if (task) task();
     }
+
+    NavMeshQueryManager::CleanupThreadQuery();
 }

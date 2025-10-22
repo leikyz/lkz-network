@@ -21,7 +21,7 @@ int main()
     Engine& engine = Engine::Instance(server);
     engine.Initialize();
 
-	
+
 
     ComponentManager& componentManager = ComponentManager::Instance();
     EntityManager& entityManager = EntityManager::Instance();
@@ -31,20 +31,24 @@ int main()
     systemManager.RegisterSystem(std::make_shared<AISystem>());
 
     ThreadManager::CreatePool("logger", 1);
-    ThreadManager::CreatePool("io", 1,[server](float) { server->Poll(); }, false);
+    ThreadManager::CreatePool("io", 1, [server](float) { server->Poll(); }, false);
     ThreadManager::CreatePool("message", 8);
     ThreadManager::CreatePool("matchmaking", 1);
-    ThreadManager::CreatePool("player_simulation", 1,[&](float) 
-        { auto& engine = Engine::Instance();float fixedDt = engine.GetFixedDeltaTime(); systemManager.Update(componentManager, fixedDt); }, true);
 
-    ThreadManager::CreatePool("ai_simulation", 1, [&](float)
-        { auto& engine = Engine::Instance(); float deltaTime = engine.GetDeltaTime(); systemManager.Update(componentManager, deltaTime); }, true);
+    ThreadManager::CreatePool("simulation", 1, [&](float)
+        {
+            auto& engine = Engine::Instance();
+            float fixedDt = engine.GetFixedDeltaTime();
+            systemManager.Update(componentManager, fixedDt);
+
+        }, true);
+
 
     World* world = new World();
-	engine.SetWorld(world);
+    engine.SetWorld(world);
     world->initialize();
 
-        
+
 
     engine.Run();
 

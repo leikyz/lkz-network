@@ -17,7 +17,7 @@
 #include "LKZ/Protocol/Message/Matchmaking/LeaveLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
-
+#include "LKZ/Protocol/Message/Entity/RequestCreateEntityMessage.h"
 
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
@@ -39,6 +39,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<RotateEntityMessage>(12);
     EventManager::registerHandler<RotateEntityMessage>(12);
     EventManager::registerHandler<LastEntityPositionMessage>(13);
+    EventManager::registerHandler<RequestCreateEntityMessage>(14);
   /*  EventManager::registerHandler<CreateEntityMessage>(4);
     EventManager::registerHandler<LobbyListMessage>(5);
     EventManager::registerHandler<SynchronizeEntitiesMessage>(6);

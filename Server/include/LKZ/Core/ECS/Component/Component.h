@@ -6,7 +6,7 @@
 enum class EntitySuperType : uint8_t
 {
     Player = 1,
-	Zombie = 2,
+    Zombie = 2,
 };
 
 enum class EntityType : uint8_t
@@ -26,16 +26,16 @@ struct PlayerInputComponent
 struct AIComponent
 {
     std::optional<Vector3> targetPosition;
-    std::vector<Vector3> path;      
-    int currentPathIndex = 0;     
+    std::vector<Vector3> path;
+    int currentPathIndex = 0;
+    float repathTimer = 0.0f;
 };
 struct PositionComponent
 {
-	Vector3 position;
+    Vector3 position;
 };
 
-struct RotationComponent 
+struct RotationComponent
 {
-	Vector3 rotation;
+    Vector3 rotation;
 };
-

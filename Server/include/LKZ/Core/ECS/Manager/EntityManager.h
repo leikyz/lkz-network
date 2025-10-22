@@ -3,6 +3,7 @@
 #include "ComponentManager.h"
 #include <queue>
 #include <unordered_map>
+#include <mutex> 
 
 class EntityManager {
     Entity nextID = 1; // start at 1, 0 is invalid
@@ -25,9 +26,12 @@ public:
 
     Lobby* GetLobbyByEntity(Entity entity);
 
+    Entity GetEntityById(uint32_t entityId, Lobby* lobby);
+
 private:
     EntityManager() = default;
     EntityManager(const EntityManager&) = delete;
     EntityManager& operator=(const EntityManager&) = delete;
     std::unordered_map<Entity, uint32_t> lastSequenceIds;
+    mutable std::mutex m_mutex;
 };

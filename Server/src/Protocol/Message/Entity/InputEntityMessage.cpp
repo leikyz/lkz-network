@@ -48,7 +48,7 @@ void InputEntityMessage::process(const sockaddr_in& senderAddr)
 
     if (components.positions.find(entity) != components.positions.end())
     {
-        components.inputs[entity] = PlayerInput{ inputX, inputY, yaw, sequenceId };
+        components.inputs[entity] = PlayerInputComponent{ inputX, inputY, yaw, sequenceId };
         components.lastReceivedSequence[entity] = sequenceId;
 
         if (components.rotations.find(entity) != components.rotations.end())

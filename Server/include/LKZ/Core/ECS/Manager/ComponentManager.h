@@ -20,8 +20,7 @@ public:
     // Component storages
     std::unordered_map<Entity, PositionComponent> positions;
     std::unordered_map<Entity, RotationComponent> rotations;
-    std::unordered_map<Entity, TypeComponent> types;
-    std::unordered_map<Entity, PlayerInput> inputs;
+    std::unordered_map<Entity, PlayerInputComponent> inputs;
     std::unordered_map<Entity, AIComponent> ai;
     std::unordered_map<Entity, int> lastReceivedSequence;
 

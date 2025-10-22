@@ -3,13 +3,20 @@
 #include <LKZ/Simulation/Math/Vector.h>
 #include <optional>
 #include <vector>
-enum class EntityType : uint8_t
+enum class EntitySuperType : uint8_t
 {
     Player = 1,
-    AI
+	Zombie = 2,
 };
 
-struct PlayerInput 
+enum class EntityType : uint8_t
+{
+    Player1 = 1,
+    PlayerSynced1 = 2,
+    Zombie1 = 3,
+};
+
+struct PlayerInputComponent
 {
     float inputX;
     float inputY;
@@ -18,9 +25,9 @@ struct PlayerInput
 };
 struct AIComponent
 {
-    std::optional<Vector3> targetPosition; // Position que l'IA doit atteindre
-    std::vector<Vector3> path;             // Pathfinding result from navmesh
-    int currentPathIndex = 0;              // Index du point courant dans le path
+    std::optional<Vector3> targetPosition;
+    std::vector<Vector3> path;      
+    int currentPathIndex = 0;     
 };
 struct PositionComponent
 {
@@ -32,8 +39,3 @@ struct RotationComponent
 	Vector3 rotation;
 };
 
-
-struct TypeComponent
-{
-    EntityType type;
-};

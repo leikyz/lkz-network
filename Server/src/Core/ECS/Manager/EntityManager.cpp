@@ -2,7 +2,7 @@
 #include "LKZ/Core/ECS/Component/Component.h."
 #include <iostream>
 
-Entity EntityManager::CreateEntity(EntityType type, ComponentManager& components, Lobby* lobby)
+Entity EntityManager::CreateEntity(EntitySuperType type, ComponentManager& components, Lobby* lobby)
 {
     Entity id;
     if (!freeIDs.empty()) {

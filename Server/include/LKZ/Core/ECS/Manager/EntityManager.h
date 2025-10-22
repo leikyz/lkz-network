@@ -19,7 +19,7 @@ public:
     void SetLastSequenceId(Entity entity, uint32_t sequenceId);
     uint32_t GetLastSequenceId(Entity entity) const;
 
-    Entity CreateEntity(EntityType type, ComponentManager& components, Lobby* lobby);
+    Entity CreateEntity(EntitySuperType type, ComponentManager& components, Lobby* lobby);
 
     void DestroyEntity(Entity entity);
 

@@ -18,8 +18,6 @@ struct CreateEntityMessage : public Message
     float posY;
     float posZ;
 
-    bool controlled;
-
     uint8_t getId() const override;
 
     std::vector<uint8_t>& serialize(Serializer& serializer) const override;

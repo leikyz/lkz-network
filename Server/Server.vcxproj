@@ -164,6 +164,7 @@
     <ClCompile Include="src\Core\ECS\System\AISystem.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\RequestCreateEntityMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Simulation\NavMesh\NavMeshLoader.cpp" />
     <ClCompile Include="src\Simulation\World.cpp">
@@ -203,6 +204,7 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\RequestCreateEntityMessage.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Quaternion.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Vector.h" />

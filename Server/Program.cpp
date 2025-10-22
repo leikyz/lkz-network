@@ -9,6 +9,7 @@
 #include <DetourCrowd.h>
 #include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
 #include <LKZ/Core/ECS/System/AISystem.h>
+#include "LKZ/Core/Threading/CommandQueue.h"
 
 int main()
 {
@@ -21,8 +22,6 @@ int main()
     Engine& engine = Engine::Instance(server);
     engine.Initialize();
 
-
-
     ComponentManager& componentManager = ComponentManager::Instance();
     EntityManager& entityManager = EntityManager::Instance();
     SystemManager& systemManager = SystemManager::Instance();
@@ -34,21 +33,18 @@ int main()
     ThreadManager::CreatePool("io", 1, [server](float) { server->Poll(); }, false);
     ThreadManager::CreatePool("message", 8);
     ThreadManager::CreatePool("matchmaking", 1);
-
     ThreadManager::CreatePool("simulation", 1, [&](float)
         {
             auto& engine = Engine::Instance();
             float fixedDt = engine.GetFixedDeltaTime();
+            CommandQueue::Instance().ProcessAllCommands();
             systemManager.Update(componentManager, fixedDt);
 
         }, true);
 
-
     World* world = new World();
     engine.SetWorld(world);
     world->initialize();
-
-
 
     engine.Run();
 

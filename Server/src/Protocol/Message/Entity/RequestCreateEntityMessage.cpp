@@ -1,14 +1,23 @@
 #include "LKZ/Protocol/Message/Entity/RequestCreateEntityMessage.h"
-#include <cstdlib> 
-#include <ctime>   
-#include <LKZ/Core/ECS/Manager/EntityManager.h>
-#include <LKZ/Protocol/Message/Entity/CreateEntityMessage.h>
-#include <LKZ/Core/ECS/Manager/NavMeshQueryManager.h>
+#include <cstdlib>
+#include <ctime>
+
+// Nouveaux includes nécessaires pour la Command Queue
+#include "LKZ/Core/Threading/CommandQueue.h"
+#include "LKZ/Core/ECS/Manager/EntityManager.h"
+#include "LKZ/Core/ECS/Manager/ComponentManager.h"
+#include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h"
+#include "LKZ/Core/Manager/LobbyManager.h" // Supposé, pour LobbyManager
+#include "LKZ/Core/Manager/ClientManager.h" // Supposé, pour ClientManager
+#include "LKZ/Core/Engine.h"
+#include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
+#include "LKZ/Utility/Logger.h" // Pour Logger
+#include <LKZ/Core/Threading/CommandQueue.h>
 
 RequestCreateEntityMessage::RequestCreateEntityMessage() {};
 
 RequestCreateEntityMessage::RequestCreateEntityMessage(int entityTypeId)
-    :  entitySuperTypeId(entityTypeId)
+    : entitySuperTypeId(entityTypeId)
 {
 }
 
@@ -20,41 +29,58 @@ uint8_t RequestCreateEntityMessage::getId() const
 std::vector<uint8_t>& RequestCreateEntityMessage::serialize(Serializer& serializer) const
 {
     serializer.reset();
-
-
-
+    // Vous n'avez rien sérialisé ici ?
+    // Je laisse tel quel.
     return serializer.getBuffer();
 }
 
 void RequestCreateEntityMessage::deserialize(Deserializer& deserializer)
 {
-	entitySuperTypeId = deserializer.readByte();
+    entitySuperTypeId = deserializer.readByte();
 }
 
 
 void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    Lobby* lobby = LobbyManager::getLobby(ClientManager::getClientByAddress(senderAddr)->lobbyId);
-    if (lobby != nullptr)
+    // --- ÉTAPE 1 : Obtenir les données thread-safe (depuis le thread réseau) ---
+
+    Client* client = ClientManager::getClientByAddress(senderAddr);
+    if (!client)
     {
-        // Create entity
-        Entity entity = EntityManager::Instance().CreateEntity(EntitySuperType(entitySuperTypeId), ComponentManager::Instance(), lobby);
+        Logger::Log("RequestCreateEntityMessage: Client introuvable.", LogType::Warning);
+        return;
+    }
 
+    Lobby* lobby = LobbyManager::getLobby(client->lobbyId);
+    if (lobby == nullptr)
+    {
+        Logger::Log("RequestCreateEntityMessage: Lobby introuvable.", LogType::Warning);
+        return;
+    }
 
-		Logger::Log("Creating entity of type " + std::to_string(entitySuperTypeId) + " with ID " + std::to_string(entity) + " for client " + ClientManager::getClientByAddress(senderAddr)->ipAddress, LogType::Info);
-        // Get the component manager
+    int superTypeId = this->entitySuperTypeId;
+    INetworkInterface* server = Engine::Instance().Server();
+
+    CommandQueue::Instance().Push([=]() 
+    {
+
         auto& components = ComponentManager::Instance();
+        auto& world = Engine::Instance().GetWorld();
 
-        ClientManager::getClientByAddress(senderAddr)->playerEntityId = entity;
+        Entity entity = EntityManager::Instance().CreateEntity(EntitySuperType(superTypeId), components, lobby);
+
+        Logger::Log("Creating entity of type " + std::to_string(superTypeId) + " with ID " + std::to_string(entity) + " for client " + client->ipAddress, LogType::Info);
+
+        client->playerEntityId = entity;
 
         CreateEntityMessage createEntityMsg;
 
-        components.positions[entity] = PositionComponent{ 0.0f, 0.0f, 0.0f };
-        components.rotations[entity] = RotationComponent{ 0.0f, 0.0f, 0.0f };
+        components.AddComponent(entity, PositionComponent{ 0.0f, 0.0f, 0.0f });
+        components.AddComponent(entity, RotationComponent{ 0.0f, 0.0f, 0.0f });
 
-        if (entitySuperTypeId == (int)EntitySuperType::Player)
+        if (superTypeId == (int)EntitySuperType::Player)
         {
-            components.inputs[entity] = PlayerInputComponent{ 0.0f, 0.0f, 0.0f, 0 };
+            components.AddComponent(entity, PlayerInputComponent{ 0.0f, 0.0f, 0.0f, 0 });
 
             components.positions[entity].position.x = 10.0f + rand() % 5;
             components.positions[entity].position.y = 0;
@@ -62,57 +88,55 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
             createEntityMsg.entityTypeId = (int)EntityType::Player1;
         }
-        else
+        else // Zombie
         {
-            Vector3 randomSpawnPoint = Engine::Instance().GetWorld().getRandomNavMeshPoint(
-                NavMeshQueryManager::GetThreadLocalQuery(Engine::Instance().GetWorld().getNavMesh()));
+            dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
+            Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
 
             components.positions[entity].position.x = randomSpawnPoint.x;
             components.positions[entity].position.y = randomSpawnPoint.y;
             components.positions[entity].position.z = randomSpawnPoint.z;
-			components.ai[entity] = AIComponent{ Vector3(0,0,0), std::vector<Vector3>(), 0 };
 
-			createEntityMsg.entityTypeId = (int)EntityType::Zombie1;
+            components.AddComponent(entity, AIComponent{ Vector3(0,0,0), std::vector<Vector3>(), 0 });
+
+            createEntityMsg.entityTypeId = (int)EntityType::Zombie1;
         }
-
 
         createEntityMsg.entityId = entity;
         createEntityMsg.posX = components.positions[entity].position.x;
         createEntityMsg.posY = components.positions[entity].position.y;
         createEntityMsg.posZ = components.positions[entity].position.z;
 
-
         lobby->addEntity(&entity);
-    
 
         Serializer serializer;
-		createEntityMsg.serialize(serializer);
+        createEntityMsg.serialize(serializer);
 
         // Player
-        if (entitySuperTypeId == (int)EntitySuperType::Player)
+        if (superTypeId == (int)EntitySuperType::Player)
         {
             // Send to the creator client
-            Engine::Instance().Server()->Send(senderAddr, serializer.getBuffer(), createEntityMsg.getClassName());
+            server->Send(senderAddr, serializer.getBuffer(), createEntityMsg.getClassName());
 
             // Send to all other clients in lobby and mark as synced entity
             createEntityMsg.entityTypeId = (int)EntityType::PlayerSynced1;
-            createEntityMsg.serialize(serializer);
+            createEntityMsg.serialize(serializer); // Re-sérialiser avec le nouveau type
 
-            Engine::Instance().Server()->SendToMultiple(
+            server->SendToMultiple(
                 lobby->clients,
                 serializer.getBuffer(),
                 createEntityMsg.getClassName(),
-                ClientManager::getClientByAddress(senderAddr)
+                client // Exclure le créateur
             );
         }
         // Zombie
         else
         {
-            Engine::Instance().Server()->SendToMultiple(
+            server->SendToMultiple(
                 lobby->clients,
                 serializer.getBuffer(),
                 createEntityMsg.getClassName()
             );
         }
-    }
+        }); // Fin de la lambda
 }

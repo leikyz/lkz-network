@@ -2,31 +2,20 @@
 #include "DetourNavMeshQuery.h"
 #include "DetourNavMesh.h"
 #include "DetourAlloc.h"
-#include <LKZ/Utility/Logger.h> // Assurez-vous d'inclure votre Logger
-
-// Ce manager gère une instance de dtNavMeshQuery par thread.
+#include <LKZ/Utility/Logger.h> 
 class NavMeshQueryManager
 {
 public:
-    /**
-     * @brief Récupère le dtNavMeshQuery pour le thread courant.
-     * L'initialise s'il n'existe pas encore.
-     *
-     * @param navMesh Le navmesh principal (doit être valide)
-     * @return Un pointeur vers le dtNavMeshQuery du thread, ou nullptr en cas d'échec.
-     */
     static dtNavMeshQuery* GetThreadLocalQuery(dtNavMesh* navMesh)
     {
-        // 'thread_local' signifie que chaque thread aura sa propre copie de ce pointeur.
         static thread_local dtNavMeshQuery* tls_navQuery = nullptr;
 
-        if (!tls_navQuery) // Si ce thread n'a pas encore de query
+        if (!tls_navQuery) 
         {
             tls_navQuery = dtAllocNavMeshQuery();
             if (tls_navQuery)
             {
-                // Initialise le query pour ce thread
-                if (dtStatusFailed(tls_navQuery->init(navMesh, 2048))) // 2048 = max nodes
+                if (dtStatusFailed(tls_navQuery->init(navMesh, 2048)))
                 {
                     Logger::Log("NavMeshQueryManager: Échec de l'initialisation du query de thread.", LogType::Error);
                     dtFreeNavMeshQuery(tls_navQuery);
@@ -45,10 +34,6 @@ public:
         return tls_navQuery;
     }
 
-    /**
-     * @brief Nettoie le query pour le thread courant.
-     * Doit être appelé avant que le thread ne se termine.
-     */
     static void CleanupThreadQuery()
     {
         static thread_local dtNavMeshQuery* tls_navQuery = nullptr;

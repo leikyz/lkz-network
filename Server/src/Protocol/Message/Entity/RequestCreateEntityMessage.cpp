@@ -29,8 +29,6 @@ uint8_t RequestCreateEntityMessage::getId() const
 std::vector<uint8_t>& RequestCreateEntityMessage::serialize(Serializer& serializer) const
 {
     serializer.reset();
-    // Vous n'avez rien sérialisé ici ?
-    // Je laisse tel quel.
     return serializer.getBuffer();
 }
 
@@ -42,7 +40,6 @@ void RequestCreateEntityMessage::deserialize(Deserializer& deserializer)
 
 void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    // --- ÉTAPE 1 : Obtenir les données thread-safe (depuis le thread réseau) ---
 
     Client* client = ClientManager::getClientByAddress(senderAddr);
     if (!client)
@@ -115,18 +112,16 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
         // Player
         if (superTypeId == (int)EntitySuperType::Player)
         {
-            // Send to the creator client
             server->Send(senderAddr, serializer.getBuffer(), createEntityMsg.getClassName());
 
-            // Send to all other clients in lobby and mark as synced entity
             createEntityMsg.entityTypeId = (int)EntityType::PlayerSynced1;
-            createEntityMsg.serialize(serializer); // Re-sérialiser avec le nouveau type
+            createEntityMsg.serialize(serializer);
 
             server->SendToMultiple(
                 lobby->clients,
                 serializer.getBuffer(),
                 createEntityMsg.getClassName(),
-                client // Exclure le créateur
+                client 
             );
         }
         // Zombie
@@ -138,5 +133,5 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
                 createEntityMsg.getClassName()
             );
         }
-        }); // Fin de la lambda
+        }); 
 }

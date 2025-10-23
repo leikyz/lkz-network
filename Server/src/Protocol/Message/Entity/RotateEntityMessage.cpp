@@ -3,7 +3,7 @@
 
 RotateEntityMessage::RotateEntityMessage() {};
 
-RotateEntityMessage::RotateEntityMessage(int entityId, float yawY)
+RotateEntityMessage::RotateEntityMessage(uint16_t entityId, float yawY)
 {
 
     this->entityId = entityId;
@@ -18,7 +18,7 @@ uint8_t RotateEntityMessage::getId() const
 std::vector<uint8_t>& RotateEntityMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
-    serializer.writeInt(entityId);
+    serializer.writeUInt16(entityId);
     serializer.writeFloat(rotaY);
 
     return serializer.getBuffer();
@@ -26,7 +26,7 @@ std::vector<uint8_t>& RotateEntityMessage::serialize(Serializer& serializer) con
 
 void RotateEntityMessage::deserialize(Deserializer& deserializer)
 {
-    entityId = deserializer.readInt();
+    entityId = deserializer.readUInt16();
     rotaY = deserializer.readFloat();
 }
 

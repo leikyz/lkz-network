@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <cmath>
 
-constexpr float moveSpeed = 0.2f; 
+constexpr float moveSpeed = 0.2f; // 0.2f
 constexpr int sendEveryTicks = 5;     
 constexpr float moveThreshold = 0.02f; 
 
@@ -51,21 +51,21 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         positionComponent.position.x += dirX * moveSpeed * fixedDeltaTime;
         positionComponent.position.z += dirZ * moveSpeed * fixedDeltaTime;
 
-    /*    Logger::Log(
-            std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
-                entity, position.x, position.y, position.z, fixedDeltaTime),
-            LogType::Debug
-        );*/
+        /* Logger::Log(
+             std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
+                 entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z, fixedDeltaTime),
+             LogType::Debug
+         );*/
 
         if (!shouldSend)
-            continue; 
+            continue;
 
         Vector3 currentPos = { positionComponent.position.x, positionComponent.position.y, positionComponent.position.z };
         Vector3 lastPos = lastSentPositions[entity];
         float distSq = MathUtils::Distance(currentPos, lastPos);
 
         if (distSq < moveThreshold * moveThreshold)
-            continue; 
+            continue;
 
         lastSentPositions[entity] = currentPos;
 
@@ -77,29 +77,26 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         if (!ownerClient)
             continue;
 
-        {
-            MoveEntityMessage moveMsg(entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z);
-            Serializer s;
-            moveMsg.serialize(s);
-            Engine::Instance().Server()->SendToMultiple(
-                lobby->clients,
-                s.getBuffer(),
-                moveMsg.getClassName(),
-                ownerClient
-            );
-        }
+        MoveEntityMessage moveMsg(entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z);
+        Serializer s;
+        moveMsg.serialize(s);
+        Engine::Instance().Server()->SendToMultiple(
+            lobby->clients,
+            s.getBuffer(),
+            moveMsg.getClassName(),
+            ownerClient
+        );
 
-        {
-            RotateEntityMessage rotateMsg(entity, rotationComponent.rotation.y);
-            Serializer rs;
-            rotateMsg.serialize(rs);
-            Engine::Instance().Server()->SendToMultiple(
-                lobby->clients,
-                rs.getBuffer(),
-                rotateMsg.getClassName(),
-                ownerClient
-            );
-        }
+        RotateEntityMessage rotateMsg(entity, rotationComponent.rotation.y);
+        Serializer rs;
+        rotateMsg.serialize(rs);
+        Engine::Instance().Server()->SendToMultiple(
+            lobby->clients,
+            rs.getBuffer(),
+            rotateMsg.getClassName(),
+            ownerClient
+        );
+
 
         uint32_t lastSeq = EntityManager::Instance().GetLastSequenceId(entity);
 
@@ -110,8 +107,6 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             positionComponent.position.z,
             lastSeq
         );
-
-      
 
         Serializer cs;
         correctionMsg.serialize(cs);

@@ -51,6 +51,18 @@ public:
         return value;
     }
 
+    uint16_t readUInt16() // short
+    {
+        if (m_position + 2 > m_buffer.size()) {
+            throw std::out_of_range("Buffer overflow in readUInt16");
+        }
+
+        uint16_t value = m_buffer[m_position] |
+            (m_buffer[m_position + 1] << 8);
+        m_position += 2;
+        return value;
+    }
+
     uint8_t readByte()
     {
         if (m_position + 1 > m_buffer.size()) {

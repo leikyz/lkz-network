@@ -9,9 +9,9 @@ struct RotateEntityMessage : public Message
 
     RotateEntityMessage();
 
-    RotateEntityMessage(int entityId, float rotaY);
+    RotateEntityMessage(uint16_t entityId, float rotaY);
 
-    int entityId;
+    uint16_t entityId;
 
     float rotaY;
 

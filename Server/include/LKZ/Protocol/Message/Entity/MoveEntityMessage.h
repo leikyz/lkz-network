@@ -9,9 +9,9 @@ struct MoveEntityMessage : public Message
 
     MoveEntityMessage();
 
-    MoveEntityMessage(int entityId, float posX, float posY, float posZ);
+    MoveEntityMessage(uint16_t entityId, float posX, float posY, float posZ);
 
-    int entityId;
+    uint16_t entityId;
 
     float posX;
     float posY;

@@ -8,9 +8,9 @@ struct InputEntityMessage : public Message
     static constexpr uint8_t ID = 10;
 
     InputEntityMessage();
-    InputEntityMessage(int entityId, float inputX, float inputY, float yaw, int sequenceId);
+    InputEntityMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId);
 
-    int entityId = 0;
+    uint16_t entityId = 0;
     float inputX = 0.0f;
     float inputY = 0.0f;
     float yaw = 0.0f;

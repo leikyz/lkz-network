@@ -4,7 +4,7 @@
 
 LastEntityPositionMessage::LastEntityPositionMessage() {};
 
-LastEntityPositionMessage::LastEntityPositionMessage(int entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput)
+LastEntityPositionMessage::LastEntityPositionMessage(uint16_t entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput)
 	: entityId(entityId), posX(posX), posY(posY), posZ(posZ), lastProcessedInput(lastProcessedInput)
 {
 }
@@ -17,7 +17,7 @@ uint8_t LastEntityPositionMessage::getId() const
 std::vector<uint8_t>& LastEntityPositionMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
-    serializer.writeInt(entityId);
+    serializer.writeUInt16(entityId);
     serializer.writeFloat(posX);
     serializer.writeFloat(posY);
     serializer.writeFloat(posZ);

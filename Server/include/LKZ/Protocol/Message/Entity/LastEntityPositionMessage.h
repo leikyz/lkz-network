@@ -9,9 +9,9 @@ struct LastEntityPositionMessage : public Message
 
     LastEntityPositionMessage();
 
-    LastEntityPositionMessage(int entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput);
+    LastEntityPositionMessage(uint16_t entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput);
 
-    int entityId;
+    uint16_t entityId;
 
     float posX;
     float posY;

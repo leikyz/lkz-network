@@ -9,9 +9,9 @@ struct CreateEntityMessage : public Message
 
     CreateEntityMessage();
 
-    CreateEntityMessage(int entityId, int entityTypeId, float posX, float posY, float posZ);
+    CreateEntityMessage(uint16_t entityId, int entityTypeId, float posX, float posY, float posZ);
 
-    int entityId;
+    uint16_t entityId;
     int entityTypeId;
 
     float posX;

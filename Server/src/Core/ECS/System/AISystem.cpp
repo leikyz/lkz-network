@@ -15,8 +15,9 @@
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Protocol/Message/Entity/MoveEntityMessage.h>
 #include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h" 
+#include <LKZ/Protocol/Message/Entity/MoveEntitiesMessage.h>
 
-constexpr float aiMoveSpeed = 3.0f;
+constexpr float aiMoveSpeed = 1.0f;
 constexpr float aiMessageRate = 0.2f; 
 constexpr float aiRepathRate = 1.0f;  
 
@@ -31,10 +32,12 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     dtNavMeshQuery* navQuery = NavMeshQueryManager::GetThreadLocalQuery(navMesh);
     if (!navQuery) return;
 
+    // Regrouper les entités par lobby
+    std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
+
     for (auto& [entity, ai] : components.ai)
     {
-        if (!ai.targetPosition.has_value())
-            continue;
+        if (!ai.targetPosition.has_value()) continue;
 
         Vector3& position = components.positions[entity].position;
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
@@ -43,11 +46,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         ai.repathTimer -= deltaTime;
         bool shouldRepath = false;
 
-        if (ai.path.empty())
-        {
-            shouldRepath = true;
-        }
-        else if (ai.repathTimer <= 0.0f)
+        if (ai.path.empty() || ai.repathTimer <= 0.0f)
         {
             shouldRepath = true;
             ai.repathTimer = aiRepathRate;
@@ -64,22 +63,17 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
             }
 
             Vector3& targetPos = components.positions[targetEntity].position;
-
             ai.path = world.CalculatePath(navQuery, position, targetPos);
             ai.currentPathIndex = 0;
-            if (ai.path.empty())
-                continue;
+            if (ai.path.empty()) continue;
         }
 
-        if (ai.path.empty())
-        {
-            continue;
-        }
+        if (ai.path.empty()) continue;
 
         Vector3& target = ai.path[ai.currentPathIndex];
-
         Vector3 dir = target - position;
         float dist = dir.Length();
+
         if (dist < 0.05f)
         {
             ai.currentPathIndex++;
@@ -105,13 +99,18 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         if (timeSinceLastSend[entity] >= aiMessageRate)
         {
             timeSinceLastSend[entity] = 0.0f;
+            lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
+        }
+    }
 
-            MoveEntityMessage moveMsg(entity, position.x, position.y, position.z);
+    // Envoi un message par lobby
+    for (auto& [lobby, msg] : lobbyMessages)
+    {
+        if (!msg.updates.empty())
+        {
             Serializer s;
-            moveMsg.serialize(s);
-            Engine::Instance().Server()->SendToMultiple(
-                lobby->clients, s.getBuffer(), moveMsg.getClassName()
-            );
+            msg.serialize(s);
+            Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
         }
     }
 }

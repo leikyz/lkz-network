@@ -4,7 +4,7 @@
 
 InputEntityMessage::InputEntityMessage() {}
 
-InputEntityMessage::InputEntityMessage(int entityId, float inputX, float inputY, float yaw, int sequenceId)
+InputEntityMessage::InputEntityMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId)
     : entityId(entityId), inputX(inputX), inputY(inputY), yaw(yaw), sequenceId(sequenceId)
 {
 }
@@ -17,7 +17,7 @@ uint8_t InputEntityMessage::getId() const
 std::vector<uint8_t>& InputEntityMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
-    serializer.writeInt(entityId);
+    serializer.writeUInt16(entityId);
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);
     serializer.writeFloat(yaw);
@@ -28,7 +28,7 @@ std::vector<uint8_t>& InputEntityMessage::serialize(Serializer& serializer) cons
 
 void InputEntityMessage::deserialize(Deserializer& deserializer)
 {
-    entityId = deserializer.readInt();
+    entityId = deserializer.readUInt16();
     inputX = deserializer.readFloat();
     inputY = deserializer.readFloat();
     yaw = deserializer.readFloat();

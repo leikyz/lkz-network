@@ -5,7 +5,7 @@
 
 CreateEntityMessage::CreateEntityMessage() {};
 
-CreateEntityMessage::CreateEntityMessage(int entityId, int entityTypeId, float posX, float posY, float posZ)
+CreateEntityMessage::CreateEntityMessage(uint16_t entityId, int entityTypeId, float posX, float posY, float posZ)
     : entityId(entityId), entityTypeId(entityTypeId), posX(posX), posY(posY), posZ(posZ)
 {
 }
@@ -20,7 +20,7 @@ std::vector<uint8_t>& CreateEntityMessage::serialize(Serializer& serializer) con
     serializer.reset();
 
     serializer.writeByte(ID);
-    serializer.writeInt(entityId);
+    serializer.writeUInt16(entityId);
     serializer.writeInt(entityTypeId);
     serializer.writeFloat(posX);
     serializer.writeFloat(posY);

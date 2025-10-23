@@ -25,7 +25,7 @@ void EntityManager::DestroyEntity(Entity entity)
     entityLobbyMap.erase(entity);
 }
 
-Entity EntityManager::GetEntityById(uint32_t entityId, Lobby* lobby)
+Entity EntityManager::GetEntityById(uint16_t entityId, Lobby* lobby)
 {
 
     for (const auto& [entity, mappedLobby] : entityLobbyMap) {

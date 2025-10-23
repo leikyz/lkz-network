@@ -15,7 +15,14 @@ public:
         m_buffer.push_back(static_cast<uint8_t>((value >> 16) & 0xFF));
         m_buffer.push_back(static_cast<uint8_t>((value >> 24) & 0xFF));
     }
+    void writeUInt8(uint8_t value) {
+        m_buffer.push_back(value); 
+    }
 
+    void writeUInt16(uint16_t value) {
+        m_buffer.push_back(static_cast<uint8_t>(value & 0xFF)); 
+        m_buffer.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));
+    }
     void writeUInt32(uint32_t value) {
         m_buffer.push_back(static_cast<uint8_t>(value & 0xFF));
         m_buffer.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));

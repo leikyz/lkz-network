@@ -25,7 +25,7 @@ public:
 
     Lobby* GetLobbyByEntity(Entity entity);
 
-    Entity GetEntityById(uint32_t entityId, Lobby* lobby);
+    Entity GetEntityById(uint16_t entityId, Lobby* lobby);
 
 private:
     EntityManager() = default;

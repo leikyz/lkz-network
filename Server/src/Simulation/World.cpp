@@ -10,6 +10,9 @@
 #include <iostream>
 #include <format>
 #include <random>
+#include <DetourCrowd.h>
+#include <LKZ/Core/ECS/Entity.h>
+#include <LKZ/Core/ECS/Manager/ComponentManager.h>
 
 #define SAMPLE_POLYAREA_GROUND 1
 #define SAMPLE_POLYFLAGS_WALK 0x01
@@ -36,14 +39,80 @@ void World::initialize()
 		return;
 	}
 
-	m_filter = new dtQueryFilter();
-	m_filter->setIncludeFlags(SAMPLE_POLYFLAGS_WALK);
-	m_filter->setExcludeFlags(0);
-	m_filter->setAreaCost(SAMPLE_POLYAREA_GROUND, 1.0f);
+	crowd = dtAllocCrowd();
+	if (!crowd) {
+		Logger::Log("Critical Error: Failed to allocate crowd.", LogType::Error);
+		return;
+	}
 
+	if (!crowd->init(1000, 0.5f, navMesh)) {
+		Logger::Log("Critical Error: Failed to initialize crowd.", LogType::Error);
+		return;
+	}
+	dtQueryFilter* filter = crowd->getEditableFilter(0);
+	if (filter)
+	{
+		filter->setIncludeFlags(SAMPLE_POLYFLAGS_WALK);
+		filter->setExcludeFlags(0);
+		filter->setAreaCost(SAMPLE_POLYAREA_GROUND, 1.0f);
+	}
+
+	m_filter = filter;
 
 	Logger::Log("World and NavMesh initialized successfully.", LogType::Info);
 }
+
+void World::UpdateCrowd(double deltaTime)
+{
+	if (crowd)
+	{
+		crowd->update(static_cast<float>(deltaTime), nullptr);
+
+		auto& components = ComponentManager::Instance();
+		const int agentCount = crowd->getAgentCount();
+
+		for (int i = 0; i < agentCount; ++i)
+		{
+			const dtCrowdAgent* agent = crowd->getAgent(i);
+			if (!agent->active) continue;
+
+			// Get the Entity ID we stored in userData
+			Entity entity = (Entity)((uintptr_t)agent->params.userData);
+
+			// Check if the entity still exists in our ECS
+			if (components.positions.count(entity))
+			{
+				// Sync Position
+				auto& posComp = components.positions[entity].position;
+				posComp.x = agent->npos[0];
+				posComp.y = agent->npos[1];
+				posComp.z = agent->npos[2];
+
+				// Only log if the agent is an AI agent
+				if (components.ai.count(entity))
+				{
+					// Calculate velocity length
+					float velLengthSq = agent->vel[0] * agent->vel[0] + agent->vel[1] * agent->vel[1] + agent->vel[2] * agent->vel[2];
+				}
+
+				// Sync Rotation from velocity
+				if (components.rotations.count(entity))
+				{
+					auto& rotComp = components.rotations[entity];
+					// Only update yaw if the agent is actually moving
+					float velLengthSq = agent->vel[0] * agent->vel[0] + agent->vel[2] * agent->vel[2];
+					if (velLengthSq > 0.01f) // Small threshold to prevent jitter
+					{
+						float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / 3.14159265f);
+						rotComp.rotation.y = yaw;
+					}
+				}
+			}
+		}
+	}
+}
+		
+
 
 void World::update(double deltaTime)
 {
@@ -51,11 +120,16 @@ void World::update(double deltaTime)
 
 void World::shutdown()
 {
-	if (m_filter)
+
+	m_filter = nullptr;
+
+	if (crowd)
 	{
-		delete m_filter;
-		m_filter = nullptr;
+		dtFreeCrowd(crowd);
+		crowd = nullptr;
+		Logger::Log("Crowd shut down.", LogType::Info);
 	}
+
 	if (navMesh)
 	{
 		dtFreeNavMesh(navMesh);
@@ -67,7 +141,7 @@ void World::shutdown()
 
 Vector3 World::FindNearestPoint(dtNavMeshQuery* navQuery, const Vector3& point)
 {
-	if (!navQuery || !m_filter) 
+	if (!navQuery || !m_filter)
 	{
 		Logger::Log("FindNearestPoint Error: NavQuery or Filter not initialized.", LogType::Error);
 		return point;
@@ -153,7 +227,7 @@ std::vector<Vector3> World::CalculatePath(dtNavMeshQuery* navQuery, const Vector
 
 Vector3 World::getRandomNavMeshPoint(dtNavMeshQuery* navQuery)
 {
-	if (!navQuery || !m_filter) { 
+	if (!navQuery || !m_filter) {
 		return { 0, 0, 0 };
 	}
 

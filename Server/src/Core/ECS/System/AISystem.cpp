@@ -1,25 +1,24 @@
-﻿#include "LKZ/Core/ECS/Manager/ComponentManager.h"
+﻿#include "LKZ/Core/ECS/System/AISystem.h"
+#include "LKZ/Core/ECS/Manager/ComponentManager.h"
 #include "LKZ/Simulation/World.h"
-#include "LKZ/Simulation/Math/MathUtils.h" 
-#include "LKZ/Simulation/Math/Vector.h" 
-#include <cmath> 
-#include <LKZ/Core/ECS/System/AISystem.h>
+#include "LKZ/Simulation/Math/MathUtils.h"
+#include "LKZ/Simulation/Math/Vector.h"
+#include <cmath>
 #include <LKZ/Core/Engine.h>
-#include "Recast.h"
-#include "RecastAlloc.h"
-#include "DetourNavMesh.h"
-#include "DetourNavMeshBuilder.h" 
-#include "DetourNavMeshQuery.h" 
-#include "DetourCommon.h"
 #include <LKZ/Utility/Logger.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
-#include <LKZ/Protocol/Message/Entity/MoveEntityMessage.h>
-#include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h" 
 #include <LKZ/Protocol/Message/Entity/MoveEntitiesMessage.h>
+#include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h"
 
-constexpr float aiMoveSpeed = 1.0f;
-constexpr float aiMessageRate = 0.2f; 
-constexpr float aiRepathRate = 1.0f;  
+#include "DetourCrowd.h"
+#include "DetourNavMeshQuery.h"
+
+#include <float.h> 
+
+constexpr float aiMessageRate = 0.2f;
+constexpr float aiRepathRate = 1.0f; 
+constexpr float aiStopDistance = 2.0f; 
+constexpr float aiStopDistanceSq = aiStopDistance * aiStopDistance; 
 
 void AISystem::Update(ComponentManager& components, float deltaTime)
 {
@@ -27,17 +26,19 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
     World& world = Engine::Instance().GetWorld();
     dtNavMesh* navMesh = world.getNavMesh();
-    if (!navMesh) return;
+    dtCrowd* crowd = world.getCrowd();
+    if (!navMesh || !crowd) return;
 
     dtNavMeshQuery* navQuery = NavMeshQueryManager::GetThreadLocalQuery(navMesh);
     if (!navQuery) return;
 
-    // Regrouper les entités par lobby
+    const dtQueryFilter* filter = crowd->getFilter(0); // Use filter 0 (default)
+
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
     for (auto& [entity, ai] : components.ai)
     {
-        if (!ai.targetPosition.has_value()) continue;
+        if (ai.crowdAgentIndex == -1) continue; // Not a crowd agent
 
         Vector3& position = components.positions[entity].position;
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
@@ -46,53 +47,70 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         ai.repathTimer -= deltaTime;
         bool shouldRepath = false;
 
-        if (ai.path.empty() || ai.repathTimer <= 0.0f)
+        if (!ai.targetPosition.has_value() || ai.repathTimer <= 0.0f)
         {
             shouldRepath = true;
-            ai.repathTimer = aiRepathRate;
         }
 
         if (shouldRepath)
         {
-            Entity targetEntity = EntityManager::Instance().GetEntityById(1, lobby);
-            if (components.positions.find(targetEntity) == components.positions.end())
+            ai.repathTimer = aiRepathRate;
+
+            // --- Find nearest player logic ---
+            Entity nearestPlayerEntity = 0;
+            float minDistanceSq = FLT_MAX;
+            Vector3 targetPos;
+
+            for (auto& [playerEntity, input] : components.inputs)
             {
-                ai.path.clear();
-                ai.targetPosition.reset();
-                continue;
+                if (components.positions.find(playerEntity) == components.positions.end()) continue;
+                Lobby* playerLobby = EntityManager::Instance().GetLobbyByEntity(playerEntity);
+                if (playerLobby != lobby) continue;
+
+                Vector3& playerPos = components.positions[playerEntity].position;
+                float distSq = (playerPos - position).LengthSquared();
+
+                if (distSq < minDistanceSq)
+                {
+                    minDistanceSq = distSq;
+                    nearestPlayerEntity = playerEntity;
+                    targetPos = playerPos;
+                }
             }
 
-            Vector3& targetPos = components.positions[targetEntity].position;
-            ai.path = world.CalculatePath(navQuery, position, targetPos);
-            ai.currentPathIndex = 0;
-            if (ai.path.empty()) continue;
-        }
-
-        if (ai.path.empty()) continue;
-
-        Vector3& target = ai.path[ai.currentPathIndex];
-        Vector3 dir = target - position;
-        float dist = dir.Length();
-
-        if (dist < 0.05f)
-        {
-            ai.currentPathIndex++;
-            if (ai.currentPathIndex >= ai.path.size())
+            if (nearestPlayerEntity != 0)
             {
-                ai.path.clear();
-                ai.targetPosition.reset();
-                continue;
+                if (minDistanceSq < aiStopDistanceSq)
+                {
+                    // We are close enough, STOP moving.
+                    ai.targetPosition.reset(); // Clear our internal target
+                    crowd->resetMoveTarget(ai.crowdAgentIndex); // Tell crowd to stop
+                }
+                else
+                {
+                    // We are far away, so pathfind to the player.
+                    ai.targetPosition = targetPos;
+
+                    // Find the nearest navmesh point to the player's position
+                    const float extents[3] = { 10.0f, 10.0f, 10.0f }; // Search box
+                    dtPolyRef targetRef;
+                    float nearestPt[3];
+
+                    navQuery->findNearestPoly(targetPos.data(), extents, filter, &targetRef, nearestPt, nullptr);
+
+                    if (targetRef)
+                    {
+                        // Tell the crowd agent to move to this point
+                        crowd->requestMoveTarget(ai.crowdAgentIndex, targetRef, nearestPt);
+                    }
+                }
             }
-            target = ai.path[ai.currentPathIndex];
-            dir = target - position;
-            dist = dir.Length();
+            else // No player was found
+            {
+                ai.targetPosition.reset();
+                crowd->resetMoveTarget(ai.crowdAgentIndex);
+            }
         }
-
-        dir.Normalize();
-        position += dir * aiMoveSpeed * deltaTime;
-
-        float yaw = std::atan2(dir.x, dir.z) * 180.0f / 3.14159265f;
-        components.rotations[entity].rotation.y = yaw;
 
         timeSinceLastSend[entity] += deltaTime;
 
@@ -103,7 +121,6 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         }
     }
 
-    // Envoi un message par lobby
     for (auto& [lobby, msg] : lobbyMessages)
     {
         if (!msg.updates.empty())

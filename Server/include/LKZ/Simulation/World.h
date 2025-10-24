@@ -6,6 +6,7 @@ struct Vector3;
 struct dtNavMesh;
 class dtNavMeshQuery;
 class dtQueryFilter;
+class dtCrowd;
 
 class World
 {
@@ -24,8 +25,10 @@ public:
 	Vector3 getRandomNavMeshPoint(dtNavMeshQuery* navQuery);
 
 	dtNavMesh* getNavMesh() const { return navMesh; }
-
+	dtCrowd* getCrowd() const { return crowd; }
+	void UpdateCrowd(double deltaTime);
 private:
 	dtNavMesh* navMesh = nullptr;
+	dtCrowd* crowd;
 	dtQueryFilter* m_filter = nullptr;
 };

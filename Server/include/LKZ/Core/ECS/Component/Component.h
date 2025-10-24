@@ -25,10 +25,9 @@ struct PlayerInputComponent
 };
 struct AIComponent
 {
-    std::optional<Vector3> targetPosition;
-    std::vector<Vector3> path;
-    int currentPathIndex = 0;
-    float repathTimer = 0.0f;
+    std::optional<Vector3> targetPosition; 
+    float repathTimer;
+    int crowdAgentIndex;
 };
 struct PositionComponent
 {

@@ -8,6 +8,8 @@ struct Vector3
 	float y;
 	float z;
 
+	float* data() { return &x; }
+	const float* data() const { return &x; }
 	/**
 	 * \brief Calculates the magnitude (length) of the vector.
 	 * \return The length of the vector.

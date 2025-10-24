@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <cmath>
 
-constexpr float moveSpeed = 0.6f; // 0.2f
+constexpr float moveSpeed = 0.2f; // 0.2f
 constexpr int sendEveryTicks = 5;     
 constexpr float moveThreshold = 0.02f; 
 

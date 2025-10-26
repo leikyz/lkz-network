@@ -73,7 +73,7 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
     }
 
     m_vertices.reserve(vertexCount);
-    Logger::Log(std::format("Reading {} vertices...", vertexCount), LogType::Info);
+    //Logger::Log(std::format("Reading {} vertices...", vertexCount), LogType::Info);
 
     for (int i = 0; i < vertexCount; ++i)
     {
@@ -123,7 +123,7 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
 
     m_indices.reserve(triangleCount * 3);
     m_triAreas.reserve(triangleCount);
-    Logger::Log(std::format("Reading {} triangles...", triangleCount), LogType::Info);
+    //Logger::Log(std::format("Reading {} triangles...", triangleCount), LogType::Info);
 
     for (int i = 0; i < triangleCount; ++i)
     {
@@ -161,8 +161,8 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
         Logger::Log("Error: No vertices or triangles loaded from the file.", LogType::Error);
         return false;
     }
+    std::cout << std::format("[World] Successfully loaded {} vertices and {} triangles ({} indices).", m_vertices.size(), m_indices.size() / 3, m_indices.size()) << std::endl;
 
-    Logger::Log(std::format("Successfully loaded {} vertices and {} triangles ({} indices).", m_vertices.size(), m_indices.size() / 3, m_indices.size()), LogType::Info);
     return true;
 }
 
@@ -336,6 +336,5 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
     rcFreePolyMesh(pmesh);
     rcFreePolyMeshDetail(dmesh);
 
-    Logger::Log("NavMesh built successfully.", LogType::Info);
     return navMesh;
 }

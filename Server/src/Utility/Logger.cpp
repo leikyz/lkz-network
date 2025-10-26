@@ -12,7 +12,7 @@ std::string Logger::GetPrefix(LogType level)
     case LogType::Warning: return "[WARNING] ";
     case LogType::Error:   return "[ERROR] ";
     case LogType::Debug:   return "[DEBUG] ";
-	case LogType::Received:return "[RECEIVED] ";
+	case LogType::Received:return "[RECV] ";
 	case LogType::Sent:    return "[SENT] ";
     default:               return "";
     }

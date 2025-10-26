@@ -8,7 +8,8 @@
 #include "LKZ/Protocol/Message/Entity/LastEntityPositionMessage.h"
 #include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/RotateEntityMessage.h"
-#include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
+#include "LKZ/Protocol/Message/Entity/Player/PlayerInputMessage.h"
+#include "LKZ/Protocol/Message/Entity/Player/PlayerStateMessage.h"
 #include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/RotateEntityMessage.h"
@@ -25,7 +26,7 @@ EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
-	Logger::Log("Initialize events.", LogType::Info);    
+    std::cout << "[EventManager] Initialize events." << std::endl;   
     EventManager::registerHandler<CreateClientMessage>(1);
     EventManager::registerHandler<ServerInformationsMessage>(2);
     EventManager::registerHandler<DisconnectClientMessage>(3);
@@ -35,18 +36,14 @@ void EventManager::BindEvents()
     EventManager::registerHandler<LeaveLobbyMessage>(7);
     EventManager::registerHandler<UpdateLobbyMessage>(8);
     EventManager::registerHandler<CreateEntityMessage>(9);
-    EventManager::registerHandler<InputEntityMessage>(10);
+    EventManager::registerHandler<PlayerInputMessage>(10);
     EventManager::registerHandler<MoveEntityMessage>(11);
     EventManager::registerHandler<RotateEntityMessage>(12);
     EventManager::registerHandler<RotateEntityMessage>(12);
     EventManager::registerHandler<LastEntityPositionMessage>(13);
     EventManager::registerHandler<RequestCreateEntityMessage>(14);
     EventManager::registerHandler<MoveEntitiesMessage>(15);
-  /*  EventManager::registerHandler<CreateEntityMessage>(4);
-    EventManager::registerHandler<LobbyListMessage>(5);
-    EventManager::registerHandler<SynchronizeEntitiesMessage>(6);
-    EventManager::registerHandler<MoveEntityMessage>(7);
-    EventManager::registerHandler<RotateEntityMessage>(8);*/
+    EventManager::registerHandler<PlayerStateMessage>(16);
 }
 
 template<typename T>

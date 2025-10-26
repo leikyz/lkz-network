@@ -150,7 +150,7 @@
     <ClCompile Include="src\Utility\Logger.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Protocol\Message\Entity\InputEntityMessage.cpp">
+    <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerInputMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="lib\RecastNavigation\DebugUtils\Source\DebugDraw.cpp">
@@ -262,6 +262,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\Protocol\Message\Entity\MoveEntitiesMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ECS\Manager\NavMeshQueryManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerStateMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -440,7 +446,7 @@
     <ClInclude Include="include\LKZ\Utility\Logger.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\InputEntityMessage.h">
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerInputMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="lib\RecastNavigation\DebugUtils\Include\DebugDraw.h">
@@ -546,6 +552,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\MoveEntitiesMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerStateMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

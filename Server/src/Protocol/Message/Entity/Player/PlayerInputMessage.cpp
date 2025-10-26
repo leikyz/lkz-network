@@ -1,32 +1,31 @@
-﻿#include "LKZ/Protocol/Message/Entity/InputEntityMessage.h"
+﻿#include "LKZ/Protocol/Message/Entity/Player/PlayerInputMessage.h"
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 
-InputEntityMessage::InputEntityMessage() {}
+PlayerInputMessage::PlayerInputMessage() {}
 
-InputEntityMessage::InputEntityMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId)
+PlayerInputMessage::PlayerInputMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId)
     : entityId(entityId), inputX(inputX), inputY(inputY), yaw(yaw), sequenceId(sequenceId)
 {
 }
 
-uint8_t InputEntityMessage::getId() const
+uint8_t PlayerInputMessage::getId() const
 {
     return ID;
 }
 
-std::vector<uint8_t>& InputEntityMessage::serialize(Serializer& serializer) const
+std::vector<uint8_t>& PlayerInputMessage::serialize(Serializer& serializer) const
 {
     serializer.writeByte(ID);
     serializer.writeUInt16(entityId);
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);
-    serializer.writeFloat(yaw);
-    serializer.writeInt(sequenceId);
+	serializer.writeFloat(yaw);
 
     return serializer.getBuffer();
 }
 
-void InputEntityMessage::deserialize(Deserializer& deserializer)
+void PlayerInputMessage::deserialize(Deserializer& deserializer)
 {
     entityId = deserializer.readUInt16();
     inputX = deserializer.readFloat();
@@ -35,7 +34,7 @@ void InputEntityMessage::deserialize(Deserializer& deserializer)
     sequenceId = deserializer.readInt();
 }
 
-void InputEntityMessage::process(const sockaddr_in& senderAddr)
+void PlayerInputMessage::process(const sockaddr_in& senderAddr)
 {
     auto* client = ClientManager::getClientByAddress(senderAddr);
     if (!client) return;
@@ -48,7 +47,7 @@ void InputEntityMessage::process(const sockaddr_in& senderAddr)
 
     if (components.positions.find(entity) != components.positions.end())
     {
-        components.inputs[entity] = PlayerInputComponent{ inputX, inputY, yaw, sequenceId };
+        components.playerInputs[entity] = PlayerInputComponent{ inputX, inputY, yaw, sequenceId };
         components.lastReceivedSequence[entity] = sequenceId;
 
         if (components.rotations.find(entity) != components.rotations.end())
@@ -56,6 +55,17 @@ void InputEntityMessage::process(const sockaddr_in& senderAddr)
             components.rotations[entity].rotation.y = yaw;
         }
     }
+
+
+    Serializer serializer;
+    serialize(serializer);
+
+    Engine::Instance().Server()->SendToMultiple(
+        lobby->clients,
+        serializer.getBuffer(),
+        getClassName(),
+        ClientManager::getClientByAddress(senderAddr));
+
 }
 
 

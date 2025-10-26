@@ -61,7 +61,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
             float minDistanceSq = FLT_MAX;
             Vector3 targetPos;
 
-            for (auto& [playerEntity, input] : components.inputs)
+            for (auto& [playerEntity, input] : components.playerInputs)
             {
                 if (components.positions.find(playerEntity) == components.positions.end()) continue;
                 Lobby* playerLobby = EntityManager::Instance().GetLobbyByEntity(playerEntity);

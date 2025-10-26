@@ -2,7 +2,6 @@
 #include <iostream>
 #include <thread>
 
-// Definition of static member
 INetworkInterface* Engine::network = nullptr;
 
 Engine::Engine(INetworkInterface* netInterface)
@@ -57,7 +56,7 @@ void Engine::Initialize()
                                          
     )" << std::endl;
     std::cout << "\033[0m";
-    std::cout << "[MAIN] Starting engine...\n";
+    std::cout << "[Main] Starting engine...\n";
     lastFrame = std::chrono::steady_clock::now();
 
 }

@@ -5,7 +5,8 @@ void ComponentManager::RemoveEntity(Entity entity)
 
 	positions.erase(entity);
 	rotations.erase(entity);
-	inputs.erase(entity);
+	playerInputs.erase(entity);
+	playerState.erase(entity);
 	lastReceivedSequence.erase(entity);
 	ai.erase(entity);
 }
@@ -26,7 +27,13 @@ void ComponentManager::AddComponent<RotationComponent>(Entity entity, RotationCo
 template<>
 void ComponentManager::AddComponent<PlayerInputComponent>(Entity entity, PlayerInputComponent component)
 {
-	inputs[entity] = component;
+	playerInputs[entity] = component;
+}
+
+template<>
+void ComponentManager::AddComponent<PlayerStateComponent>(Entity entity, PlayerStateComponent component)
+{
+	playerState[entity] = component;
 }
 
 template<>

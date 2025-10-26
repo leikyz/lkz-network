@@ -22,7 +22,7 @@ const float DEFAULT_SEARCH_EXTENTS[3] = { 20.0f, 20.0f, 20.0f };
 
 void World::initialize()
 {
-	Logger::Log("Initializing World...", LogType::Info);
+	std::cout << "[World] Initialize world...\n";
 	NavMeshLoader navMeshLoader;
 
 	if (!navMeshLoader.LoadFromFile("NavMeshExport.txt"))
@@ -31,7 +31,8 @@ void World::initialize()
 		return;
 	}
 
-	Logger::Log("Building NavMesh from loaded data...", LogType::Info);
+	std::cout << "[World] Building NavMesh..\n";
+	//Logger::Log("Building NavMesh from loaded data...", LogType::Info);
 	navMesh = navMeshLoader.BuildNavMesh();
 	if (!navMesh)
 	{
@@ -58,8 +59,7 @@ void World::initialize()
 	}
 
 	m_filter = filter;
-
-	Logger::Log("World and NavMesh initialized successfully.", LogType::Info);
+	std::cout << "[World] World and NavMesh initialized successfully.\n";
 }
 
 void World::UpdateCrowd(double deltaTime)

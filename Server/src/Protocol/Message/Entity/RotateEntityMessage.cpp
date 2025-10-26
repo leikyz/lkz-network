@@ -26,14 +26,14 @@ std::vector<uint8_t>& RotateEntityMessage::serialize(Serializer& serializer) con
 
 void RotateEntityMessage::deserialize(Deserializer& deserializer)
 {
-    entityId = deserializer.readUInt16();
-    rotaY = deserializer.readFloat();
+   /* entityId = deserializer.readUInt16();
+    rotaY = deserializer.readFloat();*/
 }
 
 
 void RotateEntityMessage::process(const sockaddr_in& senderAddr)
 {
-    auto* client = ClientManager::getClientByAddress(senderAddr);
+ /*   auto* client = ClientManager::getClientByAddress(senderAddr);
     if (!client) return;
 
     Lobby* lobby = LobbyManager::getLobby(client->lobbyId);
@@ -59,6 +59,6 @@ void RotateEntityMessage::process(const sockaddr_in& senderAddr)
         serializer.getBuffer(),
         getClassName(),
         ClientManager::getClientByAddress(senderAddr)
-    );
+    );*/
 
 }

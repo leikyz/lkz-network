@@ -23,6 +23,13 @@ struct PlayerInputComponent
     float yaw;
     int sequenceId;
 };
+
+struct PlayerStateComponent
+{
+	bool isArmed;
+	bool isAiming;
+	bool isRunning;
+};
 struct AIComponent
 {
     std::optional<Vector3> targetPosition; 

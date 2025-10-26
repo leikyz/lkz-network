@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <cmath>
 
-constexpr float moveSpeed = 0.2f; // 0.2f
+constexpr float moveSpeed = 1.0f; // 0.2f
 constexpr int sendEveryTicks = 5;     
 constexpr float moveThreshold = 0.02f; 
 
@@ -23,7 +23,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
     bool shouldSend = (tickCounter % sendEveryTicks == 0);
 
-    for (auto& [entity, input] : components.inputs)
+	for (auto& [entity, input] : components.playerInputs) // For each entity with PlayerInputComponent
     {
         if (components.positions.find(entity) == components.positions.end()) continue;
         if (components.rotations.find(entity) == components.rotations.end()) continue;
@@ -31,8 +31,11 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         auto& positionComponent = components.positions[entity];
         auto& rotationComponent = components.rotations[entity];
+        auto& playerStateComponent = components.playerState[entity];
 
-        float yawRad = rotationComponent.rotation.y * (3.14159265f / 180.0f);
+		/*Logger::Log("State" + std::to_string(playerStateComponent.isAiming ? 1 : 0), LogType::Debug);*/
+
+        float yawRad = input.yaw * (3.14159265f / 180.0f);
         float forwardX = std::sin(yawRad);
         float forwardZ = std::cos(yawRad);
         float rightX = std::cos(yawRad);
@@ -42,7 +45,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         float dirZ = rightZ * input.inputX + forwardZ * input.inputY;
 
         float len = std::sqrt(dirX * dirX + dirZ * dirZ);
-        if (len > 0.001f)
+        if (len > 1.0f)
         {
             dirX /= len;
             dirZ /= len;
@@ -53,7 +56,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         /* Logger::Log(
              std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
-                 entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z, fixedDeltaTime),
+                 entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z, input.yaw),
              LogType::Debug
          );*/
 
@@ -87,7 +90,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             ownerClient
         );
 
-        RotateEntityMessage rotateMsg(entity, rotationComponent.rotation.y);
+  /*      RotateEntityMessage rotateMsg(entity, rotationComponent.rotation.y);
         Serializer rs;
         rotateMsg.serialize(rs);
         Engine::Instance().Server()->SendToMultiple(
@@ -95,7 +98,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             rs.getBuffer(),
             rotateMsg.getClassName(),
             ownerClient
-        );
+        );*/
 
 
         uint32_t lastSeq = EntityManager::Instance().GetLastSequenceId(entity);

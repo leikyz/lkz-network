@@ -75,6 +75,7 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             components.AddComponent(entity, PositionComponent{});
             components.AddComponent(entity, RotationComponent{});
             components.AddComponent(entity, PlayerInputComponent{});
+            components.AddComponent(entity, PlayerStateComponent{});
 
             components.positions[entity].position.x = 10.0f + rand() % 5;
             components.positions[entity].position.y = 0;

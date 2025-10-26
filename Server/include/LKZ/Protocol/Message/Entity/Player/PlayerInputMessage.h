@@ -1,14 +1,14 @@
-#ifndef INPUT_ENTITY_MESSAGE_H
-#define INPUT_ENTITY_MESSAGE_H
+#ifndef PLAYER_INPUT_MESSAGE_H
+#define PLAYER_INPUT_MESSAGE_H
 
 #include "LKZ/Protocol/Message/Message.h"
 
-struct InputEntityMessage : public Message
+struct PlayerInputMessage : public Message
 {
     static constexpr uint8_t ID = 10;
 
-    InputEntityMessage();
-    InputEntityMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId);
+    PlayerInputMessage();
+    PlayerInputMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId);
 
     uint16_t entityId = 0;
     float inputX = 0.0f;
@@ -23,4 +23,4 @@ struct InputEntityMessage : public Message
     void process(const sockaddr_in& senderAddr) override;
 };
 
-#endif // INPUT_ENTITY_MESSAGE_H
+#endif // PLAYER_INPUT_MESSAGE_H

@@ -9,12 +9,10 @@
 #include <DetourCrowd.h>
 #include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
 #include "LKZ/Core/Threading/CommandQueue.h"
-
-// --- ADD THIS FOR LOGGING ---
 #include "LKZ/Utility/Logger.h"
 #include <string>
 #include <LKZ/Core/ECS/System/AISystem.h>
-// --- END ADD ---
+
 
 
 int main()

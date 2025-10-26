@@ -46,7 +46,7 @@ int main()
         {
             auto& engine = Engine::Instance();
             auto& components = ComponentManager::Instance();
-            float fixedDt = engine.GetFixedDeltaTime();
+			float fixedDt = Constants::FIXED_DELTA_TIME;
 
             CommandQueue::Instance().ProcessAllCommands();
           

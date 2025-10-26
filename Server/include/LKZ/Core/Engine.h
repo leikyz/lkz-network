@@ -23,7 +23,6 @@ public:
     void Initialize();
     void Run();
 
-    float GetFixedDeltaTime() const { return fixedDeltaTime; }
     float GetDeltaTime() const { return deltaTime; }
 	World& GetWorld() const { return *world; }
 	void SetWorld(World* newWorld) { world = newWorld; }
@@ -39,6 +38,4 @@ private:
 	World* world;
     std::chrono::steady_clock::time_point lastFrame;
     float deltaTime = 0.0f;
-    float fixedDeltaTime = 0.02f; // 50 Hz
-
 };

@@ -557,5 +557,8 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerStateMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="include\LKZ\Utility\Constants.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

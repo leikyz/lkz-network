@@ -1,4 +1,5 @@
 ﻿#include "LKZ/Core/Engine.H"
+#include "LKZ/Utility/Constants.h"
 #include <iostream>
 #include <thread>
 
@@ -29,10 +30,10 @@ void Engine::Run()
 
         ThreadManager::SetGlobalDeltaTime(deltaTime);
 
-        while (accumulator >= fixedDeltaTime)
+        while (accumulator >= Constants::FIXED_DELTA_TIME)
         {
-            ThreadManager::SetGlobalDeltaTime(fixedDeltaTime);
-            accumulator -= fixedDeltaTime;
+            ThreadManager::SetGlobalDeltaTime(Constants::FIXED_DELTA_TIME);
+            accumulator -= Constants::FIXED_DELTA_TIME;
         }
 
         network->Poll();

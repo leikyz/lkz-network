@@ -221,6 +221,7 @@
     <ClInclude Include="include\LKZ\Simulation\World.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="include\LKZ\Utility\Constants.h" />
     <ClInclude Include="include\LKZ\Utility\Logger.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h" />
     <ClInclude Include="include\LKZ\Core\ECS\Manager\EntityManager.h" />

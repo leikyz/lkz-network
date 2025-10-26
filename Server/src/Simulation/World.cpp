@@ -13,7 +13,7 @@
 #include <DetourCrowd.h>
 #include <LKZ/Core/ECS/Entity.h>
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
-
+#include "LKZ/Utility/Constants.h"
 #define SAMPLE_POLYAREA_GROUND 1
 #define SAMPLE_POLYFLAGS_WALK 0x01
 
@@ -103,7 +103,7 @@ void World::UpdateCrowd(double deltaTime)
 					float velLengthSq = agent->vel[0] * agent->vel[0] + agent->vel[2] * agent->vel[2];
 					if (velLengthSq > 0.01f) // Small threshold to prevent jitter
 					{
-						float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / 3.14159265f);
+						float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / Constants::PI);
 						rotComp.rotation.y = yaw;
 					}
 				}

@@ -6,6 +6,7 @@
 #include <cmath>
 #include <LKZ/Core/Engine.h>
 #include <LKZ/Utility/Logger.h>
+#include <LKZ/Utility/Constants.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Protocol/Message/Entity/MoveEntitiesMessage.h>
 #include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h"
@@ -14,11 +15,6 @@
 #include "DetourNavMeshQuery.h"
 
 #include <float.h> 
-
-constexpr float aiMessageRate = 0.2f;
-constexpr float aiRepathRate = 1.0f; 
-constexpr float aiStopDistance = 2.0f; 
-constexpr float aiStopDistanceSq = aiStopDistance * aiStopDistance; 
 
 void AISystem::Update(ComponentManager& components, float deltaTime)
 {
@@ -32,7 +28,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     dtNavMeshQuery* navQuery = NavMeshQueryManager::GetThreadLocalQuery(navMesh);
     if (!navQuery) return;
 
-    const dtQueryFilter* filter = crowd->getFilter(0); // Use filter 0 (default)
+    const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE); // Use filter 0 (default)
 
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
@@ -54,7 +50,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
         if (shouldRepath)
         {
-            ai.repathTimer = aiRepathRate;
+            ai.repathTimer = Constants::AI_REPATH_RATE;
 
             // --- Find nearest player logic ---
             Entity nearestPlayerEntity = 0;
@@ -80,7 +76,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
             if (nearestPlayerEntity != 0)
             {
-                if (minDistanceSq < aiStopDistanceSq)
+                if (minDistanceSq < Constants::AI_STOP_DISTANCE_SQ)
                 {
                     // We are close enough, STOP moving.
                     ai.targetPosition.reset(); // Clear our internal target
@@ -114,7 +110,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
         timeSinceLastSend[entity] += deltaTime;
 
-        if (timeSinceLastSend[entity] >= aiMessageRate)
+        if (timeSinceLastSend[entity] >= Constants::AI_MESSAGE_RATE)
         {
             timeSinceLastSend[entity] = 0.0f;
             lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);

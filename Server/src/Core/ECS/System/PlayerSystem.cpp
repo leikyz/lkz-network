@@ -8,12 +8,9 @@
 #include <LKZ/Simulation/Math/MathUtils.h>
 #include <LKZ/Simulation/Math/Vector.h>
 #include <LKZ/Utility/Logger.h>
+#include <LKZ/Utility/Constants.h>
 #include <unordered_map>
 #include <cmath>
-
-constexpr float moveSpeed = 1.0f; // 0.2f
-constexpr int sendEveryTicks = 5;     
-constexpr float moveThreshold = 0.02f; 
 
 void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
@@ -21,7 +18,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
     static int tickCounter = 0;
     tickCounter++;
 
-    bool shouldSend = (tickCounter % sendEveryTicks == 0);
+    bool shouldSend = (tickCounter % Constants::PLAYER_MESSAGE_RATE == 0);
 
 	for (auto& [entity, input] : components.playerInputs) // For each entity with PlayerInputComponent
     {
@@ -35,7 +32,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
 		/*Logger::Log("State" + std::to_string(playerStateComponent.isAiming ? 1 : 0), LogType::Debug);*/
 
-        float yawRad = input.yaw * (3.14159265f / 180.0f);
+        float yawRad = input.yaw * (Constants::PI / 180.0f);
         float forwardX = std::sin(yawRad);
         float forwardZ = std::cos(yawRad);
         float rightX = std::cos(yawRad);
@@ -51,8 +48,8 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             dirZ /= len;
         }
 
-        positionComponent.position.x += dirX * moveSpeed * fixedDeltaTime;
-        positionComponent.position.z += dirZ * moveSpeed * fixedDeltaTime;
+        positionComponent.position.x += dirX * Constants::PLAYER_MOVE_SPEED * fixedDeltaTime;
+        positionComponent.position.z += dirZ * Constants::PLAYER_MOVE_SPEED * fixedDeltaTime;
 
         /* Logger::Log(
              std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
@@ -67,7 +64,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         Vector3 lastPos = lastSentPositions[entity];
         float distSq = MathUtils::Distance(currentPos, lastPos);
 
-        if (distSq < moveThreshold * moveThreshold)
+        if (distSq < Constants::PLAYER_MOVE_THRESHOLD * Constants::PLAYER_MOVE_THRESHOLD)
             continue;
 
         lastSentPositions[entity] = currentPos;

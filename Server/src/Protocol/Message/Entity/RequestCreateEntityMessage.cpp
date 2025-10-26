@@ -13,6 +13,7 @@
 #include "LKZ/Core/Engine.h"
 #include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
 #include "LKZ/Utility/Logger.h"
+#include "LKZ/Utility/Constants.h"
 #include <DetourCrowd.h>
 
 // Include for Vector3
@@ -139,25 +140,18 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
                     memset(&params, 0, sizeof(params));
 
-                    params.radius = 0.1f; 
-                    params.height = 1.8f;
-                    params.maxAcceleration = 2.0f; 
-                    params.maxSpeed = 0.4f;        
+					params.radius = Constants::AGENT_RADIUS;
+                    params.height = Constants::AGENT_HEIGHT;
+                    params.maxAcceleration = Constants::AGENT_MAX_ACCELERATION;
+                    params.maxSpeed = Constants::AGENT_MAX_SPEED;
 
                     params.collisionQueryRange = params.radius * 8.0f;
-                    // How far to look for walls (static obstacles)
                     params.pathOptimizationRange = params.radius * 30.0f;
                     // This MUST match the filter you set up in World.cpp
-                    params.queryFilterType = 0;
-                    params.obstacleAvoidanceType = 3; // Use high quality avoidance
-                    params.separationWeight = 2.0f;   // How strongly to push other agents away
-                    params.updateFlags = 0;
-                    params.updateFlags |= DT_CROWD_ANTICIPATE_TURNS;
-                    params.updateFlags |= DT_CROWD_OPTIMIZE_VIS;
-                    params.updateFlags |= DT_CROWD_OPTIMIZE_TOPO;
-                    params.updateFlags |= DT_CROWD_OBSTACLE_AVOIDANCE; 
-                    params.updateFlags |= DT_CROWD_SEPARATION;    
-
+                    params.queryFilterType = Constants::AGENT_QUERY_FILTER_TYPE;
+                    params.obstacleAvoidanceType = Constants::AGENT_OBSTACLE_AVOIDANCE_TYPE; 
+                    params.separationWeight = Constants::AGENT_SEPARATION_WEIGHT;   
+                    params.updateFlags = Constants::AGENT_UPDATE_FLAGS;
                     params.userData = (void*)((uintptr_t)entity);
                     int agentIdx = crowd->addAgent(randomSpawnPoint.data(), &params);
 

@@ -4,6 +4,7 @@
 #include "INetworkInterface.h"
 #include "LKZ/Core/Threading/ThreadManager.h"
 #include "LKZ/Utility/Logger.h"
+#include "LKZ/Utility/Constants.h"
 #include "LKZ/Core/ECS/Manager/EntityManager.h"
 #include "LKZ/Core/ECS/Manager/SystemManager.h"
 #include "LKZ/Core/ECS/Manager/ComponentManager.h"
@@ -39,7 +40,7 @@ struct IoData
 class WindowsServer : public INetworkInterface 
 {
 public:
-    explicit WindowsServer(int port, size_t bufferSize = 1024);
+    explicit WindowsServer(int port, size_t bufferSize = Constants::NETWORK_BUFFER_SIZE);
     ~WindowsServer() override;
 
     void Start() override;

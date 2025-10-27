@@ -16,6 +16,16 @@ uint8_t PlayerStateMessage::getId() const
 
 std::vector<uint8_t>& PlayerStateMessage::serialize(Serializer& serializer) const
 {
+    serializer.writeByte(ID);
+    serializer.writeUInt16(entityId);
+
+    uint8_t flagsByte = 0;
+    if (isArmed())  flagsByte |= 1;  // Bit 0
+    if (isAiming()) flagsByte |= 2;  // Bit 1
+    if (isRunning()) flagsByte |= 4; // Bit 2
+
+    serializer.writeByte(flagsByte);
+
     return serializer.getBuffer();
 }
 
@@ -44,6 +54,15 @@ void PlayerStateMessage::process(const sockaddr_in& senderAddr)
 		state.isArmed = isArmed();
 		state.isRunning = isRunning();
     }
+
+    Serializer serializer;
+    serialize(serializer);
+
+    Engine::Instance().Server()->SendToMultiple(
+        lobby->clients,
+        serializer.getBuffer(),
+        getClassName(),
+        ClientManager::getClientByAddress(senderAddr));
 }
 
 

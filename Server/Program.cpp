@@ -18,7 +18,7 @@
 int main()
 {
 #ifdef _WIN32
-    WindowsServer* server = new WindowsServer(5555);
+    WindowsServer* server = new WindowsServer(Constants::SERVER_PORT);
 #else
     LinuxServer server = new LinuxServer();
 #endif

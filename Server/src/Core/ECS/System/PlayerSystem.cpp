@@ -42,14 +42,17 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         float dirZ = rightZ * input.inputX + forwardZ * input.inputY;
 
         float len = std::sqrt(dirX * dirX + dirZ * dirZ);
+
         if (len > 1.0f)
         {
             dirX /= len;
             dirZ /= len;
         }
 
-        positionComponent.position.x += dirX * Constants::PLAYER_MOVE_SPEED * fixedDeltaTime;
-        positionComponent.position.z += dirZ * Constants::PLAYER_MOVE_SPEED * fixedDeltaTime;
+		float speed = playerStateComponent.isAiming ? Constants::PLAYER_AIM_SPEED : Constants::PLAYER_MOVE_SPEED;
+
+        positionComponent.position.x += dirX * speed * fixedDeltaTime;
+        positionComponent.position.z += dirZ * speed * fixedDeltaTime;
 
         /* Logger::Log(
              std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",

@@ -24,13 +24,13 @@ namespace Constants
 
     inline constexpr float AGENT_RADIUS = 0.1f;       // The physical radius of a typical AI agent.
     inline constexpr float AGENT_HEIGHT = 1.8f;      // The height of an agent (e.g., for humanoid navigation).
-    inline constexpr float AGENT_MAX_ACCELERATION = 2.0f; // Maximum acceleration allowed for an agent.
-    inline constexpr float AGENT_MAX_SPEED = 1.5f;       // Maximum movement speed of an agent (units per second).
+    inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.
+    inline constexpr float AGENT_MAX_SPEED = 0.8f;       // Maximum movement speed of an agent (units per second).
 
     // ----- Avoidance & Collision -----
 
-    inline constexpr float AGENT_COLLISION_QUERY_RANGE = AGENT_RADIUS * 8.0f;      // Distance around the agent used to query nearby agents for collision avoidance.
-    inline constexpr float AGENT_PATH_OPTIMIZATION_RANGE = AGENT_RADIUS * 30.0f;  // How far the agent will look ahead to optimize its path (avoid walls, etc.).
+    inline constexpr float AGENT_COLLISION_QUERY_RANGE = AGENT_RADIUS * 4.0f;      // Distance around the agent used to query nearby agents for collision avoidance.
+    inline constexpr float AGENT_PATH_OPTIMIZATION_RANGE = AGENT_RADIUS * 15.0f;  // How far the agent will look ahead to optimize its path (avoid walls, etc.).
     inline constexpr int AGENT_OBSTACLE_AVOIDANCE_TYPE = 3;                      // Quality level of obstacle avoidance: 0 = Low, 1 = Medium, 2 = Good, 3 = High (default: 3)
     inline constexpr float AGENT_SEPARATION_WEIGHT = 2.0f;                      // How strongly agents try to stay away from each other.
 
@@ -51,7 +51,7 @@ namespace Constants
 	// ----- ECS -----
 
 	inline constexpr float PLAYER_MOVE_SPEED = 0.2f;       // Player movement speed in units per second.
-    inline constexpr float PLAYER_AIM_SPEED = 0.05f;
+    inline constexpr float PLAYER_AIM_SPEED = 0.08f;
 	inline constexpr float PLAYER_MOVE_THRESHOLD = 0.02f; // Minimum distance change to trigger a position update.
 	inline constexpr int PLAYER_MESSAGE_RATE = 5.0f; 	 // Send player position updates every N ticks.
 

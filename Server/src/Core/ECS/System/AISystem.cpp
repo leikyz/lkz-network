@@ -15,9 +15,14 @@
 #include "DetourNavMeshQuery.h"
 
 #include <float.h> 
+#include <DetourCommon.h>
+#include <stdlib.h> /
+
 
 void AISystem::Update(ComponentManager& components, float deltaTime)
 {
+     auto t0 = std::chrono::high_resolution_clock::now();
+
     static std::unordered_map<Entity, float> timeSinceLastSend;
 
     World& world = Engine::Instance().GetWorld();
@@ -31,6 +36,8 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE); // Use filter 0 (default)
 
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
+
+    const float AI_AGGRO_RANGE_SQ = 25.0f * 25.0f; // 25 meters
 
     for (auto& [entity, ai] : components.ai)
     {
@@ -74,7 +81,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
                 }
             }
 
-            if (nearestPlayerEntity != 0)
+            if (nearestPlayerEntity != 0 && minDistanceSq < AI_AGGRO_RANGE_SQ)
             {
                 if (minDistanceSq < Constants::AI_STOP_DISTANCE_SQ)
                 {
@@ -88,7 +95,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
                     ai.targetPosition = targetPos;
 
                     // Find the nearest navmesh point to the player's position
-                    const float extents[3] = { 10.0f, 10.0f, 10.0f }; // Search box
+                    const float extents[3] = { 5.0f, 5.0f, 5.0f }; // Search box
                     dtPolyRef targetRef;
                     float nearestPt[3];
 
@@ -101,29 +108,44 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
                     }
                 }
             }
-            else // No player was found
+            else
             {
                 ai.targetPosition.reset();
                 crowd->resetMoveTarget(ai.crowdAgentIndex);
             }
         }
 
-        timeSinceLastSend[entity] += deltaTime;
+        ai.timeSinceLastSend += deltaTime;
 
-        if (timeSinceLastSend[entity] >= Constants::AI_MESSAGE_RATE)
+        if (ai.timeSinceLastSend >= Constants::AI_MESSAGE_RATE)
         {
-            timeSinceLastSend[entity] = 0.0f;
-            lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
+            ai.timeSinceLastSend = 0.0f;
+
+            const dtCrowdAgent* agent = crowd->getAgent(ai.crowdAgentIndex);
+
+            if (agent)
+            {
+                float velocityMagnitudeSq = dtVlenSqr(agent->vel);
+                const float VELOCITY_THRESHOLD_SQ = 0.01f;
+
+                if (velocityMagnitudeSq > VELOCITY_THRESHOLD_SQ)
+                {
+                    lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
+                }
+            }
         }
     }
 
-    for (auto& [lobby, msg] : lobbyMessages)
-    {
-        if (!msg.updates.empty())
-        {
-            Serializer s;
-            msg.serialize(s);
-            Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
-        }
-    }
+    //for (auto& [lobby, msg] : lobbyMessages)
+    //{
+    //    if (!msg.updates.empty())
+    //    {
+    //        Serializer s;
+    //        msg.serialize(s);
+    //        Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
+    //    }
+    //}
+
+     auto t1 = std::chrono::high_resolution_clock::now();
+    Logger::Log("AISystem send phase took " + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1000.0) + " ms");
 }

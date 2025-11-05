@@ -14,6 +14,7 @@
 #include <LKZ/Core/ECS/Entity.h>
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include "LKZ/Utility/Constants.h"
+
 #define SAMPLE_POLYAREA_GROUND 1
 #define SAMPLE_POLYFLAGS_WALK 0x01
 
@@ -60,6 +61,7 @@ void World::initialize()
 
 	m_filter = filter;
 	std::cout << "[World] World and NavMesh initialized successfully.\n";
+
 }
 
 void World::UpdateCrowd(double deltaTime)
@@ -76,38 +78,27 @@ void World::UpdateCrowd(double deltaTime)
 			const dtCrowdAgent* agent = crowd->getAgent(i);
 			if (!agent->active) continue;
 
-			// Get the Entity ID we stored in userData
 			Entity entity = (Entity)((uintptr_t)agent->params.userData);
+			auto posIt = components.positions.find(entity);
+			if (posIt == components.positions.end()) continue;
 
-			// Check if the entity still exists in our ECS
-			if (components.positions.count(entity))
+			// Sync Position
+			auto& posComp = posIt->second.position;
+			posComp.x = agent->npos[0];
+			posComp.y = agent->npos[1];
+			posComp.z = agent->npos[2];
+
+			// Sync Rotation
+			auto rotIt = components.rotations.find(entity);
+			if (rotIt != components.rotations.end())
 			{
-				// Sync Position
-				auto& posComp = components.positions[entity].position;
-				posComp.x = agent->npos[0];
-				posComp.y = agent->npos[1];
-				posComp.z = agent->npos[2];
-
-				// Only log if the agent is an AI agent
-				if (components.ai.count(entity))
+				float velLengthSq = agent->vel[0] * agent->vel[0] + agent->vel[2] * agent->vel[2];
+				if (velLengthSq > 0.01f)
 				{
-					// Calculate velocity length
-					float velLengthSq = agent->vel[0] * agent->vel[0] + agent->vel[1] * agent->vel[1] + agent->vel[2] * agent->vel[2];
+					float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / Constants::PI);
+					rotIt->second.rotation.y = yaw;
 				}
-
-				// Sync Rotation from velocity
-				if (components.rotations.count(entity))
-				{
-					auto& rotComp = components.rotations[entity];
-					// Only update yaw if the agent is actually moving
-					float velLengthSq = agent->vel[0] * agent->vel[0] + agent->vel[2] * agent->vel[2];
-					if (velLengthSq > 0.01f) // Small threshold to prevent jitter
-					{
-						float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / Constants::PI);
-						rotComp.rotation.y = yaw;
-					}
-				}
-			}
+			}		
 		}
 	}
 }

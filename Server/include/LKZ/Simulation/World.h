@@ -26,6 +26,7 @@ public:
 
 	dtNavMesh* getNavMesh() const { return navMesh; }
 	dtCrowd* getCrowd() const { return crowd; }
+
 	void UpdateCrowd(double deltaTime);
 private:
 	dtNavMesh* navMesh = nullptr;

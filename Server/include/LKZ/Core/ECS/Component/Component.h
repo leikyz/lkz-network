@@ -35,6 +35,7 @@ struct AIComponent
     std::optional<Vector3> targetPosition; 
     float repathTimer;
     int crowdAgentIndex;
+    float timeSinceLastSend = 0.0f;
 };
 struct PositionComponent
 {

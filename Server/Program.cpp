@@ -50,6 +50,7 @@ int main()
 
             CommandQueue::Instance().ProcessAllCommands();
           
+
             if (world)
                 world->UpdateCrowd(fixedDt);
 

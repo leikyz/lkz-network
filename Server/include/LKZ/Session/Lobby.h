@@ -18,7 +18,6 @@ struct Lobby
     std::vector<Client*> clients;
     std::vector<Entity*> entities;
     int nextEntityId = 1;
-
     /**
     * @brief Constructor for Lobby.
     * @param lobbyId Unique identifier for the lobby.

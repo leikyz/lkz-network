@@ -136,16 +136,16 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         }
     }
 
-    //for (auto& [lobby, msg] : lobbyMessages)
-    //{
-    //    if (!msg.updates.empty())
-    //    {
-    //        Serializer s;
-    //        msg.serialize(s);
-    //        Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
-    //    }
-    //}
+    for (auto& [lobby, msg] : lobbyMessages)
+    {
+        if (!msg.updates.empty())
+        {
+            Serializer s;
+            msg.serialize(s);
+            Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
+        }
+    }
 
-     auto t1 = std::chrono::high_resolution_clock::now();
-    Logger::Log("AISystem send phase took " + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1000.0) + " ms");
+    // auto t1 = std::chrono::high_resolution_clock::now();
+    //Logger::Log("AISystem send phase took " + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1000.0) + " ms");
 }

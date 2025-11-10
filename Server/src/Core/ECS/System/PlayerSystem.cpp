@@ -30,7 +30,7 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
         auto& rotationComponent = components.rotations[entity];
         auto& playerStateComponent = components.playerState[entity];
 
-        /*Logger::Log("State" + std::to_string(playerStateComponent.isAiming ? 1 : 0), LogType::Debug);*/
+        
 
         float yawRad = input.yaw * (Constants::PI / 180.0f);
         float forwardX = std::sin(yawRad);
@@ -50,6 +50,13 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
         }
 
         float speed = playerStateComponent.isAiming ? Constants::PLAYER_AIM_SPEED : Constants::PLAYER_MOVE_SPEED;
+
+        if (playerStateComponent.isRunning && !playerStateComponent.isAiming)
+        {
+            speed = Constants::PLAYER_RUN_SPEED;
+		}
+
+        Logger::Log("Speed" + std::to_string(speed) , LogType::Debug);
 
         positionComponent.position.x += dirX * speed * fixedDeltaTime;
         positionComponent.position.z += dirZ * speed * fixedDeltaTime;

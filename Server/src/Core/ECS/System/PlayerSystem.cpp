@@ -56,7 +56,7 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
             speed = Constants::PLAYER_RUN_SPEED;
 		}
 
-        Logger::Log("Speed" + std::to_string(speed) , LogType::Debug);
+        //Logger::Log("Speed" + std::to_string(speed) , LogType::Debug);
 
         positionComponent.position.x += dirX * speed * fixedDeltaTime;
         positionComponent.position.z += dirZ * speed * fixedDeltaTime;

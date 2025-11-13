@@ -168,6 +168,7 @@
     <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerInputMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\MoveEntitiesMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerShootingMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerStateMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\RequestCreateEntityMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerInputMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\MoveEntitiesMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerShootingMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerStateMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\RequestCreateEntityMessage.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />

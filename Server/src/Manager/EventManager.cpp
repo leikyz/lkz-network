@@ -11,6 +11,7 @@
 #include "LKZ/Protocol/Message/Entity/Player/PlayerInputMessage.h"
 #include "LKZ/Protocol/Message/Entity/Player/PlayerStateMessage.h"
 #include "LKZ/Protocol/Message/Entity/Player/PlayerAimTargetPositionMessage.h"
+#include "LKZ/Protocol/Message/Entity/Player/PlayerShootingMessage.h"
 #include "LKZ/Protocol/Message/Entity/CreateEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/MoveEntityMessage.h"
 #include "LKZ/Protocol/Message/Entity/RotateEntityMessage.h"
@@ -46,6 +47,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<MoveEntitiesMessage>(15);
     EventManager::registerHandler<PlayerStateMessage>(16);
     EventManager::registerHandler<PlayerAimTargetPositionMessage>(17);
+    EventManager::registerHandler<PlayerShootingMessage>(18);
 }
 
 template<typename T>

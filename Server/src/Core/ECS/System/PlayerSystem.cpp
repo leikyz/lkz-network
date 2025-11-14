@@ -56,6 +56,11 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
             speed = Constants::PLAYER_RUN_SPEED;
 		}
 
+        if (playerStateComponent.isArmed && !playerStateComponent.isAiming)
+        {
+            speed *= 0.7f; // Reduce speed by 50% when armed but not aiming
+		}
+
         //Logger::Log("Speed" + std::to_string(speed) , LogType::Debug);
 
         positionComponent.position.x += dirX * speed * fixedDeltaTime;

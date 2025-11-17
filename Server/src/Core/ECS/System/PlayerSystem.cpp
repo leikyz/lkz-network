@@ -49,26 +49,63 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
             dirZ /= len;
         }
 
-        float speed = playerStateComponent.isAiming ? Constants::PLAYER_AIM_SPEED : Constants::PLAYER_MOVE_SPEED;
+        float speed = Constants::PLAYER_MOVE_SPEED;
 
-        if (playerStateComponent.isRunning && !playerStateComponent.isAiming)
+        if (playerStateComponent.isArmed)
         {
-            speed = Constants::PLAYER_RUN_SPEED;
-		}
-
-        if (playerStateComponent.isArmed && !playerStateComponent.isAiming)
+            if (playerStateComponent.isAiming)
+            {
+                speed *= Constants::PLAYER_AIM_SPEED_MULTIPLICATOR;     
+            }
+            else if (playerStateComponent.isRunning)
+            {
+                speed *= Constants::PLAYER_RUN_ARMED_SPEED_MULTIPLICATOR;
+               /* Logger::Log(
+                    std::format("[Server] Entity {} speed applied: RUN_ARMED_SPEED_MULTIPLICATOR. Speed={:.3f}",
+                        entity, speed),
+                    LogType::Debug
+                );*/
+            }
+            else
+            {
+                speed *= Constants::PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR;
+             /*   Logger::Log(
+                    std::format("[Server] Entity {} speed applied: WALK_ARMED_SPEED_MULTIPLICATOR. Speed={:.3f}",
+                        entity, speed),
+                    LogType::Debug
+                );*/
+            }
+        }
+        else
         {
-            speed *= 0.7f; // Reduce speed by 50% when armed but not aiming
-		}
+            if (playerStateComponent.isRunning)
+            {
+                speed *= Constants::PLAYER_RUN_SPEED_MULTIPLICATOR;
+             /*   Logger::Log(
+                    std::format("[Server] Entity {} speed applied: RUN_SPEED_MULTIPLICATOR. Speed={:.3f}",
+                        entity, speed),
+                    LogType::Debug
+                );*/
+            }
+            else
+            {
+                speed *= Constants::PLAYER_WALK_SPEED_MULTIPLICATOR;
+               /* Logger::Log(
+                    std::format("[Server] Entity {} speed applied: WALK_SPEED_MULTIPLICATOR. Speed={:.3f}",
+                        entity, speed),
+                    LogType::Debug
+                );*/
+            }
+        }
 
         //Logger::Log("Speed" + std::to_string(speed) , LogType::Debug);
 
         positionComponent.position.x += dirX * speed * fixedDeltaTime;
         positionComponent.position.z += dirZ * speed * fixedDeltaTime;
 
-        /* Logger::Log(
+      /*   Logger::Log(
              std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
-                 entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z, input.yaw),
+                 entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z, speed),
              LogType::Debug
          );*/
 

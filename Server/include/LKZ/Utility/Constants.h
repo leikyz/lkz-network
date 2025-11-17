@@ -50,9 +50,12 @@ namespace Constants
 
 	// ----- ECS -----
 
-	inline constexpr float PLAYER_MOVE_SPEED = 0.2f;
-    inline constexpr float PLAYER_RUN_SPEED = 0.5f;      // Player movement speed in units per second. 0.2 crea | 1.0 home
-    inline constexpr float PLAYER_AIM_SPEED = 0.1f;         // 0.7 home 
+	inline constexpr float PLAYER_MOVE_SPEED = 0.2f; // Player movement speed in units per second. 0.2 crea | 1.0 home
+    inline constexpr float PLAYER_WALK_SPEED_MULTIPLICATOR = 1.0;
+    inline constexpr float PLAYER_RUN_SPEED_MULTIPLICATOR = 2.0;
+    inline constexpr float PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR = 0.7;
+    inline constexpr float PLAYER_RUN_ARMED_SPEED_MULTIPLICATOR = 1.5;
+    inline constexpr float PLAYER_AIM_SPEED_MULTIPLICATOR = 0.5;
 	inline constexpr float PLAYER_MOVE_THRESHOLD = 0.02f; // Minimum distance change to trigger a position update.
 	inline constexpr int PLAYER_MESSAGE_RATE = 5.0f; 	 // Send player position updates every N ticks.
 

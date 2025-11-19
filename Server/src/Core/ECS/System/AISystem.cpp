@@ -38,7 +38,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     // --- SETTINGS: STOP DISTANCE ---
     // Zombies will stop moving if they are within this distance of the player.
     // 1.5f = 1.5 meters (Adjust this if they are still too close or too far)
-    const float STOP_DISTANCE = 1.5f;
+    const float STOP_DISTANCE = 3.0f;
     const float STOP_DISTANCE_SQ = STOP_DISTANCE * STOP_DISTANCE;
 
     const int MAX_PATH_UPDATES_PER_TICK = 10;

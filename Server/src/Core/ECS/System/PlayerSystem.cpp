@@ -11,8 +11,8 @@
 #include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
 #include <unordered_map>
 #include <cmath>
-#include <algorithm> // Required for std::sort
-#include <set>       // Required for debug set
+#include <algorithm> 
+#include <set>     
 
 void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
@@ -48,10 +48,10 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         if (debuggedEntities.find(entity) == debuggedEntities.end())
         {
             debuggedEntities.insert(entity);
-            Logger::Log("[INIT] Entity " + std::to_string(entity) +
+           /* Logger::Log("[INIT] Entity " + std::to_string(entity) +
                 " QueueSize=" + std::to_string(inputComp.inputQueue.size()) +
                 " LastExec=" + std::to_string(inputComp.lastExecutedSequenceId),
-                LogType::Info);
+                LogType::Info);*/
         }
 
         // Sort inputs to process in order
@@ -63,14 +63,12 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         // --- PROCESS ALL PENDING INPUTS ---
         for (const auto& input : inputComp.inputQueue)
         {
-            // --- DUPLICATE PROTECTION ---
             if (input.sequenceId <= inputComp.lastExecutedSequenceId)
             {
-                // UNCOMMENTED THIS LOG SO YOU CAN SEE IT
-                Logger::Log("[REJECT] Entity " + std::to_string(entity) +
+               /* Logger::Log("[REJECT] Entity " + std::to_string(entity) +
                     " Input Seq " + std::to_string(input.sequenceId) +
                     " <= LastExec " + std::to_string(inputComp.lastExecutedSequenceId),
-                    LogType::Warning);
+                    LogType::Warning);*/
                 continue;
             }
 
@@ -116,12 +114,12 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             // --- DEBUG MOVEMENT DETAILS (Throttle to avoid spam, but log first few) ---
             if (processedAnyInput && tickCounter % 10 == 0)
             {
-                Logger::Log("[MOVE DETAIL] Entity " + std::to_string(entity) +
+                /*Logger::Log("[MOVE DETAIL] Entity " + std::to_string(entity) +
                     " Speed=" + std::to_string(speed) +
                     " DT=" + std::to_string(dt) +
                     " InX=" + std::to_string(input.inputX) +
                     " InY=" + std::to_string(input.inputY),
-                    LogType::Debug);
+                    LogType::Debug);*/
             }
 
             // Safety warning for Zero DT
@@ -132,13 +130,19 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             positionComponent.position.x += dirX * speed * dt;
             positionComponent.position.z += dirZ * speed * dt;
 
+            Logger::Log("[POSITION UPDATE] Entity " + std::to_string(entity) +
+                " NewPos=(" + std::to_string(positionComponent.position.x) + ", " +
+                std::to_string(positionComponent.position.y) + ", " +
+                std::to_string(positionComponent.position.z) + ")",
+				LogType::Debug);
+
             // Update Rotation
             rotationComponent.rotation.y = input.yaw;
         }
 
         // Log queue size if it's growing too large (lag backlog)
         if (inputComp.inputQueue.size() > 10) {
-            Logger::Log("Entity " + std::to_string(entity) + " Queue BACKLOG: " + std::to_string(inputComp.inputQueue.size()), LogType::Warning);
+          /*  Logger::Log("Entity " + std::to_string(entity) + " Queue BACKLOG: " + std::to_string(inputComp.inputQueue.size()), LogType::Warning);*/
         }
 
         // Clear queue after processing

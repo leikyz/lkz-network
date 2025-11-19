@@ -50,7 +50,7 @@ namespace Constants
 
 	// ----- ECS -----
 
-	inline constexpr float PLAYER_MOVE_SPEED = 1.0f; // Player movement speed in units per second. 0.2 crea | 1.0 home
+	inline constexpr float PLAYER_MOVE_SPEED = 2.0f; // Player movement speed in units per second. 0.2 crea | 1.0 home
     inline constexpr float PLAYER_WALK_SPEED_MULTIPLICATOR = 1.0;
     inline constexpr float PLAYER_RUN_SPEED_MULTIPLICATOR = 2.0;
     inline constexpr float PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR = 0.7;

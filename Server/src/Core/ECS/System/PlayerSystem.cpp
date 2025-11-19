@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <algorithm> // Required for std::sort
+#include <set>       // Required for debug set
 
 void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
@@ -19,11 +20,14 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
     static int tickCounter = 0;
     tickCounter++;
 
+    // Debug set to log initialization only once per entity
+    static std::set<Entity> debuggedEntities;
+
     bool shouldSend = (tickCounter % Constants::PLAYER_MESSAGE_RATE == 0);
 
     for (auto& [entity, inputComp] : components.playerInputs)
     {
-        // Safety Checks & Iterator Access (Faster than map lookup)
+        // Safety Checks & Iterator Access
         auto posIt = components.positions.find(entity);
         if (posIt == components.positions.end()) continue;
 
@@ -40,7 +44,17 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         int lastProcessedSequence = -1;
         bool processedAnyInput = false;
 
-        // --- CRITICAL: Sort inputs by sequence ID to ensure correct order ---
+        // --- DEBUG: LOG INITIAL STATE ONCE ---
+        if (debuggedEntities.find(entity) == debuggedEntities.end())
+        {
+            debuggedEntities.insert(entity);
+            Logger::Log("[INIT] Entity " + std::to_string(entity) +
+                " QueueSize=" + std::to_string(inputComp.inputQueue.size()) +
+                " LastExec=" + std::to_string(inputComp.lastExecutedSequenceId),
+                LogType::Info);
+        }
+
+        // Sort inputs to process in order
         std::sort(inputComp.inputQueue.begin(), inputComp.inputQueue.end(),
             [](const PlayerInputData& a, const PlayerInputData& b) {
                 return a.sequenceId < b.sequenceId;
@@ -49,11 +63,16 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         // --- PROCESS ALL PENDING INPUTS ---
         for (const auto& input : inputComp.inputQueue)
         {
-            // --- CRITICAL FIX: DUPLICATE PROTECTION ---
-            // If we already processed this sequence (or a newer one), skip it.
-            // This prevents the "double movement" rubber-banding.
+            // --- DUPLICATE PROTECTION ---
             if (input.sequenceId <= inputComp.lastExecutedSequenceId)
+            {
+                // UNCOMMENTED THIS LOG SO YOU CAN SEE IT
+                Logger::Log("[REJECT] Entity " + std::to_string(entity) +
+                    " Input Seq " + std::to_string(input.sequenceId) +
+                    " <= LastExec " + std::to_string(inputComp.lastExecutedSequenceId),
+                    LogType::Warning);
                 continue;
+            }
 
             // Update trackers
             inputComp.lastExecutedSequenceId = input.sequenceId;
@@ -92,20 +111,34 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             }
 
             // 3. Apply Movement
-            // Use input.deltaTime if sent, otherwise fallback to server FixedDeltaTime
             float dt = (input.deltaTime > 0.0001f) ? input.deltaTime : fixedDeltaTime;
+
+            // --- DEBUG MOVEMENT DETAILS (Throttle to avoid spam, but log first few) ---
+            if (processedAnyInput && tickCounter % 10 == 0)
+            {
+                Logger::Log("[MOVE DETAIL] Entity " + std::to_string(entity) +
+                    " Speed=" + std::to_string(speed) +
+                    " DT=" + std::to_string(dt) +
+                    " InX=" + std::to_string(input.inputX) +
+                    " InY=" + std::to_string(input.inputY),
+                    LogType::Debug);
+            }
+
+            // Safety warning for Zero DT
+            if (dt <= 0.00001f) {
+                Logger::Log("[ERROR] DT is ZERO for Entity " + std::to_string(entity), LogType::Error);
+            }
 
             positionComponent.position.x += dirX * speed * dt;
             positionComponent.position.z += dirZ * speed * dt;
 
-            Logger::Log("Entity " + std::to_string(entity) + " moved to (" +
-                std::to_string(positionComponent.position.x) + ", " +
-                std::to_string(positionComponent.position.y) + ", " +
-                std::to_string(positionComponent.position.z) + ")",
-				LogType::Debug);
-
             // Update Rotation
             rotationComponent.rotation.y = input.yaw;
+        }
+
+        // Log queue size if it's growing too large (lag backlog)
+        if (inputComp.inputQueue.size() > 10) {
+            Logger::Log("Entity " + std::to_string(entity) + " Queue BACKLOG: " + std::to_string(inputComp.inputQueue.size()), LogType::Warning);
         }
 
         // Clear queue after processing
@@ -116,17 +149,16 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         Vector3 currentPos = { positionComponent.position.x, positionComponent.position.y, positionComponent.position.z };
 
-        // --- FIX: Initialize lastSentPosition if this is the first time we see this entity ---
-        // This prevents the "Snap to Zero" bug when a player first spawns or reconnects.
+        // --- INITIALIZATION FIX ---
         if (lastSentPositions.find(entity) == lastSentPositions.end())
         {
             lastSentPositions[entity] = currentPos;
+            Logger::Log("Entity " + std::to_string(entity) + " Initialized LastPos to current.", LogType::Info);
         }
 
         Vector3 lastPos = lastSentPositions[entity];
         float distSq = MathUtils::Distance(currentPos, lastPos);
 
-        // Only broadcast to others if we moved significantly OR if it's a forced sync tick
         if (distSq < Constants::PLAYER_MOVE_THRESHOLD * Constants::PLAYER_MOVE_THRESHOLD && !shouldSend)
             continue;
 
@@ -138,7 +170,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         Client* ownerClient = LobbyManager::getClientByEntityId(entity);
         if (!ownerClient) continue;
 
-        // 1. Send Position Update to EVERYONE in the lobby
+        // 1. Send Position Update to EVERYONE
         MoveEntityMessage moveMsg(entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z);
         Serializer s;
         moveMsg.serialize(s);
@@ -150,7 +182,6 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         );
 
         // 2. Send Reconciliation/Ack ONLY to the owner
-        // We send back the Sequence ID of the LAST input we successfully processed.
         if (lastProcessedSequence != -1)
         {
             LastEntityPositionMessage correctionMsg(

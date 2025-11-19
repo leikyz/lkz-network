@@ -33,7 +33,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
-    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f; // 50 meters Aggro
+    const float AI_AGGRO_RANGE_SQ = 25.0f * 25.0f; // 50 meters Aggro
 
     // --- SETTINGS: STOP DISTANCE ---
     // Zombies will stop moving if they are within this distance of the player.

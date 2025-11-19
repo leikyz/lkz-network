@@ -16,12 +16,19 @@ enum class EntityType : uint8_t
     Zombie1 = 3,
 };
 
-struct PlayerInputComponent
+struct PlayerInputData
 {
     float inputX;
     float inputY;
     float yaw;
     int sequenceId;
+    float deltaTime;
+};
+
+struct PlayerInputComponent
+{
+    std::vector<PlayerInputData> inputQueue;
+    int lastExecutedSequenceId = -1;
 };
 
 struct PlayerStateComponent

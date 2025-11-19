@@ -16,15 +16,11 @@
 
 #include <float.h> 
 #include <DetourCommon.h>
-#include <stdlib.h> /
-
+#include <stdlib.h> 
+#include <chrono>
 
 void AISystem::Update(ComponentManager& components, float deltaTime)
 {
-     auto t0 = std::chrono::high_resolution_clock::now();
-
-    static std::unordered_map<Entity, float> timeSinceLastSend;
-
     World& world = Engine::Instance().GetWorld();
     dtNavMesh* navMesh = world.getNavMesh();
     dtCrowd* crowd = world.getCrowd();
@@ -33,33 +29,39 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     dtNavMeshQuery* navQuery = NavMeshQueryManager::GetThreadLocalQuery(navMesh);
     if (!navQuery) return;
 
-    const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE); // Use filter 0 (default)
+    const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE);
 
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
-    const float AI_AGGRO_RANGE_SQ = 25.0f * 25.0f; // 25 meters
+    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f; // 50 meters Aggro
+
+    // --- SETTINGS: STOP DISTANCE ---
+    // Zombies will stop moving if they are within this distance of the player.
+    // 1.5f = 1.5 meters (Adjust this if they are still too close or too far)
+    const float STOP_DISTANCE = 1.5f;
+    const float STOP_DISTANCE_SQ = STOP_DISTANCE * STOP_DISTANCE;
+
+    const int MAX_PATH_UPDATES_PER_TICK = 10;
+    int pathUpdatesThisTick = 0;
 
     for (auto& [entity, ai] : components.ai)
     {
-        if (ai.crowdAgentIndex == -1) continue; // Not a crowd agent
+        if (ai.crowdAgentIndex == -1) continue;
 
         Vector3& position = components.positions[entity].position;
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
         if (!lobby) continue;
 
         ai.repathTimer -= deltaTime;
-        bool shouldRepath = false;
 
-        if (!ai.targetPosition.has_value() || ai.repathTimer <= 0.0f)
+        bool allowedToPathfind = (pathUpdatesThisTick < MAX_PATH_UPDATES_PER_TICK);
+        bool needsRepath = (ai.repathTimer <= 0.0f);
+
+        if (allowedToPathfind && needsRepath)
         {
-            shouldRepath = true;
-        }
+            pathUpdatesThisTick++;
+            ai.repathTimer = 1.0f + ((rand() % 50) / 100.0f);
 
-        if (shouldRepath)
-        {
-            ai.repathTimer = Constants::AI_REPATH_RATE;
-
-            // --- Find nearest player logic ---
             Entity nearestPlayerEntity = 0;
             float minDistanceSq = FLT_MAX;
             Vector3 targetPos;
@@ -83,35 +85,37 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
             if (nearestPlayerEntity != 0 && minDistanceSq < AI_AGGRO_RANGE_SQ)
             {
-                if (minDistanceSq < Constants::AI_STOP_DISTANCE_SQ)
+                // --- FIX: STOP DISTANCE CHECK ---
+                // If we are closer than STOP_DISTANCE, reset target and stop moving.
+                if (minDistanceSq < STOP_DISTANCE_SQ)
                 {
-                    // We are close enough, STOP moving.
-                    ai.targetPosition.reset(); // Clear our internal target
-                    crowd->resetMoveTarget(ai.crowdAgentIndex); // Tell crowd to stop
+                    ai.targetPosition.reset();
+                    crowd->resetMoveTarget(ai.crowdAgentIndex);
                 }
                 else
                 {
-                    // We are far away, so pathfind to the player.
+                    // Player is far enough, keep chasing
                     ai.targetPosition = targetPos;
 
-                    // Find the nearest navmesh point to the player's position
-                    const float extents[3] = { 5.0f, 5.0f, 5.0f }; // Search box
+                    const float extents[3] = { 10.0f, 10.0f, 10.0f };
                     dtPolyRef targetRef;
                     float nearestPt[3];
 
-                    navQuery->findNearestPoly(targetPos.data(), extents, filter, &targetRef, nearestPt, nullptr);
+                    dtStatus status = navQuery->findNearestPoly(targetPos.data(), extents, filter, &targetRef, nearestPt, nullptr);
 
-                    if (targetRef)
+                    if (dtStatusSucceed(status) && targetRef)
                     {
-                        // Tell the crowd agent to move to this point
                         crowd->requestMoveTarget(ai.crowdAgentIndex, targetRef, nearestPt);
                     }
                 }
             }
             else
             {
-                ai.targetPosition.reset();
-                crowd->resetMoveTarget(ai.crowdAgentIndex);
+                // No player found or too far -> Stop
+                if (ai.targetPosition.has_value()) {
+                    ai.targetPosition.reset();
+                    crowd->resetMoveTarget(ai.crowdAgentIndex);
+                }
             }
         }
 
@@ -120,15 +124,12 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         if (ai.timeSinceLastSend >= Constants::AI_MESSAGE_RATE)
         {
             ai.timeSinceLastSend = 0.0f;
-
             const dtCrowdAgent* agent = crowd->getAgent(ai.crowdAgentIndex);
 
             if (agent)
             {
                 float velocityMagnitudeSq = dtVlenSqr(agent->vel);
-                const float VELOCITY_THRESHOLD_SQ = 0.01f;
-
-                if (velocityMagnitudeSq > VELOCITY_THRESHOLD_SQ)
+                if (velocityMagnitudeSq > 0.001f)
                 {
                     lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
                 }
@@ -145,7 +146,4 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
             Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
         }
     }
-
-    // auto t1 = std::chrono::high_resolution_clock::now();
-    //Logger::Log("AISystem send phase took " + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1000.0) + " ms");
 }

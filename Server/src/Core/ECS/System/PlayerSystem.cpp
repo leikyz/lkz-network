@@ -11,8 +11,9 @@
 #include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
 #include <unordered_map>
 #include <cmath>
+#include <algorithm> // Required for std::sort
 
-void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
+void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
     static std::unordered_map<Entity, Vector3> lastSentPositions;
     static int tickCounter = 0;
@@ -20,115 +21,124 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
 
     bool shouldSend = (tickCounter % Constants::PLAYER_MESSAGE_RATE == 0);
 
-    for (auto& [entity, input] : components.playerInputs) // For each entity with PlayerInputComponent
+    for (auto& [entity, inputComp] : components.playerInputs)
     {
-        if (components.positions.find(entity) == components.positions.end()) continue;
-        if (components.rotations.find(entity) == components.rotations.end()) continue;
+        // Safety Checks & Iterator Access (Faster than map lookup)
+        auto posIt = components.positions.find(entity);
+        if (posIt == components.positions.end()) continue;
 
+        auto rotIt = components.rotations.find(entity);
+        if (rotIt == components.rotations.end()) continue;
 
-        auto& positionComponent = components.positions[entity];
-        auto& rotationComponent = components.rotations[entity];
-        auto& playerStateComponent = components.playerState[entity];
+        auto stateIt = components.playerState.find(entity);
+        if (stateIt == components.playerState.end()) continue;
 
-        
+        auto& positionComponent = posIt->second;
+        auto& rotationComponent = rotIt->second;
+        auto& playerStateComponent = stateIt->second;
 
-        float yawRad = input.yaw * (Constants::PI / 180.0f);
-        float forwardX = std::sin(yawRad);
-        float forwardZ = std::cos(yawRad);
-        float rightX = std::cos(yawRad);
-        float rightZ = -std::sin(yawRad);
+        int lastProcessedSequence = -1;
+        bool processedAnyInput = false;
 
-        float dirX = rightX * input.inputX + forwardX * input.inputY;
-        float dirZ = rightZ * input.inputX + forwardZ * input.inputY;
+        // --- CRITICAL: Sort inputs by sequence ID to ensure correct order ---
+        std::sort(inputComp.inputQueue.begin(), inputComp.inputQueue.end(),
+            [](const PlayerInputData& a, const PlayerInputData& b) {
+                return a.sequenceId < b.sequenceId;
+            });
 
-        float len = std::sqrt(dirX * dirX + dirZ * dirZ);
-
-        if (len > 1.0f)
+        // --- PROCESS ALL PENDING INPUTS ---
+        for (const auto& input : inputComp.inputQueue)
         {
-            dirX /= len;
-            dirZ /= len;
-        }
+            // --- CRITICAL FIX: DUPLICATE PROTECTION ---
+            // If we already processed this sequence (or a newer one), skip it.
+            // This prevents the "double movement" rubber-banding.
+            if (input.sequenceId <= inputComp.lastExecutedSequenceId)
+                continue;
 
-        float speed = Constants::PLAYER_MOVE_SPEED;
+            // Update trackers
+            inputComp.lastExecutedSequenceId = input.sequenceId;
+            lastProcessedSequence = input.sequenceId;
+            processedAnyInput = true;
 
-        if (playerStateComponent.isArmed)
-        {
-            if (playerStateComponent.isAiming)
+            // 1. Calculate Direction
+            float yawRad = input.yaw * (Constants::PI / 180.0f);
+            float forwardX = std::sin(yawRad);
+            float forwardZ = std::cos(yawRad);
+            float rightX = std::cos(yawRad);
+            float rightZ = -std::sin(yawRad);
+
+            float dirX = rightX * input.inputX + forwardX * input.inputY;
+            float dirZ = rightZ * input.inputX + forwardZ * input.inputY;
+
+            float len = std::sqrt(dirX * dirX + dirZ * dirZ);
+            if (len > 1.0f)
             {
-                speed *= Constants::PLAYER_AIM_SPEED_MULTIPLICATOR;     
+                dirX /= len;
+                dirZ /= len;
             }
-            else if (playerStateComponent.isRunning)
+
+            // 2. Calculate Speed
+            float speed = Constants::PLAYER_MOVE_SPEED;
+            if (playerStateComponent.isArmed)
             {
-                speed *= Constants::PLAYER_RUN_ARMED_SPEED_MULTIPLICATOR;
-               /* Logger::Log(
-                    std::format("[Server] Entity {} speed applied: RUN_ARMED_SPEED_MULTIPLICATOR. Speed={:.3f}",
-                        entity, speed),
-                    LogType::Debug
-                );*/
+                if (playerStateComponent.isAiming) speed *= Constants::PLAYER_AIM_SPEED_MULTIPLICATOR;
+                else if (playerStateComponent.isRunning) speed *= Constants::PLAYER_RUN_ARMED_SPEED_MULTIPLICATOR;
+                else speed *= Constants::PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR;
             }
             else
             {
-                speed *= Constants::PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR;
-             /*   Logger::Log(
-                    std::format("[Server] Entity {} speed applied: WALK_ARMED_SPEED_MULTIPLICATOR. Speed={:.3f}",
-                        entity, speed),
-                    LogType::Debug
-                );*/
+                if (playerStateComponent.isRunning) speed *= Constants::PLAYER_RUN_SPEED_MULTIPLICATOR;
+                else speed *= Constants::PLAYER_WALK_SPEED_MULTIPLICATOR;
             }
-        }
-        else
-        {
-            if (playerStateComponent.isRunning)
-            {
-                speed *= Constants::PLAYER_RUN_SPEED_MULTIPLICATOR;
-             /*   Logger::Log(
-                    std::format("[Server] Entity {} speed applied: RUN_SPEED_MULTIPLICATOR. Speed={:.3f}",
-                        entity, speed),
-                    LogType::Debug
-                );*/
-            }
-            else
-            {
-                speed *= Constants::PLAYER_WALK_SPEED_MULTIPLICATOR;
-               /* Logger::Log(
-                    std::format("[Server] Entity {} speed applied: WALK_SPEED_MULTIPLICATOR. Speed={:.3f}",
-                        entity, speed),
-                    LogType::Debug
-                );*/
-            }
+
+            // 3. Apply Movement
+            // Use input.deltaTime if sent, otherwise fallback to server FixedDeltaTime
+            float dt = (input.deltaTime > 0.0001f) ? input.deltaTime : fixedDeltaTime;
+
+            positionComponent.position.x += dirX * speed * dt;
+            positionComponent.position.z += dirZ * speed * dt;
+
+            Logger::Log("Entity " + std::to_string(entity) + " moved to (" +
+                std::to_string(positionComponent.position.x) + ", " +
+                std::to_string(positionComponent.position.y) + ", " +
+                std::to_string(positionComponent.position.z) + ")",
+				LogType::Debug);
+
+            // Update Rotation
+            rotationComponent.rotation.y = input.yaw;
         }
 
-        //Logger::Log("Speed" + std::to_string(speed) , LogType::Debug);
+        // Clear queue after processing
+        inputComp.inputQueue.clear();
 
-        positionComponent.position.x += dirX * speed * fixedDeltaTime;
-        positionComponent.position.z += dirZ * speed * fixedDeltaTime;
-
-      /*   Logger::Log(
-             std::format("[Server] Entity {} pos: x={:.3f}, y={:.3f}, z={:.3f}, dt={:.3f}",
-                 entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z, speed),
-             LogType::Debug
-         );*/
-
-        if (!shouldSend)
-            continue;
+        // --- NETWORK SYNC ---
+        if (!shouldSend && !processedAnyInput) continue;
 
         Vector3 currentPos = { positionComponent.position.x, positionComponent.position.y, positionComponent.position.z };
+
+        // --- FIX: Initialize lastSentPosition if this is the first time we see this entity ---
+        // This prevents the "Snap to Zero" bug when a player first spawns or reconnects.
+        if (lastSentPositions.find(entity) == lastSentPositions.end())
+        {
+            lastSentPositions[entity] = currentPos;
+        }
+
         Vector3 lastPos = lastSentPositions[entity];
         float distSq = MathUtils::Distance(currentPos, lastPos);
 
-        if (distSq < Constants::PLAYER_MOVE_THRESHOLD * Constants::PLAYER_MOVE_THRESHOLD)
+        // Only broadcast to others if we moved significantly OR if it's a forced sync tick
+        if (distSq < Constants::PLAYER_MOVE_THRESHOLD * Constants::PLAYER_MOVE_THRESHOLD && !shouldSend)
             continue;
 
         lastSentPositions[entity] = currentPos;
 
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
-        if (!lobby)
-            continue;
+        if (!lobby) continue;
 
         Client* ownerClient = LobbyManager::getClientByEntityId(entity);
-        if (!ownerClient)
-            continue;
+        if (!ownerClient) continue;
 
+        // 1. Send Position Update to EVERYONE in the lobby
         MoveEntityMessage moveMsg(entity, positionComponent.position.x, positionComponent.position.y, positionComponent.position.z);
         Serializer s;
         moveMsg.serialize(s);
@@ -139,34 +149,26 @@ void PlayerSystem::Update(ComponentManager & components, float fixedDeltaTime)
             ownerClient
         );
 
-        /*      RotateEntityMessage rotateMsg(entity, rotationComponent.rotation.y);
-              Serializer rs;
-              rotateMsg.serialize(rs);
-              Engine::Instance().Server()->SendToMultiple(
-                  lobby->clients,
-                  rs.getBuffer(),
-                  rotateMsg.getClassName(),
-                  ownerClient
-              );*/
+        // 2. Send Reconciliation/Ack ONLY to the owner
+        // We send back the Sequence ID of the LAST input we successfully processed.
+        if (lastProcessedSequence != -1)
+        {
+            LastEntityPositionMessage correctionMsg(
+                entity,
+                positionComponent.position.x,
+                positionComponent.position.y,
+                positionComponent.position.z,
+                (uint32_t)lastProcessedSequence
+            );
 
+            Serializer cs;
+            correctionMsg.serialize(cs);
 
-        uint32_t lastSeq = EntityManager::Instance().GetLastSequenceId(entity);
-
-        LastEntityPositionMessage correctionMsg(
-            entity,
-            positionComponent.position.x,
-            positionComponent.position.y,
-            positionComponent.position.z,
-            lastSeq
-        );
-
-        Serializer cs;
-        correctionMsg.serialize(cs);
-
-        Engine::Instance().Server()->Send(
-            ownerClient->address,
-            cs.getBuffer(),
-            correctionMsg.getClassName()
-        );
+            Engine::Instance().Server()->Send(
+                ownerClient->address,
+                cs.getBuffer(),
+                correctionMsg.getClassName()
+            );
+        }
     }
 }

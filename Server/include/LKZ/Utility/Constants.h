@@ -25,7 +25,7 @@ namespace Constants
     inline constexpr float AGENT_RADIUS = 0.1f;       // The physical radius of a typical AI agent.
     inline constexpr float AGENT_HEIGHT = 1.8f;      // The height of an agent (e.g., for humanoid navigation).
     inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.
-    inline constexpr float AGENT_MAX_SPEED = 0.8f;       // Maximum movement speed of an agent (units per second).
+    inline constexpr float AGENT_MAX_SPEED = 0.4f;       // Maximum movement speed of an agent (units per second).
 
     // ----- Avoidance & Collision -----
 
@@ -50,7 +50,7 @@ namespace Constants
 
 	// ----- ECS -----
 
-	inline constexpr float PLAYER_MOVE_SPEED = 0.2f; // Player movement speed in units per second. 0.2 crea | 1.0 home
+	inline constexpr float PLAYER_MOVE_SPEED = 1.0f; // Player movement speed in units per second. 0.2 crea | 1.0 home
     inline constexpr float PLAYER_WALK_SPEED_MULTIPLICATOR = 1.0;
     inline constexpr float PLAYER_RUN_SPEED_MULTIPLICATOR = 2.0;
     inline constexpr float PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR = 0.7;

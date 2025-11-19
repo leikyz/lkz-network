@@ -1,6 +1,10 @@
 ﻿#include "LKZ/Protocol/Message/Entity/Player/PlayerInputMessage.h"
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
+#include <LKZ/Core/Manager/ClientManager.h>
+#include <LKZ/Core/Manager/LobbyManager.h>
+#include <LKZ/Core/Engine.h>
+#include <LKZ/Utility/Constants.h> // For FIXED_DELTA_TIME if needed
 
 PlayerInputMessage::PlayerInputMessage() {}
 
@@ -20,7 +24,8 @@ std::vector<uint8_t>& PlayerInputMessage::serialize(Serializer& serializer) cons
     serializer.writeUInt16(entityId);
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);
-	serializer.writeFloat(yaw);
+    serializer.writeFloat(yaw);
+    serializer.writeInt(sequenceId);
 
     return serializer.getBuffer();
 }
@@ -45,17 +50,25 @@ void PlayerInputMessage::process(const sockaddr_in& senderAddr)
     Entity entity = entityId;
     auto& components = ComponentManager::Instance();
 
-    if (components.positions.find(entity) != components.positions.end())
+    if (components.playerInputs.find(entity) != components.playerInputs.end())
     {
-        components.playerInputs[entity] = PlayerInputComponent{ inputX, inputY, yaw, sequenceId };
-        components.lastReceivedSequence[entity] = sequenceId;
+        // Create your data struct
+        PlayerInputData data;
+        data.inputX = inputX;
+        data.inputY = inputY;
+        data.yaw = yaw;
+        data.sequenceId = sequenceId;
+        // If you aren't sending DT in the packet, set it to 0 so System uses Server FixedDT
+        data.deltaTime = 0.0f;
+
+        // --- PUSH TO QUEUE ---
+        components.playerInputs[entity].inputQueue.push_back(data);
 
         if (components.rotations.find(entity) != components.rotations.end())
         {
             components.rotations[entity].rotation.y = yaw;
         }
     }
-
 
     Serializer serializer;
     serialize(serializer);
@@ -65,7 +78,4 @@ void PlayerInputMessage::process(const sockaddr_in& senderAddr)
         serializer.getBuffer(),
         getClassName(),
         ClientManager::getClientByAddress(senderAddr));
-
 }
-
-

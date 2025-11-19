@@ -73,21 +73,27 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
             client->playerEntityId = entity;
 
-            components.AddComponent(entity, PositionComponent{});
-            components.AddComponent(entity, RotationComponent{});
-            components.AddComponent(entity, PlayerInputComponent{});
-            components.AddComponent(entity, PlayerStateComponent{});
+            // Calculate spawn position
+            float spawnX = 10.0f + rand() % 5;
+            float spawnY = 0.0f;
+            float spawnZ = 10.0f + rand() % 5;
 
-            components.positions[entity].position.x = 10.0f + rand() % 5;
-            components.positions[entity].position.y = 0;
-            components.positions[entity].position.z = 10.0f + rand() % 5;
+            // Initialize Components using your new Structs
+            components.AddComponent(entity, PositionComponent{ Vector3{ spawnX, spawnY, spawnZ } });
+            components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
+
+            // Default Input: 0,0,0, seq 0
+            components.AddComponent(entity, PlayerInputComponent{ std::vector<PlayerInputData>() });
+
+            // Default State: Not Armed, Not Aiming, Not Running
+            components.AddComponent(entity, PlayerStateComponent{ false, false, false });
 
             CreateEntityMessage createEntityMsg;
             createEntityMsg.entityTypeId = (int)EntityType::Player1;
             createEntityMsg.entityId = entity;
-            createEntityMsg.posX = components.positions[entity].position.x;
-            createEntityMsg.posY = components.positions[entity].position.y;
-            createEntityMsg.posZ = components.positions[entity].position.z;
+            createEntityMsg.posX = spawnX;
+            createEntityMsg.posY = spawnY;
+            createEntityMsg.posZ = spawnZ;
 
             lobby->addEntity(&entity);
 
@@ -107,14 +113,14 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
     }
     else // Zombie (or other AI)
     {
-        // AI spawning is SLOW. Push to a worker thread first.
+        // AI spawning is SLOW. Push to a worker thread first to find a valid point.
         ThreadManager::GetPool("pathfinding")->EnqueueTask([=]() {
 
             World& world = Engine::Instance().GetWorld();
             dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
             Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
 
-            // Now, push the agent creation to the main simulation thread
+            // Now, push the agent creation to the main simulation thread (CommandQueue)
             CommandQueue::Instance().Push([=]() {
 
                 // --- THIS CODE RUNS ON THE MAIN SIMULATION THREAD ---
@@ -124,23 +130,28 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
                 Logger::Log("Creating entity of type " + std::to_string(superTypeId) + " with ID " + std::to_string(entity), LogType::Info);
 
-                components.AddComponent(entity, PositionComponent{ randomSpawnPoint.x, randomSpawnPoint.y, randomSpawnPoint.z });
-                components.AddComponent(entity, RotationComponent{ 0.0f, 0.0f, 0.0f });
+                // Initialize Position & Rotation
+                components.AddComponent(entity, PositionComponent{ Vector3{ randomSpawnPoint.x, randomSpawnPoint.y, randomSpawnPoint.z } });
+                components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
 
+                // OPTIMIZATION: Add random jitter to repath timer
+                float initialRepathDelay = ((rand() % 100) / 100.0f) * 2.0f;
+
+                // Initialize AI Component with your new Struct
                 components.AddComponent(entity, AIComponent{
-                    std::nullopt, // targetPosition
-                    0.0f,         // repathTimer
-                    -1            // crowdAgentIndex (default -1)
+                    std::nullopt,       // targetPosition (std::optional<Vector3>)
+                    initialRepathDelay, // repathTimer
+                    -1,                 // crowdAgentIndex
+                    0.0f                // timeSinceLastSend
                     });
 
                 dtCrowd* crowd = world.getCrowd();
                 if (crowd)
                 {
                     dtCrowdAgentParams params;
-
                     memset(&params, 0, sizeof(params));
 
-					params.radius = Constants::AGENT_RADIUS;
+                    params.radius = Constants::AGENT_RADIUS;
                     params.height = Constants::AGENT_HEIGHT;
                     params.maxAcceleration = Constants::AGENT_MAX_ACCELERATION;
                     params.maxSpeed = Constants::AGENT_MAX_SPEED;
@@ -149,15 +160,23 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
                     params.pathOptimizationRange = params.radius * 30.0f;
                     // This MUST match the filter you set up in World.cpp
                     params.queryFilterType = Constants::AGENT_QUERY_FILTER_TYPE;
-                    params.obstacleAvoidanceType = Constants::AGENT_OBSTACLE_AVOIDANCE_TYPE; 
-                    params.separationWeight = Constants::AGENT_SEPARATION_WEIGHT;   
+                    params.obstacleAvoidanceType = Constants::AGENT_OBSTACLE_AVOIDANCE_TYPE;
+                    params.separationWeight = Constants::AGENT_SEPARATION_WEIGHT;
                     params.updateFlags = Constants::AGENT_UPDATE_FLAGS;
+
                     params.userData = (void*)((uintptr_t)entity);
-                    int agentIdx = crowd->addAgent(randomSpawnPoint.data(), &params);
+
+                    float spawnPos[3] = { randomSpawnPoint.x, randomSpawnPoint.y, randomSpawnPoint.z };
+                    int agentIdx = crowd->addAgent(spawnPos, &params);
 
                     if (agentIdx != -1)
                     {
+                        // Update the specific field in the map (assuming direct access is safe)
                         components.ai[entity].crowdAgentIndex = agentIdx;
+                    }
+                    else
+                    {
+                        Logger::Log("Failed to add agent to crowd (Max agents reached?)", LogType::Error);
                     }
                 }
 
@@ -182,4 +201,3 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             });
     }
 }
-

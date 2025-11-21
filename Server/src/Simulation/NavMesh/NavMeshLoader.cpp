@@ -191,7 +191,7 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
     rcCalcBounds(verts.data(), nverts, cfg.bmin, cfg.bmax);
 
     cfg.cs = 0.3f;
-    cfg.ch = 0.2f;
+    cfg.ch = 0.05f;
     cfg.walkableSlopeAngle = 45.0f;
     cfg.walkableHeight = (int)ceilf(2.0f / cfg.ch);
     cfg.walkableClimb = (int)floorf(0.9f / cfg.ch);

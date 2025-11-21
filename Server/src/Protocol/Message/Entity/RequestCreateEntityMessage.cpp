@@ -134,6 +134,11 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
                 components.AddComponent(entity, PositionComponent{ Vector3{ randomSpawnPoint.x, randomSpawnPoint.y, randomSpawnPoint.z } });
                 components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
 
+                Logger::Log("Spawned AI entity " + std::to_string(entity) +
+                    " at (" + std::to_string(randomSpawnPoint.x) + ", " +
+                    std::to_string(randomSpawnPoint.y) + ", " +
+                    std::to_string(randomSpawnPoint.z) + ")", LogType::Info);
+
                 // OPTIMIZATION: Add random jitter to repath timer
                 float initialRepathDelay = ((rand() % 100) / 100.0f) * 2.0f;
 

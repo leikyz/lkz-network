@@ -37,6 +37,7 @@ struct PlayerStateComponent
 	bool isAiming;
 	bool isRunning;
 };
+
 struct AIComponent
 {
     std::optional<Vector3> targetPosition; 

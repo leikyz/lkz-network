@@ -23,6 +23,7 @@
 #include "LKZ/Protocol/Message/Entity/RequestCreateEntityMessage.h"
 #include <LKZ/Protocol/Message/Entity/MoveEntitiesMessage.h>
 #include <LKZ/Protocol/Message/Entity/Zombie/ZombieBoneSeveredMessage.h>
+#include <LKZ/Protocol/Message/Entity/Zombie/ZombieHitMessage.h>
 #include <LKZ/Protocol/Message/Entity/EntityDeadMessage.h>
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
@@ -51,6 +52,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<PlayerShootingMessage>(18);
     EventManager::registerHandler<ZombieBoneSeveredMessage>(19);
     EventManager::registerHandler<EntityDeadMessage>(20);
+    EventManager::registerHandler<ZombieHitMessage>(21);
 }
 
 template<typename T>

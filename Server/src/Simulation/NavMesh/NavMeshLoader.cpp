@@ -7,6 +7,7 @@
 #include <format>
 #include <vector>
 #include <string> 
+#include <algorithm> // Nécessaire pour std::max et std::min
 
 #include "Recast.h"
 #include "RecastAlloc.h"
@@ -73,7 +74,6 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
     }
 
     m_vertices.reserve(vertexCount);
-    //Logger::Log(std::format("Reading {} vertices...", vertexCount), LogType::Info);
 
     for (int i = 0; i < vertexCount; ++i)
     {
@@ -123,7 +123,6 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
 
     m_indices.reserve(triangleCount * 3);
     m_triAreas.reserve(triangleCount);
-    //Logger::Log(std::format("Reading {} triangles...", triangleCount), LogType::Info);
 
     for (int i = 0; i < triangleCount; ++i)
     {
@@ -145,7 +144,7 @@ bool NavMeshLoader::LoadFromFile(const std::string& path)
             m_indices.push_back(i0);
             m_indices.push_back(i1);
             m_indices.push_back(i2);
-            m_triAreas.push_back(SAMPLE_POLYAREA_GROUND); // On assigne l'aire 1
+            m_triAreas.push_back(SAMPLE_POLYAREA_GROUND);
         }
         catch (const std::exception& e)
         {
@@ -188,24 +187,59 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
 
     rcConfig cfg;
     memset(&cfg, 0, sizeof(cfg));
+
+    // 1. Calcul des limites globales (inclus le décor extérieur indésirable)
     rcCalcBounds(verts.data(), nverts, cfg.bmin, cfg.bmax);
 
-    cfg.cs = 0.3f;
-    cfg.ch = 0.05f;
-    cfg.walkableSlopeAngle = 45.0f;
-    cfg.walkableHeight = (int)ceilf(2.0f / cfg.ch);
-    cfg.walkableClimb = (int)floorf(0.9f / cfg.ch);
-    cfg.walkableRadius = (int)ceilf(0.6f / cfg.cs);
+    // Log pour voir la taille réelle (probablement énorme)
+    Logger::Log(std::format("[NavMesh] Raw Bounds: Min({:.1f}, {:.1f}, {:.1f}) Max({:.1f}, {:.1f}, {:.1f})",
+        cfg.bmin[0], cfg.bmin[1], cfg.bmin[2], cfg.bmax[0], cfg.bmax[1], cfg.bmax[2]), LogType::Info);
+
+    float mapSizeX = 60.0f;
+    float mapSizeZ = 60.0f;
+    float mapHeightMin = -20.0f;
+    float mapHeightMax = 50.0f;
+
+    cfg.bmin[0] = std::max(cfg.bmin[0], -mapSizeX);
+    cfg.bmin[1] = std::max(cfg.bmin[1], mapHeightMin);
+    cfg.bmin[2] = std::max(cfg.bmin[2], -mapSizeZ);
+
+    cfg.bmax[0] = std::min(cfg.bmax[0], mapSizeX);
+    cfg.bmax[1] = std::min(cfg.bmax[1], mapHeightMax);
+    cfg.bmax[2] = std::min(cfg.bmax[2], mapSizeZ);
+
+    Logger::Log(std::format("[NavMesh] Clamped Bounds: Min({:.1f}, {:.1f}, {:.1f}) Max({:.1f}, {:.1f}, {:.1f})",
+        cfg.bmin[0], cfg.bmin[1], cfg.bmin[2], cfg.bmax[0], cfg.bmax[1], cfg.bmax[2]), LogType::Info);
+
+    // =========================================================
+    // PARAMETRES UNITY STANDARD (HUMANOID)
+    // =========================================================
+
+    float agentHeight = 2.0f;
+    float agentRadius = 0.5f;
+    float agentMaxClimb = 0.4f;
+    float agentMaxSlope = 45.0f;
+
+    cfg.cs = 0.166f; // Cell Size
+    cfg.ch = 0.1f;   // Cell Height
+
+    cfg.walkableSlopeAngle = agentMaxSlope;
+    cfg.walkableHeight = (int)ceilf(agentHeight / cfg.ch);
+    cfg.walkableClimb = (int)floorf(agentMaxClimb / cfg.ch);
+    cfg.walkableRadius = (int)ceilf(agentRadius / cfg.cs);
+
     cfg.maxEdgeLen = (int)(12.0f / cfg.cs);
     cfg.maxSimplificationError = 1.3f;
-    cfg.minRegionArea = (int)rcSqr(8);
-    cfg.mergeRegionArea = (int)rcSqr(20);
+    cfg.minRegionArea = (int)(2.0f / (cfg.cs * cfg.cs));
+    cfg.mergeRegionArea = (int)(20.0f / (cfg.cs * cfg.cs));
     cfg.maxVertsPerPoly = 6;
     cfg.detailSampleDist = 6.0f;
     cfg.detailSampleMaxError = 1.0f;
     cfg.tileSize = 0;
 
     rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
+
+    Logger::Log(std::format("[NavMesh] Grid Size: {} x {}", cfg.width, cfg.height), LogType::Info);
 
     rcContext ctx;
 

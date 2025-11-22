@@ -130,11 +130,11 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             positionComponent.position.x += dirX * speed * dt;
             positionComponent.position.z += dirZ * speed * dt;
 
-            Logger::Log("[POSITION UPDATE] Entity " + std::to_string(entity) +
+          /*  Logger::Log("[POSITION UPDATE] Entity " + std::to_string(entity) +
                 " NewPos=(" + std::to_string(positionComponent.position.x) + ", " +
                 std::to_string(positionComponent.position.y) + ", " +
                 std::to_string(positionComponent.position.z) + ")",
-				LogType::Debug);
+				LogType::Debug);*/
 
             // Update Rotation
             rotationComponent.rotation.y = input.yaw;

@@ -9,7 +9,7 @@ struct ZombieBoneSeveredMessage : public Message
 
     ZombieBoneSeveredMessage();
 
-    ZombieBoneSeveredMessage(uint16_t entityId, uint8_t boneID, float posX, float posY, float posZ);
+    ZombieBoneSeveredMessage(uint16_t entityId, uint8_t boneID);
 
     uint16_t entityId;
     uint8_t boneID;

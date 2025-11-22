@@ -173,6 +173,7 @@
     <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerStateMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\RequestCreateEntityMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Zombie\ZombieBoneSeveredMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Entity\Zombie\ZombieHitMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Simulation\NavMesh\NavMeshLoader.cpp" />
     <ClCompile Include="src\Simulation\World.cpp">

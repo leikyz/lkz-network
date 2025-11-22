@@ -45,3 +45,23 @@ void NavMeshQueryManager::CleanupThreadQuery()
         Logger::Log("NavMeshQueryManager: Query cleaned up for this thread.", LogType::Debug);
     }
 }
+Vector3 NavMeshQueryManager::SnapToNavMesh(dtNavMeshQuery* query, Vector3 approximatePos, float searchRadiusH, float searchRadiusV)
+{
+    if (!query) return approximatePos;
+
+    const float center[3] = { approximatePos.x, approximatePos.y, approximatePos.z };
+
+    const float extents[3] = { searchRadiusH, searchRadiusV, searchRadiusH };
+
+    dtQueryFilter filter; 
+    dtPolyRef polyRef;
+    float nearestPt[3];
+
+    dtStatus status = query->findNearestPoly(center, extents, &filter, &polyRef, nearestPt);
+
+    if (dtStatusSucceed(status) && polyRef != 0)
+    {
+        return Vector3{ nearestPt[0], nearestPt[1], nearestPt[2] };
+    }
+    return approximatePos;
+}

@@ -13,7 +13,6 @@ struct ZombieHitMessage : public Message
 
     uint16_t zombieId;
     uint16_t from;
-    uint8_t boneID;
 
     float posX;
 	float posY;

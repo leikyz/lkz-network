@@ -36,5 +36,14 @@ void ZombieBoneSeveredMessage::deserialize(Deserializer& deserializer)
 void ZombieBoneSeveredMessage::process(const sockaddr_in& senderAddr)
 {
 
+    Client* client = ClientManager::getClientByAddress(senderAddr);
+    if (!client) return;
 
+    Lobby* lobby = LobbyManager::getLobby(client->lobbyId);
+    if (!lobby) return;
+
+    Serializer serializer;
+    serialize(serializer);
+
+    Engine::Instance().Server()->SendToMultiple(lobby->clients, serializer.getBuffer(), getClassName(), client);
 }

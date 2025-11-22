@@ -163,7 +163,7 @@ void WindowsServer::Send(const sockaddr_in& clientAddr, const std::vector<uint8_
 
     Logger::Log(std::format("{} ({} bytes) [{}:{}]",
         messageName,
-        buffer.size() + 1,
+        buffer.size(),
         ip,
         ntohs(clientAddr.sin_port)
     ), LogType::Sent);

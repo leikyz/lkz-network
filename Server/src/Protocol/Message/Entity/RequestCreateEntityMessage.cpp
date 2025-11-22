@@ -73,13 +73,17 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
             client->playerEntityId = entity;
 
-            // Calculate spawn position
-            float spawnX = 10.0f + rand() % 5;
-            float spawnY = 0.0f;
-            float spawnZ = 10.0f + rand() % 5;
+            //// Calculate spawn position
+            //float spawnX = 10.0f + rand() % 5;
+            //float spawnY = 0.0f;
+            //float spawnZ = 10.0f + rand() % 5;
+
+            World& world = Engine::Instance().GetWorld();
+            dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
+            Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
 
             // Initialize Components using your new Structs
-            components.AddComponent(entity, PositionComponent{ Vector3{ spawnX, spawnY, spawnZ } });
+            components.AddComponent(entity, PositionComponent{ randomSpawnPoint });
             components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
 
             // Default Input: 0,0,0, seq 0
@@ -91,9 +95,9 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             CreateEntityMessage createEntityMsg;
             createEntityMsg.entityTypeId = (int)EntityType::Player1;
             createEntityMsg.entityId = entity;
-            createEntityMsg.posX = spawnX;
-            createEntityMsg.posY = spawnY;
-            createEntityMsg.posZ = spawnZ;
+            createEntityMsg.posX = randomSpawnPoint.x;
+            createEntityMsg.posY = randomSpawnPoint.y;
+            createEntityMsg.posZ = randomSpawnPoint.z;
 
             lobby->addEntity(&entity);
 

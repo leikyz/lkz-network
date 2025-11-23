@@ -22,7 +22,6 @@ struct PlayerInputData
     float inputY;
     float yaw;
     int sequenceId;
-    float deltaTime;
 };
 
 struct PlayerInputComponent
@@ -36,6 +35,7 @@ struct PlayerStateComponent
 	bool isArmed;
 	bool isAiming;
 	bool isRunning;
+    Vector3 currentVelocity = { 0.0f, 0.0f, 0.0f };
 };
 
 struct AIComponent

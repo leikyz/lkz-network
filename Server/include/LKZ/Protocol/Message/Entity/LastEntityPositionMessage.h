@@ -9,13 +9,17 @@ struct LastEntityPositionMessage : public Message
 
     LastEntityPositionMessage();
 
-    LastEntityPositionMessage(uint16_t entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput);
+    LastEntityPositionMessage(uint16_t entityId, float posX, float posY, float posZ, float velocityX, float velocityY, float velocityZ, uint32_t lastProcessedInput);
 
     uint16_t entityId;
 
     float posX;
     float posY;
     float posZ;
+
+	float velocityX;
+	float velocityY;
+	float velocityZ;
 
     uint32_t lastProcessedInput;
 

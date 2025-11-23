@@ -57,11 +57,7 @@ void PlayerInputMessage::process(const sockaddr_in& senderAddr)
     packet.inputY = inputY;
     packet.yaw = yaw;
     packet.sequenceId = sequenceId;
-    packet.deltaTime = 0.0f;
 
-    // --- CRITICAL FIX: PUSH TO COMMAND QUEUE ---
-    // We cannot modify the vector directly here because this runs on the "Network Thread".
-    // We must push a command so the "Simulation Thread" applies the input safely before/after sorting.
     CommandQueue::Instance().Push([entity, packet, currentYaw]()
         {
             auto& components = ComponentManager::Instance();
@@ -79,8 +75,6 @@ void PlayerInputMessage::process(const sockaddr_in& senderAddr)
             }
         });
 
-    // Sending data out is usually thread-safe (UDP), so we can keep this here
-    // to avoid clogging the Simulation Queue with network IO logic.
     Serializer serializer;
     serialize(serializer);
 
@@ -88,5 +82,5 @@ void PlayerInputMessage::process(const sockaddr_in& senderAddr)
         lobby->clients,
         serializer.getBuffer(),
         getClassName(),
-        client); // Send to everyone EXCEPT the sender (client prediction handles self)
+        client);
 }

@@ -4,8 +4,8 @@
 
 LastEntityPositionMessage::LastEntityPositionMessage() {};
 
-LastEntityPositionMessage::LastEntityPositionMessage(uint16_t entityId, float posX, float posY, float posZ, uint32_t lastProcessedInput)
-	: entityId(entityId), posX(posX), posY(posY), posZ(posZ), lastProcessedInput(lastProcessedInput)
+LastEntityPositionMessage::LastEntityPositionMessage(uint16_t entityId, float posX, float posY, float posZ, float velocityX, float velocityY, float velocityZ, uint32_t lastProcessedInput)
+	: entityId(entityId), posX(posX), posY(posY), posZ(posZ), velocityX(velocityX), velocityY(velocityY), velocityZ(velocityZ), lastProcessedInput(lastProcessedInput)
 {
 }
 
@@ -21,6 +21,9 @@ std::vector<uint8_t>& LastEntityPositionMessage::serialize(Serializer& serialize
     serializer.writeFloat(posX);
     serializer.writeFloat(posY);
     serializer.writeFloat(posZ);
+	serializer.writeFloat(velocityX);
+	serializer.writeFloat(velocityY);
+	serializer.writeFloat(velocityZ);
     serializer.writeUInt32(lastProcessedInput);
 
     return serializer.getBuffer();

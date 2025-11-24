@@ -30,14 +30,14 @@ int main()
     EntityManager& entityManager = EntityManager::Instance();
     SystemManager& systemManager = SystemManager::Instance();
 
+    ThreadManager::CreatePool("logger", 1);
+
     World* world = new World();
     engine.SetWorld(world);
     world->initialize();
 
     systemManager.RegisterSystem(std::make_shared<PlayerSystem>());
     systemManager.RegisterSystem(std::make_shared<AISystem>());
-
-    ThreadManager::CreatePool("logger", 1);
     ThreadManager::CreatePool("io", 1, [server](float) { server->Poll(); }, false);
     ThreadManager::CreatePool("message", 8);
     ThreadManager::CreatePool("matchmaking", 1);

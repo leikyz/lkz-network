@@ -1,4 +1,5 @@
-﻿#include <LKZ/Core/ECS/Manager/ComponentManager.h>
+﻿#include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
+#include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Core/Engine.h>
 #include <LKZ/Protocol/Message/Entity/MoveEntityMessage.h>
@@ -8,16 +9,22 @@
 #include <LKZ/Simulation/Math/Vector.h>
 #include <LKZ/Utility/Logger.h>
 #include <LKZ/Utility/Constants.h>
-#include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
+#include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h"
+#include "LKZ/Simulation/World.h"
+#include "DetourNavMesh.h"
+#include "DetourNavMeshQuery.h"
+// ---------------------------
+#include <DetourCrowd.h>
 #include <unordered_map>
 #include <cmath>
-#include <algorithm> 
-#include <set>     
+#include <algorithm>
+#include <set>
 
 constexpr float INERTIA_DAMPING = 8.0f;
-void ApplyPhysics(Vector3& position, Vector3& velocity, const PlayerInputData& input, float fixedDeltaTime)
+
+void UpdateVelocity(Vector3& velocity, const PlayerInputData& input, float fixedDeltaTime)
 {
-    float yawRad = input.yaw * (3.14159265359f / 180.0f);
+    float yawRad = input.yaw * (Constants::PI / 180.0f);
 
     Vector3 forwardDir = { std::sin(yawRad), 0, std::cos(yawRad) };
     Vector3 rightDir = { std::cos(yawRad), 0, -std::sin(yawRad) };
@@ -44,15 +51,18 @@ void ApplyPhysics(Vector3& position, Vector3& velocity, const PlayerInputData& i
 
     if (std::abs(velocity.x) < 0.01f && input.inputX == 0 && input.inputY == 0) velocity.x = 0;
     if (std::abs(velocity.z) < 0.01f && input.inputX == 0 && input.inputY == 0) velocity.z = 0;
-
-    position.x += velocity.x * fixedDeltaTime;
-    position.z += velocity.z * fixedDeltaTime;
 }
+
 void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
+    World& world = Engine::Instance().GetWorld();
+    dtNavMeshQuery* navQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
+    const dtQueryFilter* filter = world.getCrowd() ? world.getCrowd()->getFilter(0) : nullptr;
+
+    const float extents[3] = { 2.0f, 4.0f, 2.0f };
+
     for (auto& [entity, inputComp] : components.playerInputs)
     {
-
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
         if (!lobby) continue;
 
@@ -60,7 +70,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         if (!ownerClient) continue;
 
         auto& pos = components.positions[entity].position;
-        auto& vel = components.playerState[entity].currentVelocity; 
+        auto& vel = components.playerState[entity].currentVelocity;
 
         std::sort(inputComp.inputQueue.begin(), inputComp.inputQueue.end(),
             [](const PlayerInputData& a, const PlayerInputData& b) {
@@ -70,11 +80,75 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         int lastProcessedSeq = -1;
         bool hasProcessed = false;
 
+        dtPolyRef currentPolyRef = 0;
+        float startPos[3] = { pos.x, pos.y, pos.z };
+
+        if (navQuery && filter)
+        {
+            navQuery->findNearestPoly(startPos, extents, filter, &currentPolyRef, startPos);
+            if (currentPolyRef != 0)
+            {
+                pos.y = startPos[1];
+            }
+            else
+            {
+                Logger::Log(std::format("[NavError] Entity {} is OFF MESH at ({:.2f}, {:.2f}, {:.2f}). Extents too small or World Flipped?",
+                    entity, pos.x, pos.y, pos.z), LogType::Warning);
+            }
+        }
+
         for (const auto& input : inputComp.inputQueue)
         {
             if (input.sequenceId <= inputComp.lastExecutedSequenceId) continue;
 
-            ApplyPhysics(pos, vel, input, fixedDeltaTime);
+            UpdateVelocity(vel, input, fixedDeltaTime);
+
+            if (navQuery && filter && currentPolyRef != 0)
+            {
+                float endPos[3];
+                endPos[0] = startPos[0] + (vel.x * fixedDeltaTime);
+                endPos[1] = startPos[1];
+                endPos[2] = startPos[2] + (vel.z * fixedDeltaTime);
+
+                float resultPos[3];
+                dtPolyRef visitedPolys[16];
+                int nVisited = 0;
+
+                navQuery->moveAlongSurface(
+                    currentPolyRef,
+                    startPos,
+                    endPos,
+                    filter,
+                    resultPos,
+                    visitedPolys,
+                    &nVisited,
+                    16
+                );
+
+                pos.x = resultPos[0];
+                pos.y = resultPos[1];
+                pos.z = resultPos[2];
+
+                startPos[0] = resultPos[0];
+                startPos[1] = resultPos[1];
+                startPos[2] = resultPos[2];
+
+                if (nVisited > 0)
+                {
+                    currentPolyRef = visitedPolys[nVisited - 1];
+                }
+            }
+            else
+            {
+                pos.x += vel.x * fixedDeltaTime;
+                pos.z += vel.z * fixedDeltaTime;
+            }
+
+            Logger::Log(std::format("Player {} Input Seq {}: Pos({:.2f}, {:.2f}, {:.2f}) Vel({:.2f}, {:.2f}, {:.2f})",
+                entity,
+                input.sequenceId,
+                pos.x, pos.y, pos.z,
+				vel.x, vel.y, vel.z), LogType::Debug);
 
             inputComp.lastExecutedSequenceId = input.sequenceId;
             lastProcessedSeq = input.sequenceId;
@@ -89,12 +163,11 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             LastEntityPositionMessage msg(
                 entity,
                 pos.x, pos.y, pos.z,
-                vel.x, vel.y, vel.z, 
+                vel.x, vel.y, vel.z,
                 lastProcessedSeq
             );
 
             msg.serialize(s);
-
             Engine::Instance().Server()->Send(ownerClient->address, s.getBuffer(), msg.getClassName());
         }
     }

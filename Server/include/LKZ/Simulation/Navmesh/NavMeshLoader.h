@@ -4,6 +4,7 @@
 #include <vector>
 
 struct dtNavMesh;
+struct rcPolyMesh;
 struct Vertex { float x, y, z; };
 
 class NavMeshLoader
@@ -17,6 +18,8 @@ public:
 
     // Builds the dtNavMesh object from the loaded geometry.
     dtNavMesh* BuildNavMesh();
+
+    void savePolyMeshToOBJ(const rcPolyMesh* pmesh, const std::string& filename);
 
 private:
     std::vector<Vertex> m_vertices;

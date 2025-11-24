@@ -143,15 +143,16 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
                     std::to_string(randomSpawnPoint.y) + ", " +
                     std::to_string(randomSpawnPoint.z) + ")", LogType::Info);
 
-                // OPTIMIZATION: Add random jitter to repath timer
                 float initialRepathDelay = ((rand() % 100) / 100.0f) * 2.0f;
 
-                // Initialize AI Component with your new Struct
+                Vector3 initialTarget = world.getRandomNavMeshPoint(simQuery);
+                if (initialTarget.x == 0 && initialTarget.z == 0) initialTarget = { 10.0f, 0.0f, 10.0f };
+
                 components.AddComponent(entity, AIComponent{
-                    std::nullopt,       // targetPosition (std::optional<Vector3>)
-                    initialRepathDelay, // repathTimer
-                    -1,                 // crowdAgentIndex
-                    0.0f                // timeSinceLastSend
+                    initialTarget,     
+                    initialRepathDelay,
+                    -1,
+                    0.0f
                     });
 
                 dtCrowd* crowd = world.getCrowd();

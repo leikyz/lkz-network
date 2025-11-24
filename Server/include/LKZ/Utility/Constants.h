@@ -22,10 +22,10 @@ namespace Constants
 
     // ----- Default Agent Settings -----
 
-    inline constexpr float AGENT_RADIUS = 0.1f;       // The physical radius of a typical AI agent.
-    inline constexpr float AGENT_HEIGHT = 1.8f;      // The height of an agent (e.g., for humanoid navigation).
+    inline constexpr float AGENT_RADIUS = 0.5f;       // The physical radius of a typical AI agent.
+    inline constexpr float AGENT_HEIGHT = 2.0f;      // The height of an agent (e.g., for humanoid navigation).
     inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.
-    inline constexpr float AGENT_MAX_SPEED = 1.0f;       // Maximum movement speed of an agent (units per second).
+    inline constexpr float AGENT_MAX_SPEED = 0.5f;       // Maximum movement speed of an agent (units per second).
 
     // ----- Avoidance & Collision -----
 

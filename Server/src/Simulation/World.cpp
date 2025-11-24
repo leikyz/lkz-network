@@ -33,8 +33,9 @@ void World::initialize()
 	}
 
 	std::cout << "[World] Building NavMesh..\n";
-	//Logger::Log("Building NavMesh from loaded data...", LogType::Info);
+
 	navMesh = navMeshLoader.BuildNavMesh();
+
 	if (!navMesh)
 	{
 		Logger::Log("Critical Error: Failed to build the navmesh from the provided data.", LogType::Error);
@@ -47,11 +48,12 @@ void World::initialize()
 		return;
 	}
 
-	if (!crowd->init(1000, 0.5f, navMesh)) {
+	if (!crowd->init(Constants::MAX_AGENTS, Constants::MAX_AGENT_RADIUS, navMesh)) {
 		Logger::Log("Critical Error: Failed to initialize crowd.", LogType::Error);
 		return;
 	}
-	dtQueryFilter* filter = crowd->getEditableFilter(0);
+
+	dtQueryFilter* filter = crowd->getEditableFilter(Constants::AGENT_QUERY_FILTER_TYPE); 
 	if (filter)
 	{
 		filter->setIncludeFlags(SAMPLE_POLYFLAGS_WALK);
@@ -60,8 +62,9 @@ void World::initialize()
 	}
 
 	m_filter = filter;
-	std::cout << "[World] World and NavMesh initialized successfully.\n";
 
+	std::cout << "[World] World and NavMesh initialized successfully.\n";
+	Logger::Log("[World] Initialization Complete. Waiting for connections...", LogType::Info);
 }
 
 void World::UpdateCrowd(double deltaTime)
@@ -219,6 +222,7 @@ std::vector<Vector3> World::CalculatePath(dtNavMeshQuery* navQuery, const Vector
 Vector3 World::getRandomNavMeshPoint(dtNavMeshQuery* navQuery)
 {
 	if (!navQuery || !m_filter) {
+		Logger::Log("getRandomNavMeshPoint: Query or Filter null.", LogType::Error);
 		return { 0, 0, 0 };
 	}
 
@@ -229,15 +233,46 @@ Vector3 World::getRandomNavMeshPoint(dtNavMeshQuery* navQuery)
 		return dis(gen);
 		};
 
-	dtPolyRef randomRef;
+	dtPolyRef randomRef = 0;
 	float randomPt[3];
+	dtStatus status;
 
-	dtStatus status = navQuery->findRandomPoint(m_filter, frand, &randomRef, randomPt);
+	// TENTATIVE 1 : Recherche globale
+	status = navQuery->findRandomPoint(m_filter, frand, &randomRef, randomPt);
 
 	if (dtStatusSucceed(status))
 	{
 		return { randomPt[0], randomPt[1], randomPt[2] };
 	}
 
+	// SI ECHEC 1 : On essaie de trouver le polygone le plus proche de (0,0,0)
+	// Cela permet de "snapper" vers la zone bleue la plus proche si le spawn est dans le vide.
+	Logger::Log("getRandomNavMeshPoint: Global search failed, trying to find nearest poly...", LogType::Warning);
+
+	const float center[3] = { 0.0f, 0.0f, 0.0f }; // On cherche autour de l'origine
+	const float extents[3] = { 50.0f, 50.0f, 50.0f }; // Rayon de recherche large (50 unités)
+	dtPolyRef nearestRef = 0;
+	float nearestPt[3];
+
+	status = navQuery->findNearestPoly(center, extents, m_filter, &nearestRef, nearestPt);
+
+	if (dtStatusSucceed(status) && nearestRef != 0)
+	{
+		// On a trouvé un morceau de navmesh valide (bleu) !
+		// Maintenant on cherche un point aléatoire SUR ce polygone ou autour.
+		status = navQuery->findRandomPointAroundCircle(nearestRef, nearestPt, 10.0f, m_filter, frand, &randomRef, randomPt);
+
+		if (dtStatusSucceed(status))
+		{
+			return { randomPt[0], randomPt[1], randomPt[2] };
+		}
+		else
+		{
+			// Si le random échoue encore, on retourne le point le plus proche trouvé (le bord du navmesh)
+			return { nearestPt[0], nearestPt[1], nearestPt[2] };
+		}
+	}
+
+	Logger::Log("getRandomNavMeshPoint: CRITICAL FAILURE - No NavMesh found nearby.", LogType::Error);
 	return { 0, 0, 0 };
 }

@@ -32,11 +32,19 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE);
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
-    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f;
+    // --- CONFIGURATION DE CHASSE ---
+    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f; // 50 mètres de portée de vue
 
+    // Distance d'arrêt (1.5m)
     const float STOP_DISTANCE = 1.5f;
     const float STOP_DISTANCE_SQ = STOP_DISTANCE * STOP_DISTANCE;
 
+    // Hystérésis : Il faut que le joueur s'éloigne à 2.0m pour recommencer à chasser
+    // Cela évite que le zombie vibre s'il est à 1.51m
+    const float RESUME_CHASE_DISTANCE = 2.0f;
+    const float RESUME_CHASE_DISTANCE_SQ = RESUME_CHASE_DISTANCE * RESUME_CHASE_DISTANCE;
+
+    // Optimisation : Pas plus de 20 calculs de chemin lourds par frame
     const int MAX_PATH_UPDATES_PER_TICK = 20;
     int pathUpdatesThisTick = 0;
 
@@ -50,18 +58,22 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
         ai.repathTimer -= deltaTime;
 
+        // On ne tente de recalculer le chemin que si le timer est écoulé
+        // ET qu'on a du budget CPU pour cette frame.
         bool needsRepath = (ai.repathTimer <= 0.0f);
 
         if (needsRepath && pathUpdatesThisTick < MAX_PATH_UPDATES_PER_TICK)
         {
             pathUpdatesThisTick++;
 
+            // Timer aléatoire (0.2s à 0.3s) pour désynchroniser les calculs des zombies
             ai.repathTimer = 0.2f + ((rand() % 10) / 100.0f);
 
             Entity nearestPlayerEntity = 0;
             float minDistanceSq = FLT_MAX;
             Vector3 targetPos;
 
+            // 1. Trouver le joueur le plus proche
             for (auto& [playerEntity, input] : components.playerInputs)
             {
                 if (components.positions.find(playerEntity) == components.positions.end()) continue;
@@ -79,31 +91,31 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
                 }
             }
 
+            // Chase logic
             if (nearestPlayerEntity != 0 && minDistanceSq < AI_AGGRO_RANGE_SQ)
             {
-                if (pathUpdatesThisTick == 1)
-                {
-                    
-                }
-
-                /*std::string debugMsg = "AI Pos: [" + std::to_string(position.x) + ", " + std::to_string(position.z) + "] " +
-                    "| CHASING Player Pos: [" + std::to_string(targetPos.x) + ", " + std::to_string(targetPos.z) + "] " +
-                    "| Dist: " + std::to_string(std::sqrt(minDistanceSq));*/
-                Logger::Log("AI Y: " + std::to_string(position.y) + " | Player Y: " + std::to_string(targetPos.y), LogType::Debug);
-                /*Logger::Log(debugMsg, LogType::Debug);*/
+                // stop
                 if (minDistanceSq < STOP_DISTANCE_SQ)
                 {
-                    ai.targetPosition.reset();
-                    crowd->resetMoveTarget(ai.crowdAgentIndex);
+                    if (ai.targetPosition.has_value())
+                    {
+                        ai.targetPosition.reset();
+                        crowd->resetMoveTarget(ai.crowdAgentIndex);
+
+                        // avoid slide
+                        dtCrowdAgent* ag = crowd->getEditableAgent(ai.crowdAgentIndex);
+                        if (ag) { memset(ag->vel, 0, sizeof(float) * 3); }
+                    }
                 }
-                else
+                // chase
+                else if (minDistanceSq > RESUME_CHASE_DISTANCE_SQ || ai.targetPosition.has_value())
                 {
                     bool shouldUpdatePath = true;
 
+					// If target move is < 25 cm from last target, don't update path
                     if (ai.targetPosition.has_value())
                     {
                         float distToLastTargetSq = (ai.targetPosition.value() - targetPos).LengthSquared();
-    
                         if (distToLastTargetSq < 0.25f)
                         {
                             shouldUpdatePath = false;
@@ -112,9 +124,8 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
                     if (shouldUpdatePath)
                     {
-                        ai.targetPosition = targetPos; 
-
-                        const float extents[3] = { 5.0f, 5.0f, 5.0f }; 
+                        ai.targetPosition = targetPos;
+                        const float extents[3] = { 5.0f, 5.0f, 5.0f };
                         dtPolyRef targetRef;
                         float nearestPt[3];
 
@@ -129,6 +140,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
             }
             else
             {
+				// lost target or too far, stop moving
                 if (ai.targetPosition.has_value()) {
                     ai.targetPosition.reset();
                     crowd->resetMoveTarget(ai.crowdAgentIndex);
@@ -136,21 +148,35 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
             }
         }
 
+		// Network update
         ai.timeSinceLastSend += deltaTime;
         if (ai.timeSinceLastSend >= Constants::AI_MESSAGE_RATE)
         {
             ai.timeSinceLastSend = 0.0f;
             const dtCrowdAgent* agent = crowd->getAgent(ai.crowdAgentIndex);
+
             if (agent)
             {
+                position.x = agent->npos[0];
+                position.y = agent->npos[1];
+                position.z = agent->npos[2];
+
                 float velocityMagnitudeSq = dtVlenSqr(agent->vel);
                 if (velocityMagnitudeSq > 0.001f)
                 {
+                    float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / Constants::PI);
+
+                    if (components.rotations.find(entity) != components.rotations.end())
+                    {
+                        components.rotations[entity].rotation.y = yaw;
+                    }
+
                     lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
                 }
             }
         }
     }
+
     for (auto& [lobby, msg] : lobbyMessages)
     {
         if (!msg.updates.empty())

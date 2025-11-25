@@ -20,10 +20,12 @@ namespace Constants
     inline constexpr int MAX_AGENTS = 1000;             // Maximum number of agents the crowd manager can handle at once.
     inline constexpr float MAX_AGENT_RADIUS = 0.5f;    // The maximum radius any agent in the crowd can have. This is used internally by DetourCrowd.
 
-    // ----- Default Agent Settings -----
+	// ----- Default Agent Settings ----- must match those used in World.cpp and Unity navmesh setup
 
-    inline constexpr float AGENT_RADIUS = 0.5f;       // The physical radius of a typical AI agent.
-    inline constexpr float AGENT_HEIGHT = 2.0f;      // The height of an agent (e.g., for humanoid navigation).
+    inline constexpr float AGENT_RADIUS = 0.1f;       // The physical radius of a typical AI agent.
+    inline constexpr float AGENT_HEIGHT = 1.8f;      // The height of an agent (e.g., for humanoid navigation).
+    inline constexpr float AGENT_MAX_CLIMB = 1.5f;
+    inline constexpr float AGENT_MAX_SLOPE = 60.0f; // in degrees
     inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.
     inline constexpr float AGENT_MAX_SPEED = 0.5f;       // Maximum movement speed of an agent (units per second).
 
@@ -32,7 +34,7 @@ namespace Constants
     inline constexpr float AGENT_COLLISION_QUERY_RANGE = AGENT_RADIUS * 4.0f;      // Distance around the agent used to query nearby agents for collision avoidance.
     inline constexpr float AGENT_PATH_OPTIMIZATION_RANGE = AGENT_RADIUS * 15.0f;  // How far the agent will look ahead to optimize its path (avoid walls, etc.).
     inline constexpr int AGENT_OBSTACLE_AVOIDANCE_TYPE = 3;                      // Quality level of obstacle avoidance: 0 = Low, 1 = Medium, 2 = Good, 3 = High (default: 3)
-    inline constexpr float AGENT_SEPARATION_WEIGHT = 2.0f;                      // How strongly agents try to stay away from each other.
+    inline constexpr float AGENT_SEPARATION_WEIGHT = 1.0f;                      // How strongly agents try to stay away from each other.
 
     // ----- Update Agent Flags -----
         

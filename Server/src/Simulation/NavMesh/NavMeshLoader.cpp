@@ -13,6 +13,7 @@
 #include "RecastAlloc.h"
 #include "DetourNavMesh.h"
 #include "DetourNavMeshBuilder.h"
+#include <LKZ/Utility/Constants.h>
 
 #define SAMPLE_POLYAREA_GROUND 1
 #define SAMPLE_POLYFLAGS_WALK 0x01
@@ -125,11 +126,11 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
     cfg.cs = 0.10f;
     cfg.ch = 0.10f;
 
-    float agentHeight = 2.0f;
-    float agentRadius = 0.1f; 
+	float agentHeight = Constants::AGENT_HEIGHT;
+	float agentRadius = Constants::AGENT_RADIUS;
 
-    float agentMaxClimb = 1.5f; 
-    float agentMaxSlope = 80.0f; 
+	float agentMaxClimb = Constants::AGENT_MAX_CLIMB;
+	float agentMaxSlope = Constants::AGENT_MAX_SLOPE;   
 
     cfg.walkableSlopeAngle = agentMaxSlope;
     cfg.walkableHeight = (int)ceilf(agentHeight / cfg.ch);

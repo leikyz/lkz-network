@@ -27,7 +27,7 @@ namespace Constants
     inline constexpr float AGENT_MAX_CLIMB = 1.5f;
     inline constexpr float AGENT_MAX_SLOPE = 60.0f; // in degrees
     inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.
-    inline constexpr float AGENT_MAX_SPEED = 0.5f;       // Maximum movement speed of an agent (units per second).
+    inline constexpr float AGENT_MAX_SPEED = 0.2f;       // Maximum movement speed of an agent (units per second).
 
     // ----- Avoidance & Collision -----
 

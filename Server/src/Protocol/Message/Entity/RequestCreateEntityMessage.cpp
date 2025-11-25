@@ -123,11 +123,8 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             World& world = Engine::Instance().GetWorld();
             dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
             Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
-
-            // Now, push the agent creation to the main simulation thread (CommandQueue)
             CommandQueue::Instance().Push([=]() {
 
-                // --- THIS CODE RUNS ON THE MAIN SIMULATION THREAD ---
                 auto& components = ComponentManager::Instance();
                 auto& world = Engine::Instance().GetWorld();
                 Entity entity = EntityManager::Instance().CreateEntity(EntitySuperType(superTypeId), components, lobby);

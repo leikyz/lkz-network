@@ -16,7 +16,6 @@ struct Lobby
     int id;
     uint8_t mapId;
     std::vector<Client*> clients;
-    std::vector<Entity*> entities;
     int nextEntityId = 1;
     /**
     * @brief Constructor for Lobby.
@@ -82,7 +81,7 @@ struct Lobby
 
     const std::vector<Client*>& getClients() const { return clients; }
 
-    const std::vector<Entity*>& getEntities() const { return entities; }
+    /*const std::vector<Entity*>& getEntities() const { return entities; }*/
 
     Entity* getEntityById(uint32_t entityId) const
     {

@@ -27,11 +27,27 @@ std::vector<uint8_t>& EntityDeadMessage::serialize(Serializer& serializer) const
 
 void EntityDeadMessage::deserialize(Deserializer& deserializer)
 {
+	entityId = deserializer.readUInt16();
 }
 
 
 void EntityDeadMessage::process(const sockaddr_in& senderAddr)
 {
+    Client* client = ClientManager::getClientByAddress(senderAddr);
+    Lobby* lobby = LobbyManager::getLobby(client->lobbyId);
 
+    if (!client || !lobby)
+        return;
+
+	EntityManager::Instance().DestroyEntity(entityId);
+
+    Serializer serializer;
+    serialize(serializer);
+
+    Engine::Instance().Server()->SendToMultiple(
+        lobby->clients,
+        serializer.getBuffer(),
+        getClassName()
+    ); 
 
 }

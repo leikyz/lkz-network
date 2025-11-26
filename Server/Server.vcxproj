@@ -214,7 +214,6 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Core\Threading\CommandQueue.h" />
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\EntityDeathMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerInputMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\MoveEntitiesMessage.h" />

@@ -123,8 +123,8 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
 
     rcCalcBounds(verts.data(), nverts, cfg.bmin, cfg.bmax);
 
-    cfg.cs = 0.10f;
-    cfg.ch = 0.10f;
+    cfg.cs = 0.30f;
+    cfg.ch = 0.20f;
 
 	float agentHeight = Constants::AGENT_HEIGHT;
 	float agentRadius = Constants::AGENT_RADIUS;
@@ -139,7 +139,7 @@ dtNavMesh* NavMeshLoader::BuildNavMesh()
 
     cfg.maxEdgeLen = (int)(12.0f / cfg.cs);
     cfg.maxSimplificationError = 1.3f;
-    cfg.minRegionArea = (int)(2.0f / (cfg.cs * cfg.cs));
+    cfg.minRegionArea = (int)(8.0f / (cfg.cs * cfg.cs));
     cfg.mergeRegionArea = (int)(20.0f / (cfg.cs * cfg.cs));
     cfg.maxVertsPerPoly = 6;
     cfg.detailSampleDist = 6.0f;

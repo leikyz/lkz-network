@@ -584,9 +584,6 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Zombie\ZombieBoneSeveredMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Protocol\Message\Entity\EntityDeathMessage.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\EntityDeadMessage.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>

@@ -13,7 +13,6 @@
 #include "LKZ/Simulation/World.h"
 #include "DetourNavMesh.h"
 #include "DetourNavMeshQuery.h"
-// ---------------------------
 #include <DetourCrowd.h>
 #include <unordered_map>
 #include <cmath>
@@ -59,11 +58,6 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
     dtNavMeshQuery* navQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
     const dtQueryFilter* filter = world.getCrowd() ? world.getCrowd()->getFilter(0) : nullptr;
 
-    static int tickCounter = 0;
-    tickCounter++;
-
-    bool shouldSend = (tickCounter % Constants::PLAYER_MESSAGE_RATE == 0);
-
     const float extents[3] = { 2.0f, 4.0f, 2.0f };
 
     for (auto& [entity, inputComp] : components.playerInputs)
@@ -75,8 +69,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
         if (!ownerClient) continue;
 
         auto& pos = components.positions[entity].position;
-        auto& vel = components.playerState[entity].currentVelocity;
-        auto state = components.playerState[entity];
+        Vector3& vel = inputComp.currentVelocity;
 
         std::sort(inputComp.inputQueue.begin(), inputComp.inputQueue.end(),
             [](const PlayerInputData& a, const PlayerInputData& b) {
@@ -85,25 +78,6 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         int lastProcessedSeq = -1;
         bool hasProcessed = false;
-
-		float speed = Constants::PLAYER_MOVE_SPEED;
-
-        if (state.isAiming)
-			speed *= Constants::PLAYER_AIM_SPEED_MULTIPLICATOR;
-        else if (state.isArmed)
-        {
-            if (state.isRunning)
-                speed *= Constants::PLAYER_RUN_ARMED_SPEED_MULTIPLICATOR;
-            else
-                speed *= Constants::PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR;
-        }
-        else
-        {
-            if (state.isRunning)
-                speed *= Constants::PLAYER_RUN_SPEED_MULTIPLICATOR;
-            else
-                speed *= Constants::PLAYER_WALK_SPEED_MULTIPLICATOR;
-        }
 
         dtPolyRef currentPolyRef = 0;
         float startPos[3] = { pos.x, pos.y, pos.z };
@@ -115,18 +89,34 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
             {
                 pos.y = startPos[1];
             }
-            else
-            {
-               /* Logger::Log(std::format("[NavError] Entity {} is OFF MESH at ({:.2f}, {:.2f}, {:.2f}). Extents too small or World Flipped?",
-                    entity, pos.x, pos.y, pos.z), LogType::Warning);*/
-            }
         }
 
         for (const auto& input : inputComp.inputQueue)
         {
             if (input.sequenceId <= inputComp.lastExecutedSequenceId) continue;
 
-            UpdateVelocity(vel, input, speed, fixedDeltaTime);
+            float currentSpeed = Constants::PLAYER_MOVE_SPEED;
+
+            if (input.isAiming)
+            {
+                currentSpeed *= Constants::PLAYER_AIM_SPEED_MULTIPLICATOR;
+            }
+            else if (input.isArmed)
+            {
+                if (input.isRunning)
+                    currentSpeed *= Constants::PLAYER_RUN_ARMED_SPEED_MULTIPLICATOR;
+                else
+                    currentSpeed *= Constants::PLAYER_WALK_ARMED_SPEED_MULTIPLICATOR;
+            }
+            else
+            {
+                if (input.isRunning)
+                    currentSpeed *= Constants::PLAYER_RUN_SPEED_MULTIPLICATOR;
+                else
+                    currentSpeed *= Constants::PLAYER_WALK_SPEED_MULTIPLICATOR;
+            }
+
+            UpdateVelocity(vel, input, currentSpeed, fixedDeltaTime);
 
             if (navQuery && filter && currentPolyRef != 0)
             {
@@ -169,11 +159,9 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
                 pos.z += vel.z * fixedDeltaTime;
             }
 
-          /*  Logger::Log(std::format("Player {} Input Seq {}: Pos({:.2f}, {:.2f}, {:.2f}) Vel({:.2f}, {:.2f}, {:.2f})",
-                entity,
-                input.sequenceId,
-                pos.x, pos.y, pos.z,
-				vel.x, vel.y, vel.z), LogType::Debug);*/
+            inputComp.isAiming = input.isAiming;
+            inputComp.isRunning = input.isRunning;
+            inputComp.isArmed = input.isArmed;
 
             inputComp.lastExecutedSequenceId = input.sequenceId;
             lastProcessedSeq = input.sequenceId;
@@ -182,7 +170,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         inputComp.inputQueue.clear();
 
-        if (/*shouldSend &&*/ hasProcessed)
+        if (hasProcessed)
         {
             MoveEntityMessage moveMsg(entity, pos.x, pos.y, pos.z);
             Serializer s;

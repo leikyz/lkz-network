@@ -9,8 +9,8 @@
 
 PlayerInputMessage::PlayerInputMessage() {}
 
-PlayerInputMessage::PlayerInputMessage(uint16_t entityId, float inputX, float inputY, float yaw, int sequenceId)
-    : entityId(entityId), inputX(inputX), inputY(inputY), yaw(yaw), sequenceId(sequenceId)
+PlayerInputMessage::PlayerInputMessage(uint16_t entityId, float inputX, float inputY, float yaw, bool isSprinting, bool isAiming, bool isArmed, int sequenceId)
+    : entityId(entityId), inputX(inputX), inputY(inputY), yaw(yaw), isSprinting(isSprinting), isAiming(isAiming), isArmed(isArmed), sequenceId(sequenceId)
 {
 }
 
@@ -37,6 +37,9 @@ void PlayerInputMessage::deserialize(Deserializer& deserializer)
     inputX = deserializer.readFloat();
     inputY = deserializer.readFloat();
     yaw = deserializer.readFloat();
+	isSprinting = deserializer.readBool();
+	isAiming = deserializer.readBool();
+	isArmed = deserializer.readBool();
     sequenceId = deserializer.readInt();
 }
 
@@ -56,6 +59,9 @@ void PlayerInputMessage::process(const sockaddr_in& senderAddr)
     packet.inputX = inputX;
     packet.inputY = inputY;
     packet.yaw = yaw;
+	packet.isAiming = isAiming;
+	packet.isRunning = isSprinting;
+	packet.isArmed = isArmed;
     packet.sequenceId = sequenceId;
 
     CommandQueue::Instance().Push([entity, packet, currentYaw]()

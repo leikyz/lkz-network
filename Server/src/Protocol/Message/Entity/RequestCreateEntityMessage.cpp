@@ -79,25 +79,46 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
             //float spawnZ = 10.0f + rand() % 5;
 
             World& world = Engine::Instance().GetWorld();
-            dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
-            Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
+            /*dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());*/
+
+			Vector3 playerSpawnPos = Constants::FIRST_PLAYER_SPAWN_POSITION;
+
+            switch (lobby->getClientCount())
+            {
+                case 1:
+					playerSpawnPos = Constants::FIRST_PLAYER_SPAWN_POSITION;
+				    break;
+				case 2:
+					playerSpawnPos = Constants::SECOND_PLAYER_SPAWN_POSITION;
+                    break;
+				case 3:
+                    playerSpawnPos = Constants::THIRD_PLAYER_SPAWN_POSITION;
+					break;
+				case 4:
+                    playerSpawnPos = Constants::FOURTH_PLAYER_SPAWN_POSITION;
+					break;
+            default:
+                break;
+            }
+
+        /*    Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);*/
 
             // Initialize Components using your new Structs
-            components.AddComponent(entity, PositionComponent{ randomSpawnPoint });
+            components.AddComponent(entity, PositionComponent{ playerSpawnPos });
             components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
 
             // Default Input: 0,0,0, seq 0
             components.AddComponent(entity, PlayerInputComponent{ std::vector<PlayerInputData>() });
 
             // Default State: Not Armed, Not Aiming, Not Running
-            components.AddComponent(entity, PlayerStateComponent{ false, false, false });
+         /*   components.AddComponent(entity, PlayerStateComponent{ false, false, false });*/
 
             CreateEntityMessage createEntityMsg;
             createEntityMsg.entityTypeId = (int)EntityType::Player1;
             createEntityMsg.entityId = entity;
-            createEntityMsg.posX = randomSpawnPoint.x;
-            createEntityMsg.posY = randomSpawnPoint.y;
-            createEntityMsg.posZ = randomSpawnPoint.z;
+            createEntityMsg.posX = playerSpawnPos.x;
+            createEntityMsg.posY = playerSpawnPos.y;
+            createEntityMsg.posZ = playerSpawnPos.z;
 
             lobby->addEntity(&entity);
 

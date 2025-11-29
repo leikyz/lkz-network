@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+#include "LKZ/Simulation/Math/Vector.h"
+
 namespace Constants 
 {
     // ----- Engine -----
@@ -27,7 +29,7 @@ namespace Constants
     inline constexpr float AGENT_MAX_CLIMB = 1.5f;
     inline constexpr float AGENT_MAX_SLOPE = 60.0f; // in degrees
     inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.
-    inline constexpr float AGENT_MAX_SPEED = 0.2f;       // Maximum movement speed of an agent (units per second).
+    inline constexpr float AGENT_MAX_SPEED = 2.0f;       // Maximum movement speed of an agent (units per second).
 
     // ----- Avoidance & Collision -----
 
@@ -65,6 +67,11 @@ namespace Constants
 	inline constexpr float AI_REPATH_RATE = 1.0f; // AI repath interval in seconds.
 	inline constexpr float AI_STOP_DISTANCE = 2.0f; // Distance at which AI stops moving towards target.
 	inline constexpr float AI_STOP_DISTANCE_SQ = AI_STOP_DISTANCE * AI_STOP_DISTANCE; // Squared stop distance for efficiency.
+
+	inline constexpr Vector3 FIRST_PLAYER_SPAWN_POSITION = { 1.80878f, 0.0f, 4.4944f }; // Default spawn position for the first player.
+	inline constexpr Vector3 SECOND_PLAYER_SPAWN_POSITION = { -1.506999, 0.0f, 3.0644 }; // Default spawn position for the second player.
+	inline constexpr Vector3 THIRD_PLAYER_SPAWN_POSITION = { -1.247f, 0.0f, -1.2856f }; // Default spawn position for the third player.
+	inline constexpr Vector3 FOURTH_PLAYER_SPAWN_POSITION = { 2.793f, 0.0f, -1.7856f }; // Default spawn position for the fourth player.
 }
 
 #endif // CONSTANTS_HPP

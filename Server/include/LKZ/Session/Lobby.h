@@ -95,6 +95,11 @@ struct Lobby
         return nullptr;
     }
 
+    int getClientCount() const
+    {
+        return static_cast<int>(clients.size());
+	}
+
     Client* getClientByIp(const std::string& ipAddress) const
     {
         for (const auto& client : clients)

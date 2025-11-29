@@ -21,7 +21,7 @@ public:
 	std::unordered_map<Entity, PositionComponent> positions;
 	std::unordered_map<Entity, RotationComponent> rotations;
 	std::unordered_map<Entity, PlayerInputComponent> playerInputs;
-	std::unordered_map<Entity, PlayerStateComponent> playerState;
+	/*std::unordered_map<Entity, PlayerStateComponent> playerState;*/
 	std::unordered_map<Entity, AIComponent> ai;
 	std::unordered_map<Entity, int> lastReceivedSequence;
 

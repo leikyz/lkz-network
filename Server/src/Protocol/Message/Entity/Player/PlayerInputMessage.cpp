@@ -26,6 +26,9 @@ std::vector<uint8_t>& PlayerInputMessage::serialize(Serializer& serializer) cons
     serializer.writeFloat(inputX);
     serializer.writeFloat(inputY);
     serializer.writeFloat(yaw);
+	serializer.writeBool(isSprinting);
+	serializer.writeBool(isAiming);
+	serializer.writeBool(isArmed);
     serializer.writeInt(sequenceId);
 
     return serializer.getBuffer();

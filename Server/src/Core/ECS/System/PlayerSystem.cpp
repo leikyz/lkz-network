@@ -129,16 +129,7 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
                 dtPolyRef visitedPolys[16];
                 int nVisited = 0;
 
-                navQuery->moveAlongSurface(
-                    currentPolyRef,
-                    startPos,
-                    endPos,
-                    filter,
-                    resultPos,
-                    visitedPolys,
-                    &nVisited,
-                    16
-                );
+                navQuery->moveAlongSurface(currentPolyRef, startPos, endPos, filter, resultPos, visitedPolys, &nVisited, 16);
 
                 pos.x = resultPos[0];
                 pos.y = resultPos[1];
@@ -159,9 +150,9 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
                 pos.z += vel.z * fixedDeltaTime;
             }
 
-            inputComp.isAiming = input.isAiming;
+           /* inputComp.isAiming = input.isAiming;
             inputComp.isRunning = input.isRunning;
-            inputComp.isArmed = input.isArmed;
+            inputComp.isArmed = input.isArmed;*/
 
             inputComp.lastExecutedSequenceId = input.sequenceId;
             lastProcessedSeq = input.sequenceId;
@@ -172,29 +163,24 @@ void PlayerSystem::Update(ComponentManager& components, float fixedDeltaTime)
 
         if (hasProcessed)
         {
-            MoveEntityMessage moveMsg(entity, pos.x, pos.y, pos.z);
             Serializer s;
+
+            MoveEntityMessage moveMsg(entity, pos.x, pos.y, pos.z);
             moveMsg.serialize(s);
+
             Engine::Instance().Server()->SendToMultiple(
-                lobby->clients,
+                lobby->clients, 
                 s.getBuffer(),
                 moveMsg.getClassName(),
-                ownerClient
-            );
-        }
+                ownerClient);
 
-        if (hasProcessed)
-        {
-            Serializer s;
-            LastEntityPositionMessage msg(
-                entity,
-                pos.x, pos.y, pos.z,
-                vel.x, vel.y, vel.z,
-                lastProcessedSeq
-            );
-
+            LastEntityPositionMessage msg(entity,pos.x, pos.y, pos.z, vel.x, vel.y, vel.z,lastProcessedSeq);
             msg.serialize(s);
-            Engine::Instance().Server()->Send(ownerClient->address, s.getBuffer(), msg.getClassName());
+
+            Engine::Instance().Server()->Send(
+                ownerClient->address, 
+                s.getBuffer(), 
+                msg.getClassName());
         }
     }
 }

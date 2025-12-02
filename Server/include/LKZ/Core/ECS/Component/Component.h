@@ -18,6 +18,8 @@ enum class EntityType : uint8_t
 
 struct PlayerInputData
 {
+    int sequenceId;
+
     float inputX;
     float inputY;
     float yaw;
@@ -25,8 +27,6 @@ struct PlayerInputData
     bool isAiming;
     bool isRunning; 
     bool isArmed;   
-
-    int sequenceId;
 };
 
 struct PlayerInputComponent
@@ -34,14 +34,7 @@ struct PlayerInputComponent
     std::vector<PlayerInputData> inputQueue;
     int lastExecutedSequenceId = -1;
 
-    // --- NOUVEAU : État Persistant (Résultat du traitement) ---
-    // On stocke ici la vélocité pour l'inertie frame-to-frame
     Vector3 currentVelocity = { 0.0f, 0.0f, 0.0f };
-
-    // On stocke ici le dernier état connu (pour replication / animation / logique de jeu)
-    bool isArmed = false;
-    bool isAiming = false;
-    bool isRunning = false;
 };
 
 struct AIComponent

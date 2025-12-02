@@ -17,6 +17,7 @@
 
 #define SAMPLE_POLYAREA_GROUND 1
 #define SAMPLE_POLYFLAGS_WALK 0x01
+
 static std::string& rtrim(std::string& s)
 {
     if (!s.empty() && s.back() == '\r')

@@ -101,17 +101,10 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
                 break;
             }
 
-        /*    Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);*/
-
-            // Initialize Components using your new Structs
             components.AddComponent(entity, PositionComponent{ playerSpawnPos });
             components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
 
-            // Default Input: 0,0,0, seq 0
             components.AddComponent(entity, PlayerInputComponent{ std::vector<PlayerInputData>() });
-
-            // Default State: Not Armed, Not Aiming, Not Running
-         /*   components.AddComponent(entity, PlayerStateComponent{ false, false, false });*/
 
             CreateEntityMessage createEntityMsg;
             createEntityMsg.entityTypeId = (int)EntityType::Player1;
@@ -186,7 +179,7 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
                     params.collisionQueryRange = params.radius * 8.0f;
                     params.pathOptimizationRange = params.radius * 30.0f;
-                    // This MUST match the filter you set up in World.cpp
+
                     params.queryFilterType = Constants::AGENT_QUERY_FILTER_TYPE;
                     params.obstacleAvoidanceType = Constants::AGENT_OBSTACLE_AVOIDANCE_TYPE;
                     params.separationWeight = Constants::AGENT_SEPARATION_WEIGHT;
@@ -199,7 +192,6 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
                     if (agentIdx != -1)
                     {
-                        // Update the specific field in the map (assuming direct access is safe)
                         components.ai[entity].crowdAgentIndex = agentIdx;
                     }
                     else

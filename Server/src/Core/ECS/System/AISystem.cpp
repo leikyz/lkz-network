@@ -32,25 +32,22 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE);
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
-    // --- CONFIGURATION DE CHASSE ---
-    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f; // 50 mètres de portée de vue
-
-    // Distance d'arrêt (1.5m)
+    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f;
     const float STOP_DISTANCE = 1.5f;
     const float STOP_DISTANCE_SQ = STOP_DISTANCE * STOP_DISTANCE;
-
-    // Hystérésis : Il faut que le joueur s'éloigne à 2.0m pour recommencer à chasser
-    // Cela évite que le zombie vibre s'il est à 1.51m
     const float RESUME_CHASE_DISTANCE = 2.0f;
     const float RESUME_CHASE_DISTANCE_SQ = RESUME_CHASE_DISTANCE * RESUME_CHASE_DISTANCE;
+    const float UPDATE_THRESHOLD_SQ = 0.7f * 0.7f;
 
-    // Optimisation : Pas plus de 20 calculs de chemin lourds par frame
-    const int MAX_PATH_UPDATES_PER_TICK = 20;
+    const int MAX_PATH_UPDATES_PER_TICK = 50;
     int pathUpdatesThisTick = 0;
 
     for (auto& [entity, ai] : components.ai)
     {
         if (ai.crowdAgentIndex == -1) continue;
+
+        const dtCrowdAgent* agent = crowd->getAgent(ai.crowdAgentIndex);
+        if (!agent) continue;
 
         Vector3& position = components.positions[entity].position;
         Lobby* lobby = EntityManager::Instance().GetLobbyByEntity(entity);
@@ -58,121 +55,109 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
 
         ai.repathTimer -= deltaTime;
 
-        // On ne tente de recalculer le chemin que si le timer est écoulé
-        // ET qu'on a du budget CPU pour cette frame.
-        bool needsRepath = (ai.repathTimer <= 0.0f);
+        bool isIdle = (agent->targetState == DT_CROWDAGENT_TARGET_NONE) ||
+            (agent->targetState == DT_CROWDAGENT_TARGET_FAILED);
 
-        if (needsRepath && pathUpdatesThisTick < MAX_PATH_UPDATES_PER_TICK)
+        bool timerExpired = (ai.repathTimer <= 0.0f);
+
+        bool shouldAttemptPathing = (timerExpired || isIdle) && (pathUpdatesThisTick < MAX_PATH_UPDATES_PER_TICK);
+
+        Entity nearestPlayerEntity = 0;
+        float minDistanceSq = FLT_MAX;
+        Vector3 targetPos;
+        bool foundPlayer = false;
+
+        for (auto& [playerEntity, input] : components.playerInputs)
         {
-            pathUpdatesThisTick++;
+            if (components.positions.find(playerEntity) == components.positions.end()) continue;
+            Lobby* playerLobby = EntityManager::Instance().GetLobbyByEntity(playerEntity);
+            if (playerLobby != lobby) continue;
 
-            // Timer aléatoire (0.2s à 0.3s) pour désynchroniser les calculs des zombies
-            ai.repathTimer = 0.2f + ((rand() % 10) / 100.0f);
+            Vector3& playerPos = components.positions[playerEntity].position;
+            float distSq = (playerPos - position).LengthSquared();
 
-            Entity nearestPlayerEntity = 0;
-            float minDistanceSq = FLT_MAX;
-            Vector3 targetPos;
-
-            // 1. Trouver le joueur le plus proche
-            for (auto& [playerEntity, input] : components.playerInputs)
+            if (distSq < minDistanceSq)
             {
-                if (components.positions.find(playerEntity) == components.positions.end()) continue;
-                Lobby* playerLobby = EntityManager::Instance().GetLobbyByEntity(playerEntity);
-                if (playerLobby != lobby) continue;
+                minDistanceSq = distSq;
+                nearestPlayerEntity = playerEntity;
+                targetPos = playerPos;
+                foundPlayer = true;
+            }
+        }
 
-                Vector3& playerPos = components.positions[playerEntity].position;
-                float distSq = (playerPos - position).LengthSquared();
 
-                if (distSq < minDistanceSq)
+        if (foundPlayer && minDistanceSq < AI_AGGRO_RANGE_SQ)
+        {
+            if (minDistanceSq < STOP_DISTANCE_SQ)
+            {
+                if (ai.targetPosition.has_value() || !isIdle)
                 {
-                    minDistanceSq = distSq;
-                    nearestPlayerEntity = playerEntity;
-                    targetPos = playerPos;
+                    ai.targetPosition.reset();
+                    crowd->resetMoveTarget(ai.crowdAgentIndex);
+
+                    dtCrowdAgent* mutableAgent = crowd->getEditableAgent(ai.crowdAgentIndex);
+                    if (mutableAgent) { memset(mutableAgent->vel, 0, sizeof(float) * 3); }
                 }
             }
-
-            // Chase logic
-            if (nearestPlayerEntity != 0 && minDistanceSq < AI_AGGRO_RANGE_SQ)
+            else if (minDistanceSq > RESUME_CHASE_DISTANCE_SQ || ai.targetPosition.has_value())
             {
-                // stop
-                if (minDistanceSq < STOP_DISTANCE_SQ)
+                if (shouldAttemptPathing)
                 {
-                    if (ai.targetPosition.has_value())
-                    {
-                        ai.targetPosition.reset();
-                        crowd->resetMoveTarget(ai.crowdAgentIndex);
+                    pathUpdatesThisTick++;
+                    ai.repathTimer = 0.2f + ((rand() % 10) / 100.0f); // Reset timer
 
-                        // avoid slide
-                        dtCrowdAgent* ag = crowd->getEditableAgent(ai.crowdAgentIndex);
-                        if (ag) { memset(ag->vel, 0, sizeof(float) * 3); }
-                    }
-                }
-                // chase
-                else if (minDistanceSq > RESUME_CHASE_DISTANCE_SQ || ai.targetPosition.has_value())
-                {
-                    bool shouldUpdatePath = true;
+                    const float extents[3] = { 2.0f, 4.0f, 2.0f };
+                    dtPolyRef targetRef;
+                    float nearestPt[3];
 
-					// If target move is < 25 cm from last target, don't update path
-                    if (ai.targetPosition.has_value())
+                    dtStatus status = navQuery->findNearestPoly(targetPos.data(), extents, filter, &targetRef, nearestPt, nullptr);
+
+                    if (dtStatusSucceed(status) && targetRef)
                     {
-                        float distToLastTargetSq = (ai.targetPosition.value() - targetPos).LengthSquared();
-                        if (distToLastTargetSq < 0.25f)
+
+                        float dx = agent->targetPos[0] - nearestPt[0];
+                        float dy = agent->targetPos[1] - nearestPt[1];
+                        float dz = agent->targetPos[2] - nearestPt[2];
+                        float distToCurrentTargetSq = dx * dx + dy * dy + dz * dz;
+
+                        if (agent->targetState != DT_CROWDAGENT_TARGET_VALID || distToCurrentTargetSq > UPDATE_THRESHOLD_SQ)
                         {
-                            shouldUpdatePath = false;
-                        }
-                    }
-
-                    if (shouldUpdatePath)
-                    {
-                        ai.targetPosition = targetPos;
-                        const float extents[3] = { 5.0f, 5.0f, 5.0f };
-                        dtPolyRef targetRef;
-                        float nearestPt[3];
-
-                        dtStatus status = navQuery->findNearestPoly(targetPos.data(), extents, filter, &targetRef, nearestPt, nullptr);
-
-                        if (dtStatusSucceed(status) && targetRef)
-                        {
+                            ai.targetPosition = targetPos;
                             crowd->requestMoveTarget(ai.crowdAgentIndex, targetRef, nearestPt);
                         }
                     }
                 }
             }
-            else
-            {
-				// lost target or too far, stop moving
-                if (ai.targetPosition.has_value()) {
-                    ai.targetPosition.reset();
-                    crowd->resetMoveTarget(ai.crowdAgentIndex);
-                }
+        }
+        else
+        {
+            if (ai.targetPosition.has_value()) {
+                ai.targetPosition.reset();
+                crowd->resetMoveTarget(ai.crowdAgentIndex);
             }
         }
 
-		// Network update
         ai.timeSinceLastSend += deltaTime;
         if (ai.timeSinceLastSend >= Constants::AI_MESSAGE_RATE)
         {
             ai.timeSinceLastSend = 0.0f;
-            const dtCrowdAgent* agent = crowd->getAgent(ai.crowdAgentIndex);
 
-            if (agent)
+            position.x = agent->npos[0];
+            position.y = agent->npos[1];
+            position.z = agent->npos[2];
+
+            float velocityMagnitudeSq = dtVlenSqr(agent->vel);
+
+            if (velocityMagnitudeSq > 0.001f)
             {
-                position.x = agent->npos[0];
-                position.y = agent->npos[1];
-                position.z = agent->npos[2];
+                float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / Constants::PI);
 
-                float velocityMagnitudeSq = dtVlenSqr(agent->vel);
-                if (velocityMagnitudeSq > 0.001f)
+                if (components.rotations.find(entity) != components.rotations.end())
                 {
-                    float yaw = std::atan2(agent->vel[0], agent->vel[2]) * (180.0f / Constants::PI);
-
-                    if (components.rotations.find(entity) != components.rotations.end())
-                    {
-                        components.rotations[entity].rotation.y = yaw;
-                    }
-
-                    lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
+                    components.rotations[entity].rotation.y = yaw;
                 }
+
+                lobbyMessages[lobby].addUpdate(entity, position.x, position.y, position.z);
             }
         }
     }

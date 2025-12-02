@@ -16,6 +16,8 @@ uint8_t LastEntityPositionMessage::getId() const
 
 std::vector<uint8_t>& LastEntityPositionMessage::serialize(Serializer& serializer) const
 {
+    serializer.reset();
+
     serializer.writeByte(ID);
     serializer.writeUInt16(entityId);
     serializer.writeFloat(posX);

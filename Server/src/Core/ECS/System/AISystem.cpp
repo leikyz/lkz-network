@@ -32,7 +32,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
     const dtQueryFilter* filter = crowd->getFilter(Constants::AGENT_QUERY_FILTER_TYPE);
     std::unordered_map<Lobby*, MoveEntitiesMessage> lobbyMessages;
 
-    const float AI_AGGRO_RANGE_SQ = 50.0f * 50.0f;
+    const float AI_AGGRO_RANGE_SQ = 200.0f * 200.0f;
     const float STOP_DISTANCE = 1.5f;
     const float STOP_DISTANCE_SQ = STOP_DISTANCE * STOP_DISTANCE;
     const float RESUME_CHASE_DISTANCE = 2.0f;

@@ -24,7 +24,7 @@ namespace Constants
 
 	// ----- Default Agent Settings ----- must match those used in World.cpp and Unity navmesh setup
 
-    inline constexpr float AGENT_RADIUS = 0.3f;       // The physical radius of a typical AI agent.
+    inline constexpr float AGENT_RADIUS = 0.1f;       // The physical radius of a typical AI agent.
     inline constexpr float AGENT_HEIGHT = 1.8f;      // The height of an agent (e.g., for humanoid navigation).
     inline constexpr float AGENT_MAX_CLIMB = 1.5f;
     inline constexpr float AGENT_MAX_SLOPE = 60.0f; // in degrees
@@ -71,7 +71,9 @@ namespace Constants
 	inline constexpr Vector3 FIRST_PLAYER_SPAWN_POSITION = { 1.80878f, 0.0f, 4.4944f }; // Default spawn position for the first player.
 	inline constexpr Vector3 SECOND_PLAYER_SPAWN_POSITION = { -1.506999, 0.0f, 3.0644 }; // Default spawn position for the second player.
 	inline constexpr Vector3 THIRD_PLAYER_SPAWN_POSITION = { -1.247f, 0.0f, -1.2856f }; // Default spawn position for the third player.
-	inline constexpr Vector3 FOURTH_PLAYER_SPAWN_POSITION = { 2.793f, 0.0f, -1.7856f }; // Default spawn position for the fourth player.
+	inline constexpr Vector3 FOURTH_PLAYER_SPAWN_POSITION = { 2.793f, 0.0f, -1.7856f }; // Default spawn position for the fourth player
+    
+    inline constexpr Vector3 FIRST_ZOMBIE_SPAWN_POSITION = { 26.175f, 0.4644f, 69.835f }; // Default spawn position for the fourth player..
 }
 
 #endif // CONSTANTS_HPP

@@ -45,6 +45,8 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
             std::vector<uint8_t> buf = startGameMsg.serialize(s);
 
             Engine::Instance().Server()->SendToMultiple(lobby->clients, buf, getClassName());
+
+			lobby->inGame = true;
         }
 	}
 

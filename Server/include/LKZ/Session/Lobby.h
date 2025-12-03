@@ -17,6 +17,7 @@ struct Lobby
     uint8_t mapId;
     std::vector<Client*> clients;
     int nextEntityId = 1;
+	bool inGame = false;
     /**
     * @brief Constructor for Lobby.
     * @param lobbyId Unique identifier for the lobby.

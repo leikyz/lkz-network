@@ -89,7 +89,7 @@ Lobby* LobbyManager::getAvailableLobby(uint8_t mapId)
     std::lock_guard<std::mutex> lock(lobbiesMutex);
     for (auto& pair : lobbies)
     {
-        if (pair.second && pair.second->mapId == mapId && pair.second->clients.size() < pair.second->MAX_PLAYER)
+        if (pair.second && pair.second->mapId == mapId && pair.second->clients.size() < pair.second->MAX_PLAYER && pair.second->inGame == false)
         {
             return pair.second;
         }

@@ -136,7 +136,8 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
             World& world = Engine::Instance().GetWorld();
             dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
-            Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
+        /*    Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);*/
+			Vector3 randomSpawnPoint = Constants::FIRST_ZOMBIE_SPAWN_POSITION;
             CommandQueue::Instance().Push([=]() {
 
                 auto& components = ComponentManager::Instance();

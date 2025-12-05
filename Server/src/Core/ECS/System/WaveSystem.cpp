@@ -18,11 +18,42 @@
 #include <cmath>
 #include <algorithm>
 #include <set>
+#include <LKZ/Protocol/Message/Gameplay/ChangeWaveMessage.h>
 
 void WaveSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
-    for (auto& [entity, inputComp] : components.waves)
+    for (auto& [entity, waveComponent] : components.waves)
     {
-		Logger::Log("Updating WaveComponent for entity: " + std::to_string(entity), LogType::Info);
+
+		Lobby* lobby = LobbyManager::getLobby(waveComponent.lobbyId);
+
+		// Check if lobby is valid and in game
+		if (!lobby || !lobby->inGame)
+			continue;
+
+		Serializer serializer;
+
+		// Start timer update
+		if (waveComponent.spawnTimer < 5.0f)
+		{
+			waveComponent.spawnTimer += fixedDeltaTime;
+		}
+		else if (waveComponent.isIntermission)
+		{		
+			waveComponent.currentWave++;
+			ChangeWaveMessage changeWaveMsg(waveComponent.currentWave);
+			changeWaveMsg.serialize(serializer);
+
+			Engine::Instance().Server()->SendToMultiple(
+				lobby->clients,
+				serializer.getBuffer(),
+				changeWaveMsg.getClassName());
+
+			waveComponent.isIntermission = false;
+		}
+
+		
+		
+		Logger::Log("Updating WaveComponent for entity: " + std::to_string(waveComponent.spawnTimer), LogType::Info);
     }
 }

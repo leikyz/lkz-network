@@ -13,7 +13,9 @@ enum class EntityType : uint8_t
 {
     Player1 = 1,
     PlayerSynced1 = 2,
-    Zombie1 = 3,
+    ZombieBase1 = 3,
+    ZombieBase2 = 4,
+	ZombieBase3 = 5
 };
 
 struct PlayerInputData

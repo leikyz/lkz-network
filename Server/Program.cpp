@@ -7,11 +7,14 @@
 #include <iostream>
 #include <thread>
 #include <DetourCrowd.h>
-#include <LKZ/Core/ECS/System/Player/PlayerSystem.h>
+#include <LKZ/Core/ECS/System/PlayerSystem.h>
 #include "LKZ/Core/Threading/CommandQueue.h"
 #include "LKZ/Utility/Logger.h"
 #include <string>
 #include <LKZ/Core/ECS/System/AISystem.h>
+#include <LKZ/Core/Manager/LobbyManager.h>
+#include <LKZ/Core/ECS/System/PlayerSystem.h>
+#include <LKZ/Core/ECS/System/WaveSystem.h>
 
 
 
@@ -37,7 +40,9 @@ int main()
     world->initialize();
 
     systemManager.RegisterSystem(std::make_shared<PlayerSystem>());
+    systemManager.RegisterSystem(std::make_shared<WaveSystem>());
     systemManager.RegisterSystem(std::make_shared<AISystem>());
+
     ThreadManager::CreatePool("io", 1, [server](float) { server->Poll(); }, false);
     ThreadManager::CreatePool("message", 8);
     ThreadManager::CreatePool("matchmaking", 1);
@@ -46,15 +51,13 @@ int main()
         {
             auto& engine = Engine::Instance();
             auto& components = ComponentManager::Instance();
-			float fixedDt = Constants::FIXED_DELTA_TIME;
 
             CommandQueue::Instance().ProcessAllCommands();
           
-
             if (world)
-                world->UpdateCrowd(fixedDt);
+                world->UpdateCrowd(Constants::FIXED_DELTA_TIME);
 
-            systemManager.Update(components, fixedDt);
+            systemManager.Update(components, Constants::FIXED_DELTA_TIME);
 
         }, true);
 

@@ -42,6 +42,12 @@ void ComponentManager::AddComponent<AIComponent>(Entity entity, AIComponent comp
 	ai[entity] = component;
 }
 
+template<>
+void ComponentManager::AddComponent<WaveComponent>(Entity entity, WaveComponent component)
+{
+	waves[entity] = component;
+}
+
 
 template<>
 PositionComponent* ComponentManager::GetComponent<PositionComponent>(Entity entity)

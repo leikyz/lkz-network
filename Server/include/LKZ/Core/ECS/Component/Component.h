@@ -5,6 +5,7 @@
 #include <vector>
 enum class EntitySuperType : uint8_t
 {
+    GameManager = 0,
     Player = 1,
     Zombie = 2,
 };
@@ -39,6 +40,19 @@ struct PlayerInputComponent
     Vector3 currentVelocity = { 0.0f, 0.0f, 0.0f };
 };
 
+struct WaveComponent 
+{
+
+    int lobbyId;
+
+    int currentWave = 0;
+    float stateTimer = 0.0f;
+    bool isIntermission = true; 
+
+    int zombiesToSpawn = 0;  
+    int zombiesAlive = 0;     
+    float spawnTimer = 0.0f;  
+};
 struct AIComponent
 {
     std::optional<Vector3> targetPosition; 

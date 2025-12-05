@@ -1,5 +1,6 @@
 #include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/StartGameMessage.h"
+#include <LKZ/Core/ECS/Manager/EntityManager.h>
 ChangeReadyStatusMessage::ChangeReadyStatusMessage() {}
 
 uint8_t ChangeReadyStatusMessage::getId() const
@@ -47,6 +48,12 @@ void ChangeReadyStatusMessage::process(const sockaddr_in& senderAddr)
             Engine::Instance().Server()->SendToMultiple(lobby->clients, buf, getClassName());
 
 			lobby->inGame = true;
+
+            ComponentManager& components = ComponentManager::Instance();
+
+            Entity entity = EntityManager::Instance().CreateEntity(EntitySuperType(EntitySuperType::GameManager), components, lobby);
+
+            components.AddComponent(entity, WaveComponent{ lobby->id });
         }
 	}
 

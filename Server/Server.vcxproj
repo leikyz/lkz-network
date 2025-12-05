@@ -163,6 +163,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="src\Core\ECS\Manager\NavMeshQueryManager.cpp" />
     <ClCompile Include="src\Core\ECS\System\AISystem.cpp" />
+    <ClCompile Include="src\Core\ECS\System\WaveSystem.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Core\Threading\CommandQueue.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\EntityDeadMessage.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="src\Protocol\Message\Entity\RequestCreateEntityMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Zombie\ZombieBoneSeveredMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Zombie\ZombieHitMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Gameplay\ChangeWaveMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Simulation\NavMesh\NavMeshLoader.cpp" />
     <ClCompile Include="src\Simulation\World.cpp">
@@ -211,7 +213,8 @@
     <ClInclude Include="include\LKZ\Core\ECS\Manager\NavMeshQueryManager.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\ISystem.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\AISystem.h" />
-    <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h" />
+    <ClInclude Include="include\LKZ\Core\ECS\System\PlayerSystem.h" />
+    <ClInclude Include="include\LKZ\Core\ECS\System\WaveSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Core\Threading\CommandQueue.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.h" />
@@ -223,6 +226,7 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\EntityDeadMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Zombie\ZombieBoneSeveredMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Zombie\ZombieHitMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Gameplay\ChangeWaveMessage.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Quaternion.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Vector.h" />

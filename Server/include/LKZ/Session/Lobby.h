@@ -10,15 +10,28 @@
 /**
 * @brief Represents a game lobby where clients and entities are managed.
 */
+enum class LobbyState {
+    WAITING,    // En attente de joueurs / Ready
+    STARTING,   // Le décompte de 5s
+    IN_GAME,    // La partie tourne
+    ENDING      // Résumé des scores
+};
+
 struct Lobby
 {
+    LobbyState state = LobbyState::WAITING;
     static constexpr int MAX_PLAYER = 4;
     int id;
     uint8_t mapId;
     std::vector<Client*> clients;
     int nextEntityId = 1;
 	bool inGame = false;
-    int wave;
+
+    bool isStarting = false;
+    float startTimer = 0.0f;
+    const float TIME_BEFORE_FIRST_WAVE = 5.0f;
+
+   /* Wave wave;*/
     /**
     * @brief Constructor for Lobby.
     * @param lobbyId Unique identifier for the lobby.
@@ -113,6 +126,18 @@ struct Lobby
         }
         return nullptr;
     }
+
+
+    //int CalculateZombiesForWave(Wave& settings) {
+    //    // Formule : (Base * (Multi ^ Wave)) + (Bonus par joueur)
+    //    int total = (int)(settings.baseZombies * std::pow(settings.multiplier, settings.waveNumber - 1));
+
+    //    // Ajout pour le multijoueur (ex: +30% de zombies par joueur supplémentaire)
+    //    if (settings.playerCount > 1) {
+    //        total += (int)(total * 0.3f * (settings.playerCount - 1));
+    //    }
+    //    return total;
+    //}
 
 
 };

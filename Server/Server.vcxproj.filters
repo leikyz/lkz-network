@@ -285,6 +285,12 @@
     <ClCompile Include="src\Protocol\Message\Entity\Zombie\ZombieHitMessage.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Gameplay\ChangeWaveMessage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ECS\System\WaveSystem.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Protocol\Message\Message.h">
@@ -425,7 +431,7 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\ISystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\LKZ\Core\ECS\System\Player\PlayerSystem.h">
+    <ClInclude Include="include\LKZ\Core\ECS\System\PlayerSystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Core\ECS\Manager\ComponentManager.h">
@@ -588,6 +594,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Zombie\ZombieHitMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Protocol\Message\Gameplay\ChangeWaveMessage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LKZ\Core\ECS\System\WaveSystem.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,7 +21,7 @@ namespace Constants
 
     inline constexpr int MAX_ZOMBIE_PER_PLAYER = 50;
     inline constexpr int MAX_ZOMBIE_PER_WAVE = 200;
-
+    inline constexpr float ZOMBIE_WAVE_MULTIPLIER = 1.2f;
     // ----- Crowd Inialization -----
 
     inline constexpr int MAX_AGENTS = 1000;             // Maximum number of agents the crowd manager can handle at once.

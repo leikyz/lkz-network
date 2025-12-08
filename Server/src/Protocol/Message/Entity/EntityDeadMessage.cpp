@@ -2,6 +2,8 @@
 #include <cstdlib> 
 #include <ctime>   
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
+#include <LKZ/Core/ECS/Component/Component.h>
+#include <LKZ/Core/ECS/Manager/EntityManager.h>
 
 EntityDeadMessage::EntityDeadMessage() {};
 
@@ -38,6 +40,12 @@ void EntityDeadMessage::process(const sockaddr_in& senderAddr)
 
     if (!client || !lobby)
         return;
+
+    ComponentManager& components = ComponentManager::Instance();
+
+	WaveComponent* waveComponent = components.GetComponent<WaveComponent>(EntityManager::Instance().GetEntityById(lobby->gameWaveEntity, lobby));
+
+    waveComponent->zombiesAlive--;
 
 	EntityManager::Instance().DestroyEntity(entityId);
 

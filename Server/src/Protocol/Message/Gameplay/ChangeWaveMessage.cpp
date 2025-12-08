@@ -14,6 +14,8 @@ uint8_t ChangeWaveMessage::getId() const
 
 std::vector<uint8_t>& ChangeWaveMessage::serialize(Serializer& serializer) const
 {
+	serializer.reset();
+
     serializer.writeByte(ID);
     serializer.writeUInt16(wave);
 

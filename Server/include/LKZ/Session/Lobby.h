@@ -24,8 +24,12 @@ struct Lobby
     int id;
     uint8_t mapId;
     std::vector<Client*> clients;
+
+	Entity gameWaveEntity;
+
     int nextEntityId = 1;
 	bool inGame = false;
+	bool gameLoaded = false;
 
     bool isStarting = false;
     float startTimer = 0.0f;

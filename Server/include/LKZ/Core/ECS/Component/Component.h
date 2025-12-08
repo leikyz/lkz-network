@@ -42,8 +42,9 @@ struct PlayerInputComponent
 
 struct WaveComponent 
 {
-
     int lobbyId;
+
+	bool canSpawn = false;
 
     int currentWave = 0;
     float stateTimer = 0.0f;

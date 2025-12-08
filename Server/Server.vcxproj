@@ -166,6 +166,7 @@
     <ClCompile Include="src\Core\ECS\System\WaveSystem.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Core\Threading\CommandQueue.cpp" />
+    <ClCompile Include="src\Protocol\Message\Approach\ClientGameSceneLoadedMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\EntityDeadMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\Player\PlayerInputMessage.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\WaveSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
     <ClInclude Include="include\LKZ\Core\Threading\CommandQueue.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Approach\ClientGameSceneLoadedMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerInputMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\MoveEntitiesMessage.h" />

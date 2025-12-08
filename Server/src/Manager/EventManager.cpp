@@ -25,12 +25,14 @@
 #include <LKZ/Protocol/Message/Entity/Zombie/ZombieBoneSeveredMessage.h>
 #include <LKZ/Protocol/Message/Entity/Zombie/ZombieHitMessage.h>
 #include <LKZ/Protocol/Message/Entity/EntityDeadMessage.h>
+#include <LKZ/Protocol/Message/Approach/ClientGameSceneLoadedMessage.h>
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
 void EventManager::BindEvents()
 {
-    std::cout << "[EventManager] Initialize events." << std::endl;   
+    std::cout << "[EventManager] Initialize events." << std::endl;  
+
     EventManager::registerHandler<CreateClientMessage>(1);
     EventManager::registerHandler<ServerInformationsMessage>(2);
     EventManager::registerHandler<DisconnectClientMessage>(3);
@@ -47,12 +49,12 @@ void EventManager::BindEvents()
     EventManager::registerHandler<LastEntityPositionMessage>(13);
     EventManager::registerHandler<RequestCreateEntityMessage>(14);
     EventManager::registerHandler<MoveEntitiesMessage>(15);
-    /*EventManager::registerHandler<PlayerStateMessage>(16);*/
     EventManager::registerHandler<PlayerAimTargetPositionMessage>(17);
     EventManager::registerHandler<PlayerShootingMessage>(18);
     EventManager::registerHandler<ZombieBoneSeveredMessage>(19);
     EventManager::registerHandler<EntityDeadMessage>(20);
     EventManager::registerHandler<ZombieHitMessage>(21);
+    EventManager::registerHandler<ClientGameSceneLoadedMessage>(22);
 }
 
 template<typename T>

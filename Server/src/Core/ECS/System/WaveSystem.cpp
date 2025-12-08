@@ -2,58 +2,162 @@
 #include <LKZ/Core/ECS/Manager/ComponentManager.h>
 #include <LKZ/Core/ECS/Manager/EntityManager.h>
 #include <LKZ/Core/Engine.h>
-#include <LKZ/Protocol/Message/Entity/MoveEntityMessage.h>
-#include <LKZ/Protocol/Message/Entity/RotateEntityMessage.h>
-#include <LKZ/Protocol/Message/Entity/LastEntityPositionMessage.h>
-#include <LKZ/Simulation/Math/MathUtils.h>
-#include <LKZ/Simulation/Math/Vector.h>
+#include <LKZ/Core/Threading/CommandQueue.h>
+#include <LKZ/Core/Threading/ThreadManager.h>
+#include <LKZ/Protocol/Message/Entity/CreateEntityMessage.h>
+#include <LKZ/Protocol/Message/Gameplay/ChangeWaveMessage.h>
 #include <LKZ/Utility/Logger.h>
 #include <LKZ/Utility/Constants.h>
 #include "LKZ/Core/ECS/Manager/NavMeshQueryManager.h"
-#include "LKZ/Simulation/World.h"
-#include "DetourNavMesh.h"
-#include "DetourNavMeshQuery.h"
 #include <DetourCrowd.h>
-#include <unordered_map>
-#include <cmath>
-#include <algorithm>
-#include <set>
-#include <LKZ/Protocol/Message/Gameplay/ChangeWaveMessage.h>
 
 void WaveSystem::Update(ComponentManager& components, float fixedDeltaTime)
 {
     for (auto& [entity, waveComponent] : components.waves)
     {
+		Logger::Log("Zombie to spawn " + std::to_string(waveComponent.zombiesAlive), LogType::Debug);
 
-		Lobby* lobby = LobbyManager::getLobby(waveComponent.lobbyId);
+        Lobby* lobby = LobbyManager::getLobby(waveComponent.lobbyId);
 
-		// Check if lobby is valid and in game
-		if (!lobby || !lobby->inGame)
-			continue;
+        if (!lobby || !lobby->inGame) continue;
 
-		Serializer serializer;
+        if (lobby->gameLoaded)
+        {
+            if (waveComponent.isIntermission)
+            {
+                waveComponent.stateTimer -= fixedDeltaTime;
 
-		// Start timer update
-		if (waveComponent.spawnTimer < 5.0f)
-		{
-			waveComponent.spawnTimer += fixedDeltaTime;
-		}
-		else if (waveComponent.isIntermission)
-		{		
-			waveComponent.currentWave++;
-			ChangeWaveMessage changeWaveMsg(waveComponent.currentWave);
-			changeWaveMsg.serialize(serializer);
+                if (waveComponent.stateTimer <= 0.0f)
+                {
+                    waveComponent.currentWave++;
+                    waveComponent.isIntermission = false;
 
-			Engine::Instance().Server()->SendToMultiple(
-				lobby->clients,
-				serializer.getBuffer(),
-				changeWaveMsg.getClassName());
+                    int playerCount = lobby->getClientCount();
+                    int baseZombies = 6;
+                    float multiplier = 1.15f;
 
-			waveComponent.isIntermission = false;
-		}
+                    waveComponent.zombiesToSpawn = (int)((baseZombies * std::pow(multiplier, waveComponent.currentWave - 1)) * playerCount);
 
-		
-		
-		Logger::Log("Updating WaveComponent for entity: " + std::to_string(waveComponent.spawnTimer), LogType::Info);
+                    waveComponent.spawnTimer = 0.0f;
+
+                    ChangeWaveMessage waveMsg;
+                    waveMsg.wave = waveComponent.currentWave;
+
+                    Serializer s;
+                    waveMsg.serialize(s);
+                    Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), waveMsg.getClassName());
+                }
+                continue;
+            }
+
+            if (waveComponent.zombiesToSpawn <= 0 && waveComponent.zombiesAlive <= 0)
+            {
+                waveComponent.isIntermission = true;
+                waveComponent.stateTimer = 10.0f; 
+                Logger::Log("Wave Complete! Starting Intermission.", LogType::Info);
+                return;
+            }
+
+            if (waveComponent.zombiesToSpawn > 0)
+            {
+                if (waveComponent.zombiesAlive < MAX_ZOMBIES_ON_MAP)
+                {
+                    waveComponent.spawnTimer -= fixedDeltaTime;
+
+                    if (waveComponent.spawnTimer <= 0.0f)
+                    {
+
+                        SpawnZombie(lobby->id, (int)EntitySuperType::Zombie); 
+
+                        waveComponent.zombiesToSpawn--;
+                        waveComponent.zombiesAlive++;
+
+                        waveComponent.spawnTimer = 2.0f;
+                    }
+                }
+            }
+        }
     }
+}
+
+void WaveSystem::SpawnZombie(int lobbyId, int entitySuperTypeId)
+{
+    ThreadManager::GetPool("pathfinding")->EnqueueTask([=]() {
+
+        World& world = Engine::Instance().GetWorld();
+
+        dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
+        Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
+        randomSpawnPoint = Constants::FIRST_PLAYER_SPAWN_POSITION;
+
+        CommandQueue::Instance().Push([=]() {
+
+            Lobby* lobby = LobbyManager::getLobby(lobbyId);
+            if (!lobby) return; 
+
+            auto& components = ComponentManager::Instance();
+            auto& entityManager = EntityManager::Instance();
+            INetworkInterface* server = Engine::Instance().Server();
+
+            Entity entity = entityManager.CreateEntity(EntitySuperType(entitySuperTypeId), components, lobby);
+
+            components.AddComponent(entity, PositionComponent{ randomSpawnPoint });
+            components.AddComponent(entity, RotationComponent{ Vector3{ 0.0f, 0.0f, 0.0f } });
+
+            float initialRepathDelay = ((rand() % 100) / 100.0f) * 2.0f;
+            Vector3 initialTarget = { 0,0,0 }; 
+
+            components.AddComponent(entity, AIComponent{
+                initialTarget,
+                initialRepathDelay,
+                -1, 
+                0.0f
+                });
+
+            dtCrowd* crowd = Engine::Instance().GetWorld().getCrowd();
+            if (crowd)
+            {
+                dtCrowdAgentParams params;
+                memset(&params, 0, sizeof(params));
+
+                params.radius = Constants::AGENT_RADIUS;
+                params.height = Constants::AGENT_HEIGHT;
+                params.maxAcceleration = Constants::AGENT_MAX_ACCELERATION;
+                params.maxSpeed = Constants::AGENT_MAX_SPEED;
+                params.collisionQueryRange = params.radius * 8.0f;
+                params.pathOptimizationRange = params.radius * 30.0f;
+                params.queryFilterType = Constants::AGENT_QUERY_FILTER_TYPE;
+                params.obstacleAvoidanceType = Constants::AGENT_OBSTACLE_AVOIDANCE_TYPE;
+                params.separationWeight = Constants::AGENT_SEPARATION_WEIGHT;
+                params.updateFlags = Constants::AGENT_UPDATE_FLAGS;
+                params.userData = (void*)((uintptr_t)entity);
+
+                float spawnPos[3] = { randomSpawnPoint.x, randomSpawnPoint.y, randomSpawnPoint.z };
+                int agentIdx = crowd->addAgent(spawnPos, &params);
+
+                if (agentIdx != -1) {
+                    components.ai[entity].crowdAgentIndex = agentIdx;
+                }
+            }
+
+            lobby->addEntity(&entity);
+
+            CreateEntityMessage createEntityMsg;
+
+            createEntityMsg.entityTypeId = 3 + rand() % 3;
+            createEntityMsg.entityId = entity;
+            createEntityMsg.posX = randomSpawnPoint.x;
+            createEntityMsg.posY = randomSpawnPoint.y;
+            createEntityMsg.posZ = randomSpawnPoint.z;
+
+            Serializer serializer;
+            createEntityMsg.serialize(serializer);
+
+            server->SendToMultiple(
+                lobby->clients,
+                serializer.getBuffer(),
+                createEntityMsg.getClassName()
+            );
+            });
+        });
 }

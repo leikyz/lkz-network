@@ -6,7 +6,7 @@ void ComponentManager::RemoveEntity(Entity entity)
 	positions.erase(entity);
 	rotations.erase(entity);
 	playerInputs.erase(entity);
-	/*playerState.erase(entity);*/
+	waves.erase(entity);
 	lastReceivedSequence.erase(entity);
 	ai.erase(entity);
 }
@@ -48,6 +48,12 @@ void ComponentManager::AddComponent<WaveComponent>(Entity entity, WaveComponent 
 	waves[entity] = component;
 }
 
+template<>
+WaveComponent* ComponentManager::GetComponent<WaveComponent>(Entity entity)
+{
+	auto it = waves.find(entity);
+	return (it != waves.end()) ? &it->second : nullptr;
+}
 
 template<>
 PositionComponent* ComponentManager::GetComponent<PositionComponent>(Entity entity)

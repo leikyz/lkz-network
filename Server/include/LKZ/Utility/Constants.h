@@ -29,8 +29,8 @@ namespace Constants
 
 	// ----- Default Agent Settings ----- must match those used in World.cpp and Unity navmesh setup
 
-    inline constexpr float AGENT_RADIUS = 0.1f;       // The physical radius of a typical AI agent.
-    inline constexpr float AGENT_HEIGHT = 1.8f;      // The height of an agent (e.g., for humanoid navigation).
+    inline constexpr float AGENT_RADIUS = 0.05f;       // The physical radius of a typical AI agent.
+    inline constexpr float AGENT_HEIGHT = 1.5f;      // The height of an agent (e.g., for humanoid navigation).
     inline constexpr float AGENT_MAX_CLIMB = 1.5f;
     inline constexpr float AGENT_MAX_SLOPE = 60.0f; // in degrees
     inline constexpr float AGENT_MAX_ACCELERATION = 1.0f; // Maximum acceleration allowed for an agent.

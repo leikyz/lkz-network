@@ -3,6 +3,7 @@
 #include <sstream>
 #include <chrono>
 #include <iomanip>
+#include <LKZ/Utility/Constants.h>
 
 std::string Logger::GetPrefix(LogType level)
 {
@@ -20,6 +21,9 @@ std::string Logger::GetPrefix(LogType level)
 
 void Logger::Log(const std::string& message, LogType level)
 {
+    if (Constants::LOGGER_ENABLED == false)
+		return;
+
     auto task = [msg = message, level]() {
         auto now = std::chrono::system_clock::now();
         std::time_t time = std::chrono::system_clock::to_time_t(now);

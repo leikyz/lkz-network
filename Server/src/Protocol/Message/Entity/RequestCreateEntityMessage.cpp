@@ -83,7 +83,7 @@ void RequestCreateEntityMessage::process(const sockaddr_in& senderAddr)
 
 			Vector3 playerSpawnPos = Constants::FIRST_PLAYER_SPAWN_POSITION;
 
-            switch (lobby->getClientCount())
+            switch (client->positionInLobby)
             {
                 case 1:
 					playerSpawnPos = Constants::FIRST_PLAYER_SPAWN_POSITION;

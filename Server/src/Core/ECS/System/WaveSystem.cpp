@@ -86,9 +86,18 @@ void WaveSystem::SpawnZombie(int lobbyId, int entitySuperTypeId)
 
         World& world = Engine::Instance().GetWorld();
 
-        dtNavMeshQuery* simQuery = NavMeshQueryManager::GetThreadLocalQuery(world.getNavMesh());
-        Vector3 randomSpawnPoint = world.getRandomNavMeshPoint(simQuery);
-        randomSpawnPoint = Constants::FIRST_PLAYER_SPAWN_POSITION;
+        Vector3 randomSpawnPoint;
+        const Vector3 zombieSpawns[] = {
+             Constants::FIRST_ZOMBIE_SPAWN_POSITION,
+             Constants::SECOND_ZOMBIE_SPAWN_POSITION,
+             Constants::THIRD_ZOMBIE_SPAWN_POSITION,
+             Constants::FOURTH_ZOMBIE_SPAWN_POSITION
+                };
+
+
+        int randomIndex = std::rand() % 4;
+
+        randomSpawnPoint = zombieSpawns[randomIndex];
 
         CommandQueue::Instance().Push([=]() {
 

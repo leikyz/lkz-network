@@ -78,7 +78,10 @@ namespace Constants
 	inline constexpr Vector3 THIRD_PLAYER_SPAWN_POSITION = { -1.247f, 0.0f, -1.2856f }; // Default spawn position for the third player.
 	inline constexpr Vector3 FOURTH_PLAYER_SPAWN_POSITION = { 2.793f, 0.0f, -1.7856f }; // Default spawn position for the fourth player
     
-    inline constexpr Vector3 FIRST_ZOMBIE_SPAWN_POSITION = { 26.175f, 0.4644f, 69.835f }; // Default spawn position for the fourth player..
+    inline constexpr Vector3 FIRST_ZOMBIE_SPAWN_POSITION = { 1.82f, 0, 43.17f }; // Default spawn position for the fourth player..
+    inline constexpr Vector3 SECOND_ZOMBIE_SPAWN_POSITION = { -2.87, 0, 29.44f };
+    inline constexpr Vector3 THIRD_ZOMBIE_SPAWN_POSITION = { -20.22, 0, 3.85f };
+    inline constexpr Vector3 FOURTH_ZOMBIE_SPAWN_POSITION = { -2.51, 0, 28.66f };
 }
 
 #endif // CONSTANTS_HPP

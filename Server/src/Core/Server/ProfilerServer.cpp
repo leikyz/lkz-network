@@ -1,0 +1,137 @@
+#include "LKZ/Core/Server/ProfilerServer.h"
+#include <iostream>
+#include <string>
+#include <Common/ProfilerProtocol.h>
+
+ProfilerServer::ProfilerServer(int port)
+    : port(port) {
+}
+
+ProfilerServer::~ProfilerServer()
+{
+    Stop();
+}
+
+void ProfilerServer::Start()
+{
+    listenSocket = WSASocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP, nullptr, 0, WSA_FLAG_OVERLAPPED);
+    if (listenSocket == INVALID_SOCKET) {
+        std::cerr << "[Profiler] Socket creation failed\n";
+        return;
+    }
+
+    sockaddr_in serverAddr{};
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+    serverAddr.sin_port = htons(port);
+
+    if (bind(listenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        std::cerr << "[Profiler] Bind failed on port " << port << "\n";
+        return;
+    }
+
+    InitIOCP();
+    running = true;
+    std::cout << "[Profiler] Started on port " << port << "\n";
+}
+
+void ProfilerServer::Stop()
+{
+    running = false;
+    if (completionPort) CloseHandle(completionPort);
+    if (listenSocket != INVALID_SOCKET) closesocket(listenSocket);
+}
+
+void ProfilerServer::InitIOCP()
+{
+    completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
+    CreateIoCompletionPort((HANDLE)listenSocket, completionPort, 0, 0);
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        auto ioData = std::make_unique<ProfilerIoData>(1024);
+        PostReceive(ioData.get());
+        ioDataPool.push_back(std::move(ioData));
+    }
+}
+
+void ProfilerServer::PostReceive(ProfilerIoData* ioData)
+{
+    DWORD flags = 0;
+    ioData->clientAddrLen = sizeof(ioData->clientAddr);
+    ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
+
+    WSARecvFrom(listenSocket, &ioData->wsabuf, 1, nullptr, &flags,
+        (sockaddr*)&ioData->clientAddr, &ioData->clientAddrLen,
+        &ioData->overlapped, nullptr);
+}
+
+void ProfilerServer::Poll()
+{
+    if (!running) return;
+
+    DWORD bytesTransferred;
+    ULONG_PTR completionKey;
+    OVERLAPPED* overlapped;
+
+    BOOL success = GetQueuedCompletionStatus(
+        completionPort,
+        &bytesTransferred,
+        &completionKey,
+        &overlapped,
+        0
+    );
+
+    if (success && overlapped)
+    {
+        ProfilerIoData* ioData = CONTAINING_RECORD(overlapped, ProfilerIoData, overlapped);
+        HandlePacket(ioData, bytesTransferred);
+        PostReceive(ioData); 
+    }
+}
+
+void ProfilerServer::HandlePacket(ProfilerIoData* ioData, DWORD bytesTransferred)
+{
+    if (bytesTransferred == 0) return;
+
+    uint8_t packetID = ioData->buffer[0];
+
+    // Si on reçoit un Handshake (255), on ajoute le client à la liste
+    if (packetID == ProfilerProtocol::PacketID::Handshake)
+    {
+        std::lock_guard<std::mutex> lock(subscribersMutex);
+
+        bool known = false;
+        for (const auto& sub : subscribers) {
+            if (sub.sin_addr.s_addr == ioData->clientAddr.sin_addr.s_addr &&
+                sub.sin_port == ioData->clientAddr.sin_port) {
+                known = true;
+                break;
+            }
+        }
+
+        if (!known) {
+            subscribers.push_back(ioData->clientAddr);
+            std::cout << "[Profiler] New tool connected.\n";
+        }
+    }
+}
+
+void ProfilerServer::Broadcast(const std::vector<uint8_t>& data)
+{
+    std::lock_guard<std::mutex> lock(subscribersMutex);
+    for (const auto& addr : subscribers)
+    {
+        SendInternal(addr, data);
+    }
+}
+
+void ProfilerServer::SendInternal(const sockaddr_in& target, const std::vector<uint8_t>& buffer)
+{
+    WSABUF sendBuf{};
+    sendBuf.buf = (CHAR*)buffer.data();
+    sendBuf.len = static_cast<ULONG>(buffer.size());
+    DWORD bytesSent;
+
+    WSASendTo(listenSocket, &sendBuf, 1, &bytesSent, 0, (sockaddr*)&target, sizeof(target), nullptr, nullptr);
+}

@@ -1,19 +1,14 @@
 #pragma once
 #include "LKZ/Core/Server/INetworkInterface.h"
+#include "LKZ/Core/Server/ProfilerServer.h" // Ajout
 #include "LKZ/Core/Threading/ThreadManager.h"
 #include "LKZ/Simulation/World.h"
 #include <chrono>
-
+#include <memory>
 
 class Engine
 {
 public:
-    /**
-     * @brief Singleton instance accessor. Initializes with the provided network interface if not already initialized.
-     *
-     * \param netInterface
-     * \return
-     */
     static Engine& Instance(INetworkInterface* netInterface = nullptr)
     {
         static Engine instance(netInterface);
@@ -24,9 +19,13 @@ public:
     void Run();
 
     float GetDeltaTime() const { return deltaTime; }
-	World& GetWorld() const { return *world; }
-	void SetWorld(World* newWorld) { world = newWorld; }
+    World& GetWorld() const { return *world; }
+    void SetWorld(World* newWorld) { world = newWorld; }
+
     static INetworkInterface* Server();
+
+    // Accès au profiler
+    ProfilerServer* GetProfiler() { return profiler.get(); }
 
 private:
     Engine(INetworkInterface* netInterface);
@@ -35,7 +34,10 @@ private:
 
     static INetworkInterface* network;
 
-	World* world;
+    // Pointeur intelligent vers le profiler
+    std::unique_ptr<ProfilerServer> profiler;
+
+    World* world;
     std::chrono::steady_clock::time_point lastFrame;
     float deltaTime = 0.0f;
 };

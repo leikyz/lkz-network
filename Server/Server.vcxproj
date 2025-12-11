@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)lib/RecastNavigation/Recast/include;$(ProjectDir)lib/RecastNavigation/DetourTileCache/include;$(ProjectDir)lib/RecastNavigation/DetourCrowd/include;$(ProjectDir)lib/RecastNavigation/DebugUtils/include;$(ProjectDir)lib/RecastNavigation/Detour/include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)lib/RecastNavigation/Recast/include;$(ProjectDir)lib/RecastNavigation/DetourTileCache/include;$(ProjectDir)lib/RecastNavigation/DetourCrowd/include;$(ProjectDir)lib/RecastNavigation/DebugUtils/include;$(ProjectDir)lib/RecastNavigation/Detour/include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -120,6 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +166,7 @@
     <ClCompile Include="src\Core\ECS\System\AISystem.cpp" />
     <ClCompile Include="src\Core\ECS\System\WaveSystem.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
+    <ClCompile Include="src\Core\Server\ProfilerServer.cpp" />
     <ClCompile Include="src\Core\Threading\CommandQueue.cpp" />
     <ClCompile Include="src\Protocol\Message\Approach\ClientGameSceneLoadedMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Entity\EntityDeadMessage.cpp" />
@@ -217,6 +219,7 @@
     <ClInclude Include="include\LKZ\Core\ECS\System\PlayerSystem.h" />
     <ClInclude Include="include\LKZ\Core\ECS\System\WaveSystem.h" />
     <ClInclude Include="include\LKZ\Core\Engine.h" />
+    <ClInclude Include="include\LKZ\Core\Server\ProfilerServer.h" />
     <ClInclude Include="include\LKZ\Core\Threading\CommandQueue.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Approach\ClientGameSceneLoadedMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Player\PlayerAimTargetPositionMessage.h" />
@@ -315,6 +318,11 @@
     <ClInclude Include="lib\RecastNavigation\Recast\Include\Recast.h" />
     <ClInclude Include="lib\RecastNavigation\Recast\Include\RecastAlloc.h" />
     <ClInclude Include="lib\RecastNavigation\Recast\Include\RecastAssert.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{88eaafc4-c97c-47ac-8c98-d4801a5f01f5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

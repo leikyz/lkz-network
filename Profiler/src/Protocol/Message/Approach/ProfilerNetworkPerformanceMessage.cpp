@@ -16,5 +16,6 @@ void ProfilerNetworkPerformanceMessage::deserialize(Deserializer& deserializer)
 
 void ProfilerNetworkPerformanceMessage::process()
 {
-    ProfilerState::Instance().connectedClientsCount++;
+	ProfilerState::Instance().serverDeltaTime = deltaTime;
+	ProfilerState::Instance().serverFps = fps;
 }

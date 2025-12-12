@@ -36,7 +36,7 @@ public:
     float GetTimeSinceLastPacket() const;
 
 private:
-    void ProcessPacket(const std::vector<uint8_t>& data);
+    void ProcessPacket(std::vector<uint8_t>& data);
 
     SOCKET clientSocket = INVALID_SOCKET;
     sockaddr_in serverAddr{};

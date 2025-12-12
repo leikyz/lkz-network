@@ -14,6 +14,9 @@ public:
 
     int connectedClientsCount = 0;
 
+	float serverDeltaTime = 0.0f;
+	float serverFps = 0.0f;
+
     void Reset()
     {
         connectedClientsCount = 0;

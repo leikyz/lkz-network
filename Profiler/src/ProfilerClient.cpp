@@ -82,7 +82,7 @@ void ProfilerClient::Update()
     }
 }
 
-void ProfilerClient::ProcessPacket(const std::vector<uint8_t>& data)
+void ProfilerClient::ProcessPacket(std::vector<uint8_t>& data)
 {
     if (data.empty()) return;
 

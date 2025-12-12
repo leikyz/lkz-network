@@ -105,8 +105,8 @@ int main(int, char**)
             ImGui::Text("%llu Packets received", stats.totalPackets);
 
             ImGui::Separator();
-            ImGui::Text("Server DT:    %.4f ms", stats.currentDeltaTime * 1000.0f);
-            ImGui::Text("Server FPS:   %.1f", stats.currentDeltaTime > 0 ? 1.0f / stats.currentDeltaTime : 0.0f);
+            ImGui::Text("Server DT:    %.4f ms", ProfilerState::Instance().serverDeltaTime * 1000.0f);
+            ImGui::Text("Server FPS:   %.1f", ProfilerState::Instance().serverFps);
 
             ImGui::End();
         }

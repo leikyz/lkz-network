@@ -11,7 +11,7 @@ public:
 
     static void BindEvents();
 
-    static void ProcessMessage(const std::vector<uint8_t>& buffer);
+    static void ProcessMessage(std::vector<uint8_t>& buffer);
 
     template<typename T>
     static void RegisterHandler(uint8_t id);

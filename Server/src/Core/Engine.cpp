@@ -46,6 +46,10 @@ void Engine::Run()
     const float targetFrameTime = 1.0f / 60.0f;
     float accumulator = 0.0f;
 
+    float profilerTimer = 0.0f;
+    int framesCounted = 0;
+    float accumulatedDeltaTime = 0.0f;
+
     lastFrame = std::chrono::steady_clock::now();
 
     while (true)
@@ -56,6 +60,11 @@ void Engine::Run()
 
         accumulator += deltaTime;
 
+        // Accumuler pour la moyenne
+        profilerTimer += deltaTime;
+        accumulatedDeltaTime += deltaTime;
+        framesCounted++;
+
         ThreadManager::SetGlobalDeltaTime(deltaTime);
 
         while (accumulator >= Constants::FIXED_DELTA_TIME)
@@ -65,19 +74,25 @@ void Engine::Run()
 
         }
 
-        if (profiler)
+        if (profiler && profilerTimer >= 0.1f)
         {
-            float currentFps = (deltaTime > 0.0f) ? (1.0f / deltaTime) : 0.0f;
+            // Calculer la moyenne
+            float avgDeltaTime = accumulatedDeltaTime / framesCounted;
+            float avgFps = (avgDeltaTime > 0.0f) ? (1.0f / avgDeltaTime) : 0.0f;
 
             ProfilerNetworkPerformanceMessage msg;
             Serializer s;
 
-			msg.deltaTime = deltaTime;
-			msg.fps = currentFps;
+            msg.deltaTime = avgDeltaTime;
+            msg.fps = avgFps;
 
             msg.serialize(s);
-
             profiler->Broadcast(s.getBuffer());
+
+            // Reset des compteurs
+            profilerTimer = 0.0f;
+            framesCounted = 0;
+            accumulatedDeltaTime = 0.0f;
         }
 
         network->Poll();

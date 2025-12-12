@@ -2,7 +2,7 @@
 #include <Profiler/include/Core/Manager/ProfilerEventManager.h>
 #include <Common/ProfilerProtocol.h>
 #include <Profiler/include/Protocol/Message/Approach/ProfilerClientCreatedMessage.h>
-
+#include <Profiler/include/Protocol/Message/Approach/ProfilerNetworkPerformanceMessage.h>
 
 ProfilerEventManager::MessageHandler ProfilerEventManager::handlers[256] = { nullptr };
 
@@ -10,6 +10,7 @@ void ProfilerEventManager::BindEvents()
 {
     std::cout << "[ProfilerEventManager] Binding events..." << std::endl;
     RegisterHandler<ProfilerClientCreatedMessage>(23);
+    RegisterHandler<ProfilerNetworkPerformanceMessage>(24);
 }
 
 template<typename T>
@@ -17,7 +18,7 @@ void ProfilerEventManager::RegisterHandler(uint8_t id)
 {
     handlers[id] = &handleMessage<T>;
 }
-void ProfilerEventManager::ProcessMessage(const std::vector<uint8_t>& buffer)
+void ProfilerEventManager::ProcessMessage(std::vector<uint8_t>& buffer)
 {
     if (buffer.empty()) return;
 
@@ -29,6 +30,7 @@ void ProfilerEventManager::ProcessMessage(const std::vector<uint8_t>& buffer)
         return;
     }
 
+    buffer.erase(buffer.begin());
     // On appelle le lambda créé par RegisterHandler
     handlers[id](buffer);
 }

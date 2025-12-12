@@ -180,6 +180,7 @@
     <ClCompile Include="src\Protocol\Message\Entity\Zombie\ZombieHitMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Gameplay\ChangeWaveMessage.cpp" />
     <ClCompile Include="src\Protocol\Message\Profiler\ProfilerClientCreatedMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Profiler\ProfilerNetworkPerformanceMessage.cpp" />
     <ClCompile Include="src\Simulation\Math\MathUtils.cpp" />
     <ClCompile Include="src\Simulation\NavMesh\NavMeshLoader.cpp" />
     <ClCompile Include="src\Simulation\World.cpp">
@@ -234,6 +235,7 @@
     <ClInclude Include="include\LKZ\Protocol\Message\Entity\Zombie\ZombieHitMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Gameplay\ChangeWaveMessage.h" />
     <ClInclude Include="include\LKZ\Protocol\Message\Profiler\ProfilerClientCreatedMessage.h" />
+    <ClInclude Include="include\LKZ\Protocol\Message\Profiler\ProfilerNetworkPerformanceMessage.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\MathUtils.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Quaternion.h" />
     <ClInclude Include="include\LKZ\Simulation\Math\Vector.h" />

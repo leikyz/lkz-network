@@ -150,10 +150,12 @@
     <ClCompile Include="src\ProfilerClient.cpp" />
     <ClCompile Include="src\ProfilerEventManager.cpp" />
     <ClCompile Include="src\Protocol\Message\Approach\ProfilerClientCreatedMessage.cpp" />
+    <ClCompile Include="src\Protocol\Message\Approach\ProfilerNetworkPerformanceMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Core\Manager\ProfilerState.h" />
     <ClInclude Include="include\Protocol\Message\Approach\ProfilerClientCreatedMessage.h" />
+    <ClInclude Include="include\Protocol\Message\Approach\ProfilerNetworkPerformanceMessage.h" />
     <ClInclude Include="include\Protocol\Message\ProfilerMessage.h" />
     <ClInclude Include="include\ProfilerClient.h" />
     <ClInclude Include="include\Core\Manager\ProfilerEventManager.h" />

@@ -27,6 +27,7 @@
 #include <LKZ/Protocol/Message/Entity/EntityDeadMessage.h>
 #include <LKZ/Protocol/Message/Approach/ClientGameSceneLoadedMessage.h>
 #include <LKZ/Protocol/Message/Profiler/ProfilerClientCreatedMessage.h>
+#include <LKZ/Protocol/Message/Profiler/ProfilerNetworkPerformanceMessage.h>
 
 EventManager::MessageHandler EventManager::messageHandlers[256] = { nullptr };
 
@@ -57,6 +58,7 @@ void EventManager::BindEvents()
     EventManager::registerHandler<ZombieHitMessage>(21);
     EventManager::registerHandler<ClientGameSceneLoadedMessage>(22);
     EventManager::registerHandler<ProfilerClientCreatedMessage>(23);
+    EventManager::registerHandler<ProfilerClientCreatedMessage>(24);
 }
 
 template<typename T>

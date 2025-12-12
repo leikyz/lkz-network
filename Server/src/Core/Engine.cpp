@@ -4,6 +4,7 @@
 #include <thread>
 #include <vector>
 #include <Common/ProfilerProtocol.h>
+#include <LKZ/Protocol/Message/Profiler/ProfilerNetworkPerformanceMessage.h>
 
 INetworkInterface* Engine::network = nullptr;
 
@@ -62,6 +63,21 @@ void Engine::Run()
             ThreadManager::SetGlobalDeltaTime(Constants::FIXED_DELTA_TIME);
             accumulator -= Constants::FIXED_DELTA_TIME;
 
+        }
+
+        if (profiler)
+        {
+            float currentFps = (deltaTime > 0.0f) ? (1.0f / deltaTime) : 0.0f;
+
+            ProfilerNetworkPerformanceMessage msg;
+            Serializer s;
+
+			msg.deltaTime = deltaTime;
+			msg.fps = currentFps;
+
+            msg.serialize(s);
+
+            profiler->Broadcast(s.getBuffer());
         }
 
         network->Poll();

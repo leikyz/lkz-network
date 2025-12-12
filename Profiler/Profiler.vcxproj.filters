@@ -48,6 +48,9 @@
     <ClCompile Include="src\Protocol\Message\Approach\ProfilerClientCreatedMessage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Protocol\Message\Approach\ProfilerNetworkPerformanceMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Core\Manager\ProfilerState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Protocol\Message\Approach\ProfilerNetworkPerformanceMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

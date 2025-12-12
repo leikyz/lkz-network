@@ -15,6 +15,7 @@
 #include <LKZ/Core/Manager/LobbyManager.h>
 #include <LKZ/Core/ECS/System/PlayerSystem.h>
 #include <LKZ/Core/ECS/System/WaveSystem.h>
+#include <Common/ProfilerProtocol.h>
 
 
 
@@ -33,7 +34,7 @@ int main()
     EntityManager& entityManager = EntityManager::Instance();
     SystemManager& systemManager = SystemManager::Instance();
 
-    ThreadManager::CreatePool("logger", 1);
+//    ThreadManager::CreatePool("logger", 1);
 
     World* world = new World();
     engine.SetWorld(world);
@@ -44,6 +45,7 @@ int main()
     systemManager.RegisterSystem(std::make_shared<AISystem>());
 
     ThreadManager::CreatePool("io", 1, [server](float) { server->Poll(); }, false);
+    ThreadManager::CreatePool("profiler", 1, [&](float) { engine.GetProfiler()->Poll(); }, true);
     ThreadManager::CreatePool("message", 8);
     ThreadManager::CreatePool("matchmaking", 1);
     ThreadManager::CreatePool("pathfinding", 2);
@@ -63,7 +65,7 @@ int main()
 
 
     engine.Run();
-
+    
     ThreadManager::StopAll();
     delete world;
     delete server;

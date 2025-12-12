@@ -76,12 +76,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\GLFW\include;C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories);$(ProjectDir)lib\GLFW\lib-vc2022</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
@@ -94,12 +94,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\GLFW\include;C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Etudiant1\source\repos\leikyz\lkz-network\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories);$(ProjectDir)lib\GLFW\lib-vc2022</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
@@ -110,12 +110,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include\GLFW;C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\GLFW\include;$(SolutionDir);C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include\GLFW;C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories);$(ProjectDir)lib\GLFW\lib-vc2022</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
@@ -128,12 +128,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include\GLFW;C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)lib\GLFW\include;$(SolutionDir);C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include\GLFW;C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Matéo\Desktop\lkz-network-master\Profiler\lib\GLFW\lib-vc2022;%(AdditionalLibraryDirectories);$(ProjectDir)lib\GLFW\lib-vc2022</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>

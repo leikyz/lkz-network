@@ -32,36 +32,16 @@ void Engine::Initialize()
 
     lastFrame = std::chrono::steady_clock::now();
 
-    profiler->Start();
-    ThreadManager::CreatePool("profiler", 1, [this](float dt) {
-        if (!profiler) return;
+    network->Start();
 
-        profiler->Poll();
-
-        static float timer = 0.0f;
-        timer += dt;
-
-        if (timer > 0.1f)
-        {
-            timer = 0.0f;
-            float currentDt = this->GetDeltaTime();
-            int val = static_cast<int>(currentDt * 1000.0f);
-
-            std::vector<uint8_t> packet;
-            packet.push_back(ProfilerProtocol::PacketID::TestMessage);
-
-            uint8_t* pVal = reinterpret_cast<uint8_t*>(&val);
-            packet.insert(packet.end(), pVal, pVal + sizeof(int));
-
-            profiler->Broadcast(packet);
-        }
-        }, true);
+    if (profiler) {
+        std::cout << "[Profiler] Starting Profiler...\n";
+        profiler->Start();
+    }
 }
 
 void Engine::Run()
 {
-    network->Start();
-
     const float targetFrameTime = 1.0f / 60.0f;
     float accumulator = 0.0f;
 

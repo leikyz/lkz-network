@@ -1,5 +1,4 @@
 #include "LKZ/Core/Manager/MatchmakingManager.h"
-#include "LKZ/Protocol/Codec/Serializer.h"
 #include "LKZ/Protocol/Message/Matchmaking/UpdateLobbyMessage.h"
 #include "LKZ/Protocol/Message/Matchmaking/ChangeReadyStatusMessage.h"
 #include "LKZ/Session/Client.h"

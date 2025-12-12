@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Codec\Deserializer.h" />
+    <ClInclude Include="Codec\Serializer.h" />
     <ClInclude Include="ProfilerProtocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

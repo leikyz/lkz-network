@@ -148,9 +148,15 @@
     <ClCompile Include="lib\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="src\ProfilerClient.cpp" />
+    <ClCompile Include="src\ProfilerEventManager.cpp" />
+    <ClCompile Include="src\Protocol\Message\Approach\ProfilerClientCreatedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\Manager\ProfilerState.h" />
+    <ClInclude Include="include\Protocol\Message\Approach\ProfilerClientCreatedMessage.h" />
+    <ClInclude Include="include\Protocol\Message\ProfilerMessage.h" />
     <ClInclude Include="include\ProfilerClient.h" />
+    <ClInclude Include="include\Core\Manager\ProfilerEventManager.h" />
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="lib\ImGUI\imconfig.h" />

@@ -168,6 +168,7 @@ void AISystem::Update(ComponentManager& components, float deltaTime)
         {
             Serializer s;
             msg.serialize(s);
+            Engine::Instance().GetProfiler()->Broadcast(s.getBuffer());
             Engine::Instance().Server()->SendToMultiple(lobby->clients, s.getBuffer(), msg.getClassName());
         }
     }

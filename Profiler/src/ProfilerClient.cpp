@@ -1,12 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <Profiler/include/ProfilerClient.h>
+#include <Profiler/include/Core/Manager/ProfilerEventManager.h>
 
 ProfilerClient::ProfilerClient()
 {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
     stats.dtHistory.reserve(1000);
+
+	ProfilerEventManager::BindEvents();
 }
 
 ProfilerClient::~ProfilerClient()
@@ -86,23 +89,7 @@ void ProfilerClient::ProcessPacket(const std::vector<uint8_t>& data)
     stats.totalPackets++;
     lastPacketTime = std::chrono::steady_clock::now();
 
-    uint8_t id = data[0];
-
-    switch (id)
-    {
-    case Protocol::TestMessage:
-        if (data.size() >= 5)
-        {
-            int val = *reinterpret_cast<const int*>(&data[1]);
-            float dt = static_cast<float>(val) / 1000.0f;
-            stats.currentDeltaTime = dt;
-            stats.dtHistory.push_back(dt);
-            if (stats.dtHistory.size() > 500) {
-                stats.dtHistory.erase(stats.dtHistory.begin());
-            }
-        }
-        break;
-    }
+    ProfilerEventManager::ProcessMessage(data);
 }
 
 float ProfilerClient::GetTimeSinceLastPacket() const

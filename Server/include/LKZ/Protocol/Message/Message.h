@@ -1,11 +1,11 @@
 #pragma once
 
 #include <winsock2.h>
-#include "LKZ/Protocol/Codec/Serializer.h"
-#include "LKZ/Protocol/Codec/Deserializer.h"
 #include "LKZ/Core/Manager/ClientManager.h"
 #include "LKZ/Core/Manager/LobbyManager.h"
 #include "LKZ/Core/Engine.h"
+#include <Common/Codec/Serializer.h>
+#include <Common/Codec/Deserializer.h>
 struct Message
 {
     Message() = default;

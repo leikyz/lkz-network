@@ -18,5 +18,11 @@
     <ClInclude Include="ProfilerProtocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Codec\Deserializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Codec\Serializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

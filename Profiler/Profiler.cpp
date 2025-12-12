@@ -13,6 +13,7 @@ static const int PROFILER_PORT = 5001;
 static const char* SERVER_IP = "127.0.0.1";
 
 #include "include/ProfilerClient.h"
+#include "include/Core/Manager/ProfilerState.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -52,6 +53,8 @@ int main(int, char**)
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+
+        // Update Réseau (Va appeler process() des messages -> Met à jour ProfilerState)
         profiler.Update();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -61,48 +64,49 @@ int main(int, char**)
         {
             ImGui::Begin("Engine Metrics");
 
+            // --- Header Connection ---
             if (profiler.IsConnected())
                 ImGui::TextColored(ImVec4(0, 1, 0, 1), "[CONNECTED] %s:%d", SERVER_IP, PROFILER_PORT);
             else
+            {
                 ImGui::TextColored(ImVec4(1, 0, 0, 1), "[DISCONNECTED] Waiting for server...");
+                // Reset visuel si déconnecté (optionnel)
+                // ProfilerState::Instance().Reset(); 
+            }
 
             ImGui::Separator();
 
-            const auto& stats = profiler.GetStats();
+            // --- SECTION CLIENTS ---
+            // On récupère la donnée directement du State modifié par le message
+            int clientCount = ProfilerState::Instance().connectedClientsCount;
 
+            ImGui::Text("Game Clients:");
+            ImGui::SameLine();
+            ImGui::TextColored(ImVec4(0.2f, 0.8f, 1.0f, 1.0f), "%d Connected", clientCount);
+
+            // Petit indicateur visuel (Barre de progression bidon pour l'exemple)
+            float fraction = clientCount / 100.0f; // Disons 100 max
+            ImGui::ProgressBar(fraction, ImVec2(0.0f, 0.0f));
+
+            ImGui::Separator();
+
+            // --- SECTION RESEAU (Reste de ton code) ---
+            const auto& stats = profiler.GetStats();
             float timeSincePacket = profiler.GetTimeSinceLastPacket();
             bool isReceiving = timeSincePacket < 0.15f;
-
             ImVec4 ledColor = isReceiving ? ImVec4(0, 1, 0, 1) : ImVec4(0.3f, 0.3f, 0.3f, 1);
 
             ImGui::Text("Network Traffic:");
             ImGui::SameLine();
-
             ImVec2 p = ImGui::GetCursorScreenPos();
             ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(p.x + 7, p.y + 7), 5.0f, ImGui::GetColorU32(ledColor));
-            ImGui::Dummy(ImVec2(15, 15)); 
-
+            ImGui::Dummy(ImVec2(15, 15));
             ImGui::SameLine();
             ImGui::Text("%llu Packets received", stats.totalPackets);
 
             ImGui::Separator();
-
-            ImGui::Text("Server DT:   %.4f ms", stats.currentDeltaTime * 1000.0f);
-            ImGui::Text("Server FPS:  %.1f", stats.currentDeltaTime > 0 ? 1.0f / stats.currentDeltaTime : 0.0f);
-
-            ImGui::Spacing();
-
-            if (!stats.dtHistory.empty())
-            {
-                ImGui::PlotLines("Frame Time",
-                    stats.dtHistory.data(),
-                    (int)stats.dtHistory.size(),
-                    0,
-                    "ms",
-                    0.0f,
-                    0.033f,
-                    ImVec2(0, 100));
-            }
+            ImGui::Text("Server DT:    %.4f ms", stats.currentDeltaTime * 1000.0f);
+            ImGui::Text("Server FPS:   %.1f", stats.currentDeltaTime > 0 ? 1.0f / stats.currentDeltaTime : 0.0f);
 
             ImGui::End();
         }

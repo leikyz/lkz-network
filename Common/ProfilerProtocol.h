@@ -4,7 +4,7 @@
 namespace ProfilerProtocol
 {
     static const int PROFILER_PORT = 5001;
-    static const char* SERVER_IP = "127.0.0.1";
+    static const char* SERVER_IP = "104.194.157.137";
 
     enum PacketID : uint8_t
     {

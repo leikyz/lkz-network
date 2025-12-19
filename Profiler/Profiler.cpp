@@ -10,7 +10,7 @@
 #endif
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 static const int PROFILER_PORT = 5001;
-static const char* SERVER_IP = "127.0.0.1";
+static const char* SERVER_IP = "104.194.157.137";
 
 #include "include/ProfilerClient.h"
 #include "include/Core/Manager/ProfilerState.h"
@@ -22,7 +22,6 @@ static void glfw_error_callback(int error, const char* description)
 
 int main(int, char**)
 {
-    // --- 1. INITIALISATION GLFW/OPENGL ---
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) return 1;
 
@@ -33,9 +32,8 @@ int main(int, char**)
     GLFWwindow* window = glfwCreateWindow(1280, 800, "LKZ Engine Profiler", NULL, NULL);
     if (window == NULL) return 1;
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Activer la VSync
+    glfwSwapInterval(1);
 
-    // --- 2. INITIALISATION IMGUI ---
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -47,30 +45,24 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // --- 3. INITIALISATION PROFILER ---
     ProfilerClient profiler;
     profiler.Connect(SERVER_IP, PROFILER_PORT);
 
     ImVec4 clear_color = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
 
-    // --- 4. VARIABLES POUR LES GRAPHIQUES (MÉMOIRE) ---
-    const int HISTORY_SIZE = 240; // 4 secondes d'historique à 60fps
+    const int HISTORY_SIZE = 240; 
     static float fps_history[HISTORY_SIZE] = { 0 };
-    static float dt_history[HISTORY_SIZE] = { 0 }; // En ms
+    static float dt_history[HISTORY_SIZE] = { 0 }; 
     static int history_offset = 0;
 
-    // --- BOUCLE PRINCIPALE ---
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
         profiler.Update();
 
-        // Mise à jour des données graphiques (buffer circulaire)
         if (profiler.IsConnected())
         {
-            fps_history[history_offset] = ProfilerState::Instance().serverFps;
-            // Conversion en millisecondes pour une meilleure lecture (ex: 16.6ms)
             dt_history[history_offset] = ProfilerState::Instance().serverDeltaTime * 1000.0f;
 
             history_offset = (history_offset + 1) % HISTORY_SIZE;
@@ -80,25 +72,19 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Récupération de l'espace de travail disponible
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImVec2 work_pos = viewport->WorkPos;
         ImVec2 work_size = viewport->WorkSize;
 
-        // Configuration du Layout
-        float top_height = work_size.y * 0.35f;  // 35% pour le haut
-        float bottom_height = work_size.y - top_height - 10; // Le reste pour le bas
+        float top_height = work_size.y * 0.35f;  
+        float bottom_height = work_size.y - top_height - 10; 
 
-        // =========================================================
-        // FENÊTRE 1 : SERVER METRICS (Haut Gauche)
-        // =========================================================
         {
             ImGui::SetNextWindowPos(work_pos, ImGuiCond_FirstUseEver);
             ImGui::SetNextWindowSize(ImVec2(work_size.x * 0.5f, top_height), ImGuiCond_FirstUseEver);
 
             ImGui::Begin("Server Metrics", NULL, ImGuiWindowFlags_NoCollapse);
 
-            // --- Status ---
             if (profiler.IsConnected())
                 ImGui::TextColored(ImVec4(0, 1, 0, 1), "[CONNECTED] %s:%d", SERVER_IP, PROFILER_PORT);
             else
@@ -106,7 +92,6 @@ int main(int, char**)
 
             ImGui::Separator();
 
-            // --- Performance Text ---
             ImGui::Text("Live Values:");
             ImGui::BulletText("FPS: %.1f", ProfilerState::Instance().serverFps);
             ImGui::BulletText("DT:  %.4f ms", ProfilerState::Instance().serverDeltaTime * 1000.0f);
@@ -116,16 +101,15 @@ int main(int, char**)
             // --- Network Health (LED) ---
             const auto& stats = profiler.GetStats();
             float timeSincePacket = profiler.GetTimeSinceLastPacket();
-            bool isReceiving = timeSincePacket < 0.15f; // Seuil de 150ms
+            bool isReceiving = timeSincePacket < 0.15f; 
             ImVec4 ledColor = isReceiving ? ImVec4(0, 1, 0, 1) : ImVec4(0.3f, 0.3f, 0.3f, 1);
 
             ImGui::Text("Network Heartbeat:");
             ImGui::SameLine();
 
-            // Dessin de la LED
             ImVec2 p = ImGui::GetCursorScreenPos();
             ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(p.x + 7, p.y + 7), 5.0f, ImGui::GetColorU32(ledColor));
-            ImGui::Dummy(ImVec2(15, 15)); // Espace réservé
+            ImGui::Dummy(ImVec2(15, 15));
 
             ImGui::SameLine();
             if (isReceiving)
@@ -139,7 +123,7 @@ int main(int, char**)
         }
 
         // =========================================================
-        // FENÊTRE 2 : GAME DATA (Haut Droite)
+        // WINDOW 2 : GAME 
         // =========================================================
         {
             ImGui::SetNextWindowPos(ImVec2(work_pos.x + (work_size.x * 0.5f), work_pos.y), ImGuiCond_FirstUseEver);
@@ -168,7 +152,7 @@ int main(int, char**)
         }
 
         // =========================================================
-        // FENÊTRE 3 : PERFORMANCE GRAPHS (Bas)
+        // WINDOW 3 : PERFORMANCE GRAPHS 
         // =========================================================
         {
             ImGui::SetNextWindowPos(ImVec2(work_pos.x, work_pos.y + top_height), ImGuiCond_FirstUseEver);
@@ -176,15 +160,12 @@ int main(int, char**)
 
             ImGui::Begin("Performance History", NULL, ImGuiWindowFlags_NoCollapse);
 
-            // Graphique FPS
             ImGui::Text("FPS History (0-144)");
             ImGui::PlotLines("##FPS", fps_history, HISTORY_SIZE, history_offset,
                 NULL, 0.0f, 144.0f, ImVec2(-1, 80));
 
             ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
 
-            // Graphique Frame Time (DeltaTime en ms)
-            // Échelle de 0 à 33ms (Si ça dépasse 33ms, on est sous les 30 FPS)
             ImGui::Text("Frame Time History (ms)");
             ImGui::PlotLines("##DT", dt_history, HISTORY_SIZE, history_offset,
                 NULL, 0.0f, 33.0f, ImVec2(-1, 80));
@@ -192,7 +173,6 @@ int main(int, char**)
             ImGui::End();
         }
 
-        // --- RENDU FINAL ---
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -204,7 +184,6 @@ int main(int, char**)
         glfwSwapBuffers(window);
     }
 
-    // --- NETTOYAGE ---
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

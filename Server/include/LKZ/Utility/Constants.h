@@ -8,7 +8,7 @@ namespace Constants
     // ----- Engine -----
 
 	inline constexpr int SERVER_PORT = 5555;    // Default server port
-	inline const char* const SERVER_IP = "127.0.0.1"; // Default server IP address
+	inline const char* const SERVER_IP = "104.194.157.137"; // Default server IP address
 	inline constexpr float FIXED_DELTA_TIME = 0.02f; // Fixed update timestep (50 updates per second)
 	inline const char* const APP_NAME = "LKZ Network"; // Application name
 	inline const size_t NETWORK_BUFFER_SIZE = 1024; // Size of the network buffer for sending/receiving data
